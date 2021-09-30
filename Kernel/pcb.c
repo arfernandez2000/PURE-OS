@@ -7,6 +7,20 @@ static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; // 2^29 - 1
 int activeProcesses = 0, currentProcess = -1;
 uint64_t processes[MAX_PROCESSES];
 
+
+typedef struct
+{
+      uint64_t pid;
+      uint64_t ppid;
+      char foreground;
+      char name[30];
+      void *rsp;
+      void *rbp;
+      int priority;
+      int argc;
+      char **argv;
+} PCB;
+
 void cleanProcesses() {
     activeProcesses = 0;
     currentProcess = -1;
