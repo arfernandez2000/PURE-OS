@@ -1,4 +1,4 @@
-
+#include "memorymanager.h"
 char * ptr = 0x60000000;
 
 void memInit(void * startingPoint){
