@@ -7,7 +7,6 @@
 #include "keyboard.h"
 #include "time.h"
 #include "pcb.h"
-#include "memorymanager.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -54,8 +53,6 @@ uint64_t getRSP();
 int main() {
 	load_idt();
 	saveSampleRSP(getRSP());
-	char* ptr = 0x60000000;
-	memInit(ptr);
 	((EntryPoint)sampleCodeModuleAddress)();
 	return 0;
 }

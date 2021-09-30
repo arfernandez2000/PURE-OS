@@ -1,7 +1,7 @@
 
-char * ptr;
+char * ptr = 0x60000000;
 
-void meminit(void * startingPoint){
+void memInit(void * startingPoint){
 
     ptr = (char *) startingPoint;
 }

@@ -2,6 +2,6 @@
 #define MEMORYMANAGER_H
 
 char * alloc(unsigned int bytes);
-void meminit(void * startingPoint);
+void memInit(void * startingPoint);
 
 #endif
