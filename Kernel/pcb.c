@@ -1,5 +1,7 @@
 #include "pcb.h"
 
+
+
 static const uint8_t * firstProcessAddress = (uint8_t *) 0x18000000;
 static const long stackSize = 0x4000000; // 2^26
 static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; // 2^29 - 1
@@ -7,36 +9,6 @@ static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; // 2^29 - 1
 int activeProcesses = 0, currentProcess = -1;
 uint64_t processes[MAX_PROCESSES];
 
-typedef enum
-{
-      READY,
-      BLOCKED,
-      KILLED
-} State;
-
-
-typedef struct
-{
-      uint64_t pid;
-      uint64_t ppid;
-      char foreground;
-      char name[30];
-      void *rsp;
-      void *rbp;
-      int priority;
-      int argc;
-      char **argv;
-      State state;
-      struct PCB* next;
-
-} PCB;
-
-typedef struct {
-    uint32_t size;
-    uint32_t readySize;
-    PCB *first;
-    PCB *last;
-} PCBqueue;
 
 void cleanProcesses() {
     activeProcesses = 0;
