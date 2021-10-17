@@ -38,5 +38,6 @@ uint64_t read(uint64_t fd, uint64_t buffer, uint64_t length) {
 }
 
 void createProcess(void (*fn)) {
-    newProcess(fn);
+    int fd[2];
+    newProcess(fn,1,1,1, "name", 0,0,0,0,0,0,fd);
 }

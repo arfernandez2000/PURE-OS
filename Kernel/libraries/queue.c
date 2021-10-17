@@ -63,9 +63,10 @@ PCB* dequeueProcess(QueueADT queue){
     if(isEmpty(queue)){
         return NULL;
     }
-    Node *p = queue->head;
+    Node *aux = queue->head;
     queue->head = queue->head->next;
     queue->size--;
+    return aux->process;
 }
 
 

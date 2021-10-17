@@ -1,7 +1,5 @@
 #include "pcb.h"
 
-
-
 static const uint8_t * firstProcessAddress = (uint8_t *) 0x18000000;
 static const long stackSize = 0x4000000; // 2^26
 static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; // 2^29 - 1
@@ -15,9 +13,11 @@ void cleanProcesses() {
     currentProcess = -1;
 }
 
-void newProcess(void (*fn)) {
+void newProcess(void (*fn),uint64_t pid, uint64_t ppid, int foreground, char name[30], void *rsp, void *rbp, int priority, int argc, char **argv,     unsigned int state
+,int fd[2]) {
 
-    PCB*  
+    PCB* newProcess;
+    
     if (firstProcessAddress - activeProcesses * stackSize + stackSize <= lastProcessAddress) return;
     _initialize_stack_frame(fn, firstProcessAddress - activeProcesses * stackSize);
 }
