@@ -16,6 +16,8 @@ void cleanProcesses() {
 }
 
 void newProcess(void (*fn)) {
+
+    PCB*  
     if (firstProcessAddress - activeProcesses * stackSize + stackSize <= lastProcessAddress) return;
     _initialize_stack_frame(fn, firstProcessAddress - activeProcesses * stackSize);
 }

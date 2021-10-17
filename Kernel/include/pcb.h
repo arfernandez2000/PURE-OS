@@ -27,8 +27,6 @@ typedef struct
 
 } PCB;
 
-
-
 uint64_t loadProcess(uint64_t rsp, void (*fn), uint64_t rbp);
 uint64_t preserveStack(uint64_t rsp);
 void newProcess(void (*fn));
