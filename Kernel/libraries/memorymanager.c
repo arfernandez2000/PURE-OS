@@ -6,7 +6,7 @@ void memInit(void * startingPoint){
     ptr = (char *) startingPoint;
 }
 
-char * alloc(unsigned int bytes){
+char * malloc(unsigned int bytes){
     char * aux = ptr;
     ptr += bytes;
     return aux;
