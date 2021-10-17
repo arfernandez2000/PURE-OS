@@ -1,4 +1,4 @@
-GLOBAL sys_read, sys_write, sys_time
+GLOBAL sys_read, sys_write, sys_time, sys_malloc, sys_free
 GLOBAL _getMem, sys_loadProcess
 GLOBAL raiseOpcodeExc
 GLOBAL _getRegs, sys_switchContext
@@ -132,6 +132,54 @@ sys_time:
 	mov rsi, rdi ; option
     mov rdi, 2
     int 80h
+
+	pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+sys_malloc:
+    push rbp
+    mov rbp, rsp
+
+	push rdi
+	push rsi
+	push rdx
+	push rcx
+
+	mov rcx, rdx
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 4
+	int 80h
+
+	pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+sys_free:
+    push rbp
+    mov rbp, rsp
+
+	push rdi
+	push rsi
+	push rdx
+	push rcx
+
+	mov rcx, rdx
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 5
+	int 80h
 
 	pop rcx
 	pop rdx

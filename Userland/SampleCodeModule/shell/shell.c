@@ -8,6 +8,7 @@
 #include "excDiv.h"
 #include "excOP.h"
 #include "change.h"
+#include "test_mm.h"
 
 #define SIZE 100
 #define MAX_ARGS 5
@@ -15,9 +16,9 @@
 #define COLS 40
 #define ROWS 25
 
-const int len = 7;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change"};
-void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change};
+const int len = 8;
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change","testMM"};
+void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change,test_mm};
 
 void substractLine(char * window, int * offset) {
     for (int i = 0; i < ROWS - 1; i++) {
@@ -92,7 +93,7 @@ void shell() {
         char* tokens[SIZE] = {0};
         tokens[0] = strstrip(buffer, ' ');
         for (int i = 1; i < MAX_ARGS; i++) {
-            tokens[i] = strtok(tokens[i - 1], ' ');
+            tokens[i] = strtokLib(tokens[i - 1], ' ');
         }
         for (int i = 0; i < len; i++) {
             if (!strcmp(tokens[0], commands_void[i])) {
@@ -107,7 +108,7 @@ void shell() {
             if (*tokens[2] != 0 || *tokens[1] == 0)
                 incorrect_arg(tokens[0], window, &offset);
             else {
-                int length = strlen(tokens[1]);
+                int length = Stringlen(tokens[1]);
                 printmem(window, &offset, atoi(tokens[1], length));
             }
             comm_flag = 1;
