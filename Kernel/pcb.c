@@ -41,6 +41,7 @@ void saveSampleRSP(uint64_t rsp) {
     sampleRSP = rsp;
 }
 
+
 uint64_t getSampleRSP() {
     return sampleRSP;
 }
