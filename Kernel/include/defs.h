@@ -17,7 +17,11 @@
 #define ACS_INT         ( ACS_PRESENT | ACS_INT_386 )
 
 #define NULL ((void*)0)
+#define STACK_SIZE 0x4000000 
 
+#define READY 1
+#define BLOCKED 2
+#define KILLED 3
 
 #define ACS_CODE        (ACS_PRESENT | ACS_CSEG | ACS_READ)
 #define ACS_DATA        (ACS_PRESENT | ACS_DSEG | ACS_WRITE)

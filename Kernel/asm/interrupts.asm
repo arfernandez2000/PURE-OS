@@ -22,6 +22,7 @@ EXTERN systemCallsDispatcher
 EXTERN preserveStack
 EXTERN newStack
 EXTERN changeWindow
+EXTERN scheduler
 
 GLOBAL switchContext
 GLOBAL loadProcess
@@ -136,7 +137,22 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	pushaq
+ 
+	mov rdi, 0 ; pasaje de parametro
+	mov rsi, rsp ; pasaje de parametro
+	call irqDispatcher
+
+	mov rdi,rsp
+	call scheduler
+	mov rsp,rax
+
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+	
+	popaq
+	iretq
 
 ;Keyboard
 _irq01Handler:

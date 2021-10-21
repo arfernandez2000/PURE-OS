@@ -1,8 +1,9 @@
 #include "queue.h"
+#include "defs.h"
 
 
 typedef struct {
-    PCB process;
+    PCB* process;
     struct Node* next;
 }Node;
 
@@ -24,7 +25,7 @@ void createQueue(){
     return queue;
 }
 
-int enqueueProcess(QueueADT queue, PCB process){
+int enqueueProcess(QueueADT queue, PCB* process){
     
     Node* newNode;
     if((newNode= malloc(sizeof(Node))) == NULL){
@@ -56,7 +57,16 @@ void freeQueueRec(Node *first) {
         return;
     }
     freeQueueRec(first->next);
-    free(first);
+    freeNode(first);
+}
+
+void freeProcess(Node *process)
+{
+      for (int i = 0; i < process->pcb.argc; i++)
+            free(process->pcb.argv[i]);
+      free(process->pcb.argv);
+      free((void *)((char *)process->pcb.rbp - STACK_SIZE + 1));
+      free((void *)process);
 }
 
 PCB* dequeueProcess(QueueADT queue){
