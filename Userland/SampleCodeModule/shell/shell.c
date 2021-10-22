@@ -8,17 +8,23 @@
 #include "excDiv.h"
 #include "excOP.h"
 #include "change.h"
+#include "files.h"
 #include "test_mm.h"
+
 
 #define SIZE 100
 #define MAX_ARGS 5
 
 #define COLS 40
-#define ROWS 25
+#define ROWS 50
 
-const int len = 8;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change","testMM"};
-void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change,test_mm};
+const int len_void = 8;
+const int len_files = 3;
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change", "testMM"};
+void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change, test_mm};
+char *commands_files[] = {"cat", "wc", "filter"};
+void (*func_files []) (char *, int *, char *) = {cat, wc, filter};
+
 
 void substractLine(char * window, int * offset) {
     for (int i = 0; i < ROWS - 1; i++) {
@@ -61,7 +67,7 @@ void scanfNoPrint(char * buffer, int maxSize, char * window, int * offset) {
                 if (*offset == ROWS * COLS - 1) substractLine(window, offset);
                 window[(*offset)++] = c;
                 printWindow(window);
-            }
+            } 
         }
     }
     buffer[i] = '\0';
@@ -91,17 +97,33 @@ void shell() {
         scanfNoPrint(buffer, SIZE, window, &offset);
         substractLine(window, &offset);
         char* tokens[SIZE] = {0};
+        int file_comm = 1;
         tokens[0] = strstrip(buffer, ' ');
-        for (int i = 1; i < MAX_ARGS; i++) {
-            tokens[i] = strtokLib(tokens[i - 1], ' ');
-        }
-        for (int i = 0; i < len; i++) {
-            if (!strcmp(tokens[0], commands_void[i])) {
-                if (*tokens[1] != 0)
-                    incorrect_arg(tokens[0], window, &offset);
-                else
-                    (*func[i])(window, &offset);
+
+        tokens[1] = strtokLib(tokens[0], ' ');
+        tokens[2] = strtokLib(tokens[1], '\n');
+        
+        for (int i = 0; i < len_files; i++) {  
+            if (!strcmp(tokens[0], commands_files[i])) {
+                (*func_files[i])(window, &offset, tokens[1]);
+                file_comm = 0;
                 comm_flag = 1;
+            }
+        }
+        
+        if(file_comm){
+            for (int i = 1; i < MAX_ARGS; i++) {
+                tokens[i] = strtokLib(tokens[i - 1], ' ');
+            }
+        
+            for (int i = 0; i < len_void; i++) {
+                if (!strcmp(tokens[0], commands_void[i])) {
+                    if (*tokens[1] != 0)
+                        incorrect_arg(tokens[0], window, &offset);
+                    else
+                        (*func[i])(window, &offset);
+                    comm_flag = 1;
+                }
             }
         }
         if (!strcmp(tokens[0], "printmem")) {
