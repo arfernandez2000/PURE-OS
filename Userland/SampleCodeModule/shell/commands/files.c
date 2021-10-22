@@ -17,7 +17,7 @@ void cat (char * window, int * offset, char * input){
 }
 
 void wc (char * window, int * offset, char *input) {
-    int lines = ((strlen(input) + 6) / COLS) + 1; //agrego lo que ocupa el $> wx
+    int lines = ((Stringlen(input) + 6) / COLS) + 1; //agrego lo que ocupa el $> wx
     char ret[BUFF_SIZE] = {0};
     addText(itoa(lines, ret, 10), window, offset);
     printWindow(window);

@@ -100,8 +100,8 @@ void shell() {
         int file_comm = 1;
         tokens[0] = strstrip(buffer, ' ');
 
-        tokens[1] = strtok(tokens[0], ' ');
-        tokens[2] = strtok(tokens[1], '\n');
+        tokens[1] = strtokLib(tokens[0], ' ');
+        tokens[2] = strtokLib(tokens[1], '\n');
         
         for (int i = 0; i < len_files; i++) {  
             if (!strcmp(tokens[0], commands_files[i])) {
@@ -113,7 +113,7 @@ void shell() {
         
         if(file_comm){
             for (int i = 1; i < MAX_ARGS; i++) {
-                tokens[i] = strtok(tokens[i - 1], ' ');
+                tokens[i] = strtokLib(tokens[i - 1], ' ');
             }
         
             for (int i = 0; i < len_void; i++) {
