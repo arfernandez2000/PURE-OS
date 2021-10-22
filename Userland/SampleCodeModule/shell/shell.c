@@ -9,6 +9,8 @@
 #include "excOP.h"
 #include "change.h"
 #include "files.h"
+#include "test_mm.h"
+
 
 #define SIZE 100
 #define MAX_ARGS 5
@@ -16,12 +18,13 @@
 #define COLS 40
 #define ROWS 25
 
-const int len_void = 10;
+const int len_void = 8;
 const int len_files = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change"};
-void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change", "testMM"};
+void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change, test_mm};
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) (char *, int *, char *) = {cat, wc, filter};
+
 
 void substractLine(char * window, int * offset) {
     for (int i = 0; i < ROWS - 1; i++) {
@@ -96,6 +99,7 @@ void shell() {
         char* tokens[SIZE] = {0};
         int file_comm = 1;
         tokens[0] = strstrip(buffer, ' ');
+
         tokens[1] = strtok(tokens[0], ' ');
         tokens[2] = strtok(tokens[1], '\n');
         
@@ -126,7 +130,7 @@ void shell() {
             if (*tokens[2] != 0 || *tokens[1] == 0)
                 incorrect_arg(tokens[0], window, &offset);
             else {
-                int length = strlen(tokens[1]);
+                int length = Stringlen(tokens[1]);
                 printmem(window, &offset, atoi(tokens[1], length));
             }
             comm_flag = 1;

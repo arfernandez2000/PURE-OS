@@ -1,6 +1,9 @@
 // //habria que hacer un nodo grande e ir fragmentando y de-fragmentando, 
 // //ya que estamos ubicados en el kernel
 
+#include <stdio.h>
+#include "video.h"
+#include "memorymanager.h"
 
 // #define NALLOC 1024
 
@@ -20,7 +23,12 @@
 // static Header base; /* empty list to get started*/
 // static Header *freep = NULL; /*start of free list*/
 
-// void * alloc(unsigned nbytes){
+
+
+// void * mallocMM(unsigned nbytes){
+
+//     if (nbytes == 0) 
+//         return NULL;
 
 //     Header *p, *prevp;
 //     unsigned nunits;
@@ -46,14 +54,19 @@
 //             return (void*) (p+1);
 //         }
 //         if(p == freep){ /* wrapped around free list */
-//                     return NULL; /* none left */
+//             new_line();
+//             new_line();
+//             return NULL; /* none left */
 //         }
 //     }
 
 
 // }
-// /* free: put block ap in free list */
-// void free(void *ap) {
+
+
+
+/* free: put block ap in free list */
+// void freeMM(void *ap) {
 //     Header *bp, *p;
     
 //     bp = ( Header *) ap -1; /* point to block header */

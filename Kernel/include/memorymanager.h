@@ -1,7 +1,8 @@
 #ifndef MEMORYMANAGER_H
 #define MEMORYMANAGER_H
 
-char * alloc(unsigned int bytes);
+void * mallocMM(unsigned nbytes);
 void memInit(void * startingPoint);
+void freeMM(void *ap);
 
 #endif

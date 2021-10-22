@@ -1,16 +1,16 @@
 #include "libc.h"
 
 void printString(char * string) {
-    int len = strlen(string);
+    int len = Stringlen(string);
     sys_write(1, string, len);
 }
 
 void printStringError(char * string) {
-    int len = strlen(string);
+    int len = Stringlen(string);
     sys_write(2, string, len);
 }
 
-int strlen(const char * s) {
+int Stringlen(const char * s) {
     int i = 0;
     for (i = 0; s[i] != '\0'; i++);
     return i;
@@ -190,7 +190,7 @@ char * strstrip(char * s, char c) {
     return s;
 }
 
-char *strtok(char * s, char delim) {
+char *strtokLib(char * s, char delim) {
     char *ptr = s;
 
     if (s == 0) {
