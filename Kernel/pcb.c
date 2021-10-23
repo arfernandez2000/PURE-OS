@@ -4,7 +4,7 @@
 
 static const uint8_t * firstProcessAddress = (uint8_t *) 0x18000000;
 static const long stackSize = 0x4000000; // 2^26
-static const uint8_t * lastProcessAddress = (uint8_t *) 0xC8000000; //50 stack procesess
+static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; //50 stack procesess
 
 int activeProcesses = 0, currentProcess = -1;
 
