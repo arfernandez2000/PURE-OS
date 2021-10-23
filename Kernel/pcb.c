@@ -22,6 +22,7 @@ void initProcesses(){
 
 
 void* scheduler(void * lastRSP){
+
     if(currentPCB){
         if(currentPCB->state == READY && stopInantion > 0){
             stopInantion--;
@@ -68,7 +69,6 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     strcpy(newProcess->name, name);
     newProcessStack(entryPoint);
     return newProcess;
-         //nombre, priority, state
 }
 
 
@@ -111,7 +111,7 @@ void printProcess(PCB *process)
 
 void psDisplay()
 {
-      printStringLen(0x20,"PID      FG       RSP              RBP              STATE        NAME", Stringlen("PID      FG       RSP              RBP              STATE        NAME") );
+      printStringLen(0x02,"PID      FG       RSP              RBP              STATE        NAME", Stringlen("PID      FG       RSP              RBP              STATE        NAME") );
 
     
       for(int i = 0; i< activeProcesses; i++)

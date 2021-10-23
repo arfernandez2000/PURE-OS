@@ -8,5 +8,6 @@ void sys_write(int, char *, int);
 char sys_read(int, char *, int);
 void * sys_malloc(unsigned);
 void sys_free(void *);
+void sys_ps(void *);
 
 #endif

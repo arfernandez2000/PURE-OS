@@ -190,5 +190,29 @@ sys_free:
     pop rbp
     ret
 
+sys_ps:
+    push rbp
+    mov rbp, rsp
+
+	push rdi
+	push rsi
+	push rdx
+	push rcx
+
+	mov rcx, rdx
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 6
+	int 80h
+
+	pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
 section .bss
 	regs resb 120

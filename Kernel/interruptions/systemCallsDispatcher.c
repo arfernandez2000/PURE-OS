@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "systemCalls.h"
 #include "memorymanager.h"
+#include "pcb.h"
 
 uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx) {
 	switch (rdi) {
@@ -17,6 +18,8 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
         case 5:
             freeMM((void *) rsi);
             break;
+        case 6:
+            psDisplay(); 
         default:
             return -1;
 	}
