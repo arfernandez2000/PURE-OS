@@ -3,14 +3,13 @@
 #include <memorymanager.h>
 
 static const uint8_t * firstProcessAddress = (uint8_t *) 0x18000000;
-static const long stackSize = 0x4000000; // 2^26
-static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; //50 stack procesess
+static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; //64 procesess
 
 int activeProcesses = 0, currentProcess = -1;
 
 
 uint64_t processesStack[MAX_PROCESSES];
-PCB processQueue[MAX_PROCESSES];
+PCB* processQueue[MAX_PROCESSES];
 int stopInantion = 3;
 PCB* currentPCB = NULL;
 int processID = 0;
@@ -23,7 +22,6 @@ void initProcesses(){
 
 void* scheduler(void * lastRSP){
     if(currentPCB){
-
         if(currentPCB->state == READY && stopInantion > 0){
             stopInantion--;
             return lastRSP;
@@ -38,7 +36,15 @@ void* scheduler(void * lastRSP){
 
 
 }
-void createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
+
+void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name,int priority){
+
+    processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
+    processQueue[activeProcesses]->priority = priority;
+    processQueue[activeProcesses++]->state = READY;
+}
+
+PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
     PCB* newProcess = mallocMM(sizeof(PCB));
 
     newProcess->foreground = fg;
@@ -52,15 +58,17 @@ void createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->pid = ++processID;
 
     strcpy(newProcess->name, name);
+    newProcessStack(entryPoint);
+    return newProcess;
          //nombre, priority, state
 }
 
 
 void newProcessStack(void (*fn)) {
-    if (firstProcessAddress - activeProcesses * stackSize + stackSize <= lastProcessAddress){
+    if (firstProcessAddress - activeProcesses * STACK_SIZE + STACK_SIZE <= lastProcessAddress){
         return;
     }
-    _initialize_stack_frame(fn, firstProcessAddress - activeProcesses * stackSize);
+    _initialize_stack_frame(fn, firstProcessAddress - activeProcesses * STACK_SIZE);
 }
 
 
