@@ -16,7 +16,7 @@
 #define MAX_ARGS 5
 
 #define COLS 40
-#define ROWS 50
+#define ROWS 60
 
 const int len_void = 8;
 const int len_files = 3;

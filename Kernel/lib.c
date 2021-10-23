@@ -98,3 +98,10 @@ char * itoa(int value, char * buffer, int base, int length) {
     buffer[i] = '\0';
     return reverse(buffer, 0, i - 1);
 }
+void strcpy(char *str1, char *str2)
+{ //copies str1 into str2
+      int i;
+      for (i = 0; str1[i] != 0; i++)
+            str2[i] = str1[i];
+      str2[i] = 0;
+}

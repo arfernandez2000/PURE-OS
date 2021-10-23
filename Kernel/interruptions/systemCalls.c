@@ -38,5 +38,5 @@ uint64_t read(uint64_t fd, uint64_t buffer, uint64_t length) {
 }
 
 void createProcess(void (*fn)) {
-    newProcess(fn);
+    newProcessStack(fn);
 }

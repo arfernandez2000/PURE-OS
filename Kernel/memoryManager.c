@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "video.h"
 #include "memorymanager.h"
+#include "defs.h"
 
 #define NALLOC 1024
 
