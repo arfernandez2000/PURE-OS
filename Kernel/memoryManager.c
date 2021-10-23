@@ -2,7 +2,6 @@
 // //habria que hacer un nodo grande e ir fragmentando y de-fragmentando, 
 // //ya que estamos ubicados en el kernel
 
-#include <stdio.h>
 #include "video.h"
 #include "memorymanager.h"
 #include "defs.h"

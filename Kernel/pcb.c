@@ -1,12 +1,13 @@
 #include "pcb.h"
 #include "defs.h"
 #include <memorymanager.h>
+#include "lib.h"
+#include "video.h"
 
 static const uint8_t * firstProcessAddress = (uint8_t *) 0x18000000;
 static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; //64 procesess
 
 int activeProcesses = 0, currentProcess = -1;
-
 
 uint64_t processesStack[MAX_PROCESSES];
 PCB* processQueue[MAX_PROCESSES];
@@ -41,7 +42,8 @@ void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg,
 
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
     processQueue[activeProcesses]->priority = priority;
-    processQueue[activeProcesses++]->state = READY;
+    processQueue[activeProcesses]->state = READY;
+    currentPCB = processQueue[activeProcesses++];
 }
 
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
@@ -53,9 +55,15 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->argv = argv;
     newProcess->pipes[0] = fd[0];
     newProcess->pipes[1] = fd[1];
-
-    newProcess->ppid = processID;
-    newProcess->pid = ++processID;
+    if(processID == 0){
+        newProcess->pid = processID;
+        newProcess->ppid = processID++;
+    }
+    else{
+        newProcess->ppid = processID;
+        newProcess->pid = ++processID;
+    }
+    
 
     strcpy(newProcess->name, name);
     newProcessStack(entryPoint);
@@ -86,6 +94,33 @@ uint64_t preserveStack(uint64_t rsp) {
     }
     return processesStack[currentProcess];
 }
+
+
+void printProcess(PCB *process)
+{
+        //numbers to string ;
+      if (process != NULL){
+            char * pid = process->pid;
+            char * foreground = process->foreground;
+            char * rsp = process->rsp;
+            char * state = process->state;
+            char * name = process->name;
+      }
+              
+}
+
+void psDisplay()
+{
+      printStringLen(0x20,"PID      FG       RSP              RBP              STATE        NAME", Stringlen("PID      FG       RSP              RBP              STATE        NAME") );
+
+    
+      for(int i = 0; i< activeProcesses; i++)
+      {
+            printProcess(processQueue[i]);
+      }
+
+}
+
 
 static uint64_t sampleRSP;
 
