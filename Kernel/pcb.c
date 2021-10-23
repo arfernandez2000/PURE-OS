@@ -11,11 +11,13 @@ int activeProcesses = 0, currentProcess = -1;
 
 uint64_t processesStack[MAX_PROCESSES];
 PCB* processQueue[MAX_PROCESSES];
-int stopInantion = 3;
+int stopInantion = 0;
 PCB* currentPCB = NULL;
 int processID = 0;
 
 void initProcesses(){
+    //habria que setear el proceso idle para que nunca este vacia
+    
 
 
 }
@@ -28,9 +30,10 @@ void* scheduler(void * lastRSP){
             stopInantion--;
             return lastRSP;
         }
-
+        //Cambiar de proceso
         currentPCB->rsp = lastRSP;
     }
+    //setear la prioridad y crear el proceso, y devolver el nuevo rsp
     stopInantion = currentPCB->priority;
         
     return currentPCB->rsp;
@@ -98,7 +101,7 @@ uint64_t preserveStack(uint64_t rsp) {
 
 void printProcess(PCB *process)
 {
-        //numbers to string ;
+        //TODO> numbers to string ;
       if (process != NULL){
             char * pid = process->pid;
             char * foreground = process->foreground;
