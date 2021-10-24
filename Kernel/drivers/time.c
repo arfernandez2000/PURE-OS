@@ -1,9 +1,15 @@
 #include <time.h>
+#include <stdint.h>
+#include <pcb.h>
+#include <lib.h>
+
+extern void switchProcess( uint64_t stackPointer);
 
 static unsigned long ticks = 0;
 
-void timer_handler() {
+void timer_handler(uint64_t rsp) {
 	ticks++;
+    scheduler(rsp);
 }
 
 int ticks_elapsed() {

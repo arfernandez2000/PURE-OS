@@ -22,12 +22,13 @@ typedef struct
 
 } PCB;
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name);
-void* scheduler(void * lastRSP);
+uint64_t scheduler(uint64_t lastRSP);
 uint64_t loadProcess(uint64_t rsp, void (*fn), uint64_t rbp);
 uint64_t preserveStack(uint64_t rsp);
 void newProcessStack(void (*fn));
 void newStack(uint64_t rsp);
 void cleanProcesses();
+int getProcessCount();
 
 void * _initialize_stack_frame(void * rip, const void * rsp);
 

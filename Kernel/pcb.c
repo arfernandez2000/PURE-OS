@@ -23,19 +23,20 @@ void initProcesses(){
 }
 
 
-void* scheduler(void * lastRSP){
+uint64_t scheduler(uint64_t lastRSP){
 
-    if(currentPCB){
-        if(currentPCB->state == READY && stopInantion > 0){
-            stopInantion--;
-            return lastRSP;
-        }
-        //Cambiar de proceso
-        currentPCB->rsp = lastRSP;
-    }
-    //setear la prioridad y crear el proceso, y devolver el nuevo rsp
-    stopInantion = currentPCB->priority;
-        
+    printStringLen(0x20, "a", 1);
+//    if(currentPCB){
+//        if(currentPCB->state == READY && stopInantion > 0){
+//            stopInantion--;
+//            return lastRSP;
+//        }
+//        //Cambiar de proceso
+//        currentPCB->rsp = lastRSP;
+//    }
+//    //setear la prioridad y crear el proceso, y devolver el nuevo rsp
+//    stopInantion = currentPCB->priority;
+//
     return currentPCB->rsp;
 
 
@@ -97,8 +98,9 @@ uint64_t preserveStack(uint64_t rsp) {
     }
     return processesStack[currentProcess];
 }
-
-
+int getProcessCount(){
+    return activeProcesses;
+}
 void printProcess(PCB *process)
 {
         //TODO> numbers to string ;
