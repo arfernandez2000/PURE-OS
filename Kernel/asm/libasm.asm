@@ -77,16 +77,7 @@ getRegs:
 	mov rsp, rbp
 	pop rbp
 	ret
-	
-	;switchProcess( uint64_t stackPointer)
-	switchProcess:
 
-		mov rsp , rdi
-		sti
-		mov al, 20h
-		out 20h, al
-		popState
-		iretq
 
 section .bss
 	regs resb 120 ; 8 bytes * 16 regs
