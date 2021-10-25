@@ -29,6 +29,7 @@ void newProcessStack(void (*fn));
 void newStack(uint64_t rsp);
 void cleanProcesses();
 int getProcessCount();
+void initScheduler();
 
 void * _initialize_stack_frame(void * rip, const void * rsp);
 

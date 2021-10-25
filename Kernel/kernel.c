@@ -6,6 +6,7 @@
 #include "keyboard.h"
 #include "time.h"
 #include "pcb.h"
+#include <interrupts.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -13,6 +14,8 @@ extern uint8_t data;
 extern uint8_t bss;
 extern uint8_t endOfKernelBinary;
 extern uint8_t endOfKernel;
+
+
 
 static const uint64_t PageSize = 0x1000;
 
@@ -50,8 +53,10 @@ void load_idt();
 uint64_t getRSP();
 
 int main() {
+    _cli();
 	load_idt();
 	saveSampleRSP(getRSP());
+    _sti();
 	((EntryPoint)sampleCodeModuleAddress)();
 	return 0;
 }

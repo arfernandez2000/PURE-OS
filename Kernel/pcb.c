@@ -7,7 +7,8 @@
 static const uint8_t * firstProcessAddress = (uint8_t *) 0x18000000;
 static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; //64 procesess
 
-int activeProcesses = 0, currentProcess = -1;
+int activeProcesses = 0;
+int currentProcess = -1;
 
 uint64_t processesStack[MAX_PROCESSES];
 PCB* processQueue[MAX_PROCESSES];
@@ -15,36 +16,30 @@ int stopInantion = 0;
 PCB* currentPCB = NULL;
 int processID = 0;
 
-void initProcesses(){
-    //habria que setear el proceso idle para que nunca este vacia
-    
-
-
+void initScheduler(){
+    printStringLen(0x40,"B",1);
+    activeProcesses = 0;
 }
 
-
 uint64_t scheduler(uint64_t lastRSP){
-
-    printStringLen(0x20, "a", 1);
-//    if(currentPCB){
-//        if(currentPCB->state == READY && stopInantion > 0){
-//            stopInantion--;
-//            return lastRSP;
-//        }
-//        //Cambiar de proceso
-//        currentPCB->rsp = lastRSP;
-//    }
-//    //setear la prioridad y crear el proceso, y devolver el nuevo rsp
-//    stopInantion = currentPCB->priority;
-//
-    return currentPCB->rsp;
-
-
-
+//    printStringLen(0x20,"a",1);
+    return lastRSP;
+////    if(currentPCB){
+////        if(currentPCB->state == READY && stopInantion > 0){
+////            stopInantion--;
+////            return lastRSP;
+////        }
+////        //Cambiar de proceso
+////        currentPCB->rsp = lastRSP;
+////    }
+////    //setear la prioridad y crear el proceso, y devolver el nuevo rsp
+////    stopInantion = currentPCB->priority;
+////
+//    return currentPCB->rsp;
 }
 
 void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name,int priority){
-
+    printStringLen(0x01,"B",1);
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
     processQueue[activeProcesses]->priority = priority;
     processQueue[activeProcesses]->state = READY;
@@ -99,7 +94,7 @@ uint64_t preserveStack(uint64_t rsp) {
     return processesStack[currentProcess];
 }
 int getProcessCount(){
-    return activeProcesses;
+    return 0;
 }
 void printProcess(PCB *process)
 {

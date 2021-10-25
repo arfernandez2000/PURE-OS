@@ -2,11 +2,13 @@
 #include <stdint.h>
 #include <pcb.h>
 #include <lib.h>
+#include "naiveConsole.h"
 static unsigned long ticks = 0;
 
 void timer_handler(uint64_t rsp) {
 	ticks++;
-    scheduler(rsp);
+    if(getProcessCount() > 0)
+        scheduler(rsp);
 }
 
 int ticks_elapsed() {
