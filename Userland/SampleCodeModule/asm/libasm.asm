@@ -98,11 +98,27 @@ sys_loadProcess:
 
 	push rdi
 	push rsi
+	push rcx
+	push rdx
+	push r10
+	push r9
+	push r8
 
+	mov r8, r9
+	mov r9, r10
+	mov r10, rdx
+	mov rdx, rcx
+	mov rcx, rsi
 	mov rsi, rdi
 	mov rdi, 3
+
     int 80h
 
+	pop r8
+	pop r9
+	pop r10
+	pop rdx
+	pop rcx
 	pop rsi
 	pop rdi
 

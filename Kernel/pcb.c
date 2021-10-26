@@ -4,6 +4,7 @@
 #include "lib.h"
 #include "video.h"
 
+
 static const uint8_t * firstProcessAddress = (uint8_t *) 0x18000000;
 static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; //64 procesess
 
@@ -17,7 +18,7 @@ PCB* currentPCB = NULL;
 int processID = 0;
 
 void initScheduler(){
-    printStringLen(0x40,"B",1);
+    // printStringLen(0x40,"B",1);
     activeProcesses = 0;
 }
 
@@ -38,18 +39,19 @@ uint64_t scheduler(uint64_t lastRSP){
 //    return currentPCB->rsp;
 }
 
-void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name,int priority){
+void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
     printStringLen(0x01,"B",1);
+    printStringLen(0x01,"C",1);
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
-    processQueue[activeProcesses]->priority = priority;
-    processQueue[activeProcesses]->state = READY;
-    currentPCB = processQueue[activeProcesses++];
+    processQueue[currentProcess]->priority = 1;
+    processQueue[currentProcess]->state = READY;
+    currentPCB = processQueue[currentProcess];
+    // entryPoint(argc, argv);
 }
 
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
     PCB* newProcess = mallocMM(sizeof(PCB));
 
-    newProcess->foreground = fg;
     newProcess->foreground = fg;
     newProcess->argc = argc;
     newProcess->argv = argv;
@@ -94,7 +96,7 @@ uint64_t preserveStack(uint64_t rsp) {
     return processesStack[currentProcess];
 }
 int getProcessCount(){
-    return 0;
+    return activeProcesses;
 }
 void printProcess(PCB *process)
 {

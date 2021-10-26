@@ -57,6 +57,10 @@ int main() {
 	load_idt();
 	saveSampleRSP(getRSP());
     _sti();
+
+	// ((EntryPoint)sampleCodeModuleAddress)();
 	((EntryPoint)sampleCodeModuleAddress)();
+
+	// addProcess(sampleCodeModuleAddress, 1, NULL, 1, 0,"Shell");
 	return 0;
 }

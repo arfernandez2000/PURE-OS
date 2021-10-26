@@ -84,7 +84,7 @@ void clearWindow(char * window, int * offset) {
     printWindow(window);
 }
 
-void shell() {
+void shell(int argc, char** argv) {
     char window[ROWS * COLS + 1] = {[0 ... ROWS * COLS - 1] = ' ', 0};
     int offset = (ROWS - 1) * COLS;
 

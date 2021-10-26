@@ -7,8 +7,8 @@ static unsigned long ticks = 0;
 
 void timer_handler(uint64_t rsp) {
 	ticks++;
-    if(getProcessCount() > 0)
-        scheduler(rsp);
+    // if(getProcessCount() > 0)
+    // 	scheduler(rsp);
 }
 
 int ticks_elapsed() {

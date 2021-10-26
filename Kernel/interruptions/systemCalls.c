@@ -37,6 +37,6 @@ uint64_t read(uint64_t fd, uint64_t buffer, uint64_t length) {
 	return readBytes;
 }
 
-void createProcess(void (*fn)) {
-    newProcessStack(fn);
+void createProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name) {
+    addProcess(entryPoint, argc, argv, fg, fd, name);
 }
