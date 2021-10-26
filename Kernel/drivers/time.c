@@ -1,14 +1,12 @@
 #include <time.h>
-#include <stdint.h>
 #include <pcb.h>
 #include <lib.h>
 #include "naiveConsole.h"
 static unsigned long ticks = 0;
 
-void timer_handler(uint64_t rsp) {
+uint64_t timer_handler(uint64_t rsp) {
 	ticks++;
-    // if(getProcessCount() > 0)
-    // 	scheduler(rsp);
+	return scheduler(rsp);
 }
 
 int ticks_elapsed() {

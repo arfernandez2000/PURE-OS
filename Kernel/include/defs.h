@@ -21,7 +21,7 @@
 #define KILLED 3
 
 #define NULL ((void*)0)
-#define STACK_SIZE 0x1FFFFF 
+#define STACK_SIZE 0x1000
 
 
 #define ACS_CODE        (ACS_PRESENT | ACS_CSEG | ACS_READ)

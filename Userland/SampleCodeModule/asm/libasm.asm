@@ -2,6 +2,7 @@ GLOBAL sys_read, sys_write, sys_time, sys_malloc, sys_free
 GLOBAL _getMem, sys_loadProcess
 GLOBAL raiseOpcodeExc
 GLOBAL _getRegs, sys_switchContext
+GLOBAL _rbp, _rsp
 
 section .text
 
@@ -229,6 +230,14 @@ sys_ps:
     mov rsp, rbp
     pop rbp
     ret
+
+
+_rsp:
+	mov rax,rsp
+	ret
+_rbp:
+	mov rax, rbp
+	ret
 
 section .bss
 	regs resb 120

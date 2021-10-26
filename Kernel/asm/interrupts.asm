@@ -22,6 +22,7 @@ EXTERN systemCallsDispatcher
 EXTERN preserveStack
 EXTERN newStack
 EXTERN changeWindow
+EXTERN int_20
 
 GLOBAL switchContext
 GLOBAL loadProcess
@@ -137,7 +138,19 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	pushState
+	
+	mov rdi, rsp
+	call int_20
+	mov rsp, rax
+
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+
+	popState
+	iretq
+
 
 ;Keyboard
 _irq01Handler:
@@ -208,20 +221,34 @@ haltcpu:
 %endmacro
 
 _initialize_stack_frame:
+;pushear primero el rsp. Armado de stack frame
     mov rcx, rsp
     mov rsp, rsi
     
 	push 0x0 ; ss
-    push rsi ; sp
+    push rsi ; sp 
     push 0x202 ; rflags
 	; 0x200 IF FLAG
 	; 0x002 always one
     push 0x08 ; cs -- offset de la GDT
     push rdi ; IP
 
-    pushState
-	mov rdi, rsp
-	call newStack
+	push rax
+    push rbx
+	push rcx
+	push rdx
+	push rsi ; este es el base pointer
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+    
     
 	mov rax, rsp
     mov rsp, rcx

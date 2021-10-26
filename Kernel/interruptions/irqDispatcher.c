@@ -1,7 +1,7 @@
 #include <time.h>
 #include <stdint.h>
 
-static void int_20(uint64_t rsp);
+uint64_t int_20(uint64_t rsp);
 static void int_21();
 void keyboard_handler();
 
@@ -17,8 +17,8 @@ void irqDispatcher(uint64_t irq, uint64_t rsp) {
 	return;
 }
 
-void int_20(uint64_t rsp) {
-	timer_handler(rsp);
+uint64_t int_20(uint64_t rsp) {
+	return timer_handler(rsp);;
 }
 
 void int_21() {

@@ -11,9 +11,11 @@ int main() {
     winClear();
 
     char *argv[] = {"Shell"};
-    sys_loadProcess(&shell, 2, argv, 1, NULL, "Shell");
-    
-    sys_switchContext();
+    // sys_loadProcess(&shell, 2, argv, 1, NULL, "Shell");
+    // sys_loadProcess(&shell, 2, argv, 1, NULL, "Shell");
+    // sys_switchContext();
+    shell(1,argv);
 
 	return 1; 
 }
+//una shell, mm naive, aunque ande todo bien configurar GDB. 
