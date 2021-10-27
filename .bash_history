@@ -56,3 +56,16 @@ make clean
 make all
 make clean
 make all
+ls
+cd root/
+ls
+cd Image/
+make all
+cd ..
+cd Toolchain/
+make all
+cd ModulePacker/
+make
+cd ..
+cd ..
+make all

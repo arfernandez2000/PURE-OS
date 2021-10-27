@@ -8,6 +8,8 @@
 #include "pcb.h"
 #include <interrupts.h>
 
+#include "memorymanager.h"
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -21,6 +23,7 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
+static void * const sampleCodeModuleHeapAddress = (void *)0x600000;
 
 typedef int (*EntryPoint)();
 
@@ -58,8 +61,11 @@ int main() {
 	saveSampleRSP(getRSP());
     _sti();
 
-	// ((EntryPoint)sampleCodeModuleAddress)();
+	memInit((char *)sampleCodeModuleHeapAddress, (64*1024*1024));
+
+
 	((EntryPoint)sampleCodeModuleAddress)();
+	// ((EntryPoint)sampleCodeModuleAddress)();
 
 	// addProcess(sampleCodeModuleAddress, 1, NULL, 1, 0,"Shell");
 	return 0;
