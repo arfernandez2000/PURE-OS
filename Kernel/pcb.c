@@ -3,6 +3,7 @@
 #include <memorymanager.h>
 #include "lib.h"
 #include "video.h"
+#include "naiveConsole.h"
 
 
 static const uint8_t * firstProcessAddress = (uint8_t *) 0x18000000;
@@ -17,13 +18,21 @@ int stopInantion = 0;
 PCB* currentPCB = NULL;
 int processID = 0;
 
-void initScheduler(){
-    // printStringLen(0x40,"B",1);
-    activeProcesses = 0;
+
+uint64_t entre1era = 0;
+
+void initScheduler(uint64_t rsp){
+    entre1era = rsp;
 }
 
 uint64_t scheduler(uint64_t lastRSP){
 //    printStringLen(0x20,"a",1);
+    if(!entre1era){
+        entre1era = 1;
+        printStringLen(0x20,"aaaa",4);
+        ncPrintHex(processesStack[0]);
+        return processesStack[0];
+    }
     return lastRSP;
 ////    if(currentPCB){
 ////        if(currentPCB->state == READY && stopInantion > 0){
@@ -51,6 +60,9 @@ void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg,
 
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
     PCB* newProcess = mallocMM(sizeof(PCB));
+    if(newProcess == NULL){
+        return; 
+    }
 
     newProcess->foreground = fg;
     newProcess->argc = argc;
@@ -68,22 +80,31 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     
 
     strcpy(newProcess->name, name);
+    //arrastre error 
     newProcessStack(entryPoint);
     return newProcess;
 }
 
 
+uint64_t newStaticStack[STACK_SIZE];
+
 void newProcessStack(void (*fn)) {
-    if (firstProcessAddress - activeProcesses * STACK_SIZE + STACK_SIZE <= lastProcessAddress){
-        return;
+
+    //uint64_t newStack = mallocMM(STACK_SIZE);
+    
+    if(newStaticStack == NULL){
+       while(1){
+           printStringLen(0x30, "Error",5);
+       }; 
     }
-    _initialize_stack_frame(fn, firstProcessAddress - activeProcesses * STACK_SIZE);
+
+    processesStack[activeProcesses++] = _initialize_stack_frame(fn, newStaticStack + STACK_SIZE);
 }
 
 
-void newStack(uint64_t rsp) {
-    processesStack[activeProcesses++] = rsp;
-}
+// void newStack(uint64_t rsp) {
+//     processesStack[activeProcesses++] = rsp;
+// }
 
 uint64_t preserveStack(uint64_t rsp) {
     if (currentProcess != -1) {
@@ -139,3 +160,4 @@ void cleanProcesses() {
     activeProcesses = 0;
     currentProcess = -1;
 }
+
