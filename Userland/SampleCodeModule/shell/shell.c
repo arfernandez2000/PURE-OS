@@ -21,25 +21,22 @@
 
 const int len_void = 9;
 const int len_files = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change", "testMM","prueba"};
-void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change, test_mm, prueba};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change", "prueba","testMM"};
+void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change, prueba, test_mm };
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) (char *, int *, char *) = {cat, wc, filter};
 
 
-static void waitMF(int argc, char** argv){
+void waitMF(int argc, char** argv){
     while(1){
         printString("messi");
     }
    
 }
 void prueba(char * window, int * offset){
-    char *argv[] = {"Prueba"};
-    sys_loadProcess(&waitMF, 1, argv, 1, NULL, "Prueba");
-    
-    substractLine(window, offset);
+    sys_loadProcess(&waitMF, 1, 0 , 1, NULL, "Prueba");
+    printString("aaa");
     printWindow(window);
-   
 }
 void substractLine(char * window, int * offset) {
     for (int i = 0; i < ROWS - 1; i++) {

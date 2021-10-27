@@ -129,7 +129,7 @@ void new_line() {
 
 void clear() {
 	for (int i = limitX[0]; i < (limitX[1] - limitX[0]) * 2 * (limitY[1] - limitY[0]); i++) {	
-		printStringLen(15, " ", 1);
+		printStringLen(80, " ", 1);
 	}
 
 	currentX = limitX[0];

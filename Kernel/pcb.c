@@ -59,7 +59,9 @@ void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg,
     // entryPoint(argc, argv);
 }
 
+
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
+    
     PCB* newProcess = mallocMM(sizeof(PCB));
     if(newProcess == NULL){
         return NULL; 
@@ -99,7 +101,7 @@ void newProcessStack(void (*fn)) {
        }; 
     }
 
-    processesStack[activeProcesses++] = _initialize_stack_frame(fn, newStaticStack + STACK_SIZE);
+    processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStaticStack + STACK_SIZE);
 }
 
 

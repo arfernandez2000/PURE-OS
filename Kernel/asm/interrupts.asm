@@ -257,13 +257,7 @@ _initialize_stack_frame:
 ; System calls (int 80h)
 _systemCallsHandler:
 	pushStateNoRax
-	fsave [bytesForFPU]
-	fxsave [bytesForSSEAligned]
-
 	call systemCallsDispatcher
-
-	fxrstor [bytesForSSEAligned]
-	frstor [bytesForFPU]
 	popStateNoRax
 	iretq
 
