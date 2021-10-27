@@ -30,9 +30,10 @@ uint64_t scheduler(uint64_t lastRSP){
     if(!entre1era){
         entre1era = 1;
         printStringLen(0x20,"aaaa",4);
-        ncPrintHex(processesStack[0]);
         return processesStack[0];
     }
+    if(currentProcess < getProcessCount() && currentProcess > 1)
+        return processesStack[currentProcess++]; //current vamos a usar para iterar
     return lastRSP;
 ////    if(currentPCB){
 ////        if(currentPCB->state == READY && stopInantion > 0){
@@ -61,7 +62,7 @@ void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg,
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
     PCB* newProcess = mallocMM(sizeof(PCB));
     if(newProcess == NULL){
-        return; 
+        return NULL; 
     }
 
     newProcess->foreground = fg;

@@ -12,20 +12,35 @@
 #include "test_mm.h"
 
 
+#define NULL (void *)0
 #define SIZE 100
 #define MAX_ARGS 5
 
 #define COLS 40
 #define ROWS 50
 
-const int len_void = 8;
+const int len_void = 9;
 const int len_files = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change", "testMM"};
-void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change, test_mm};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change", "testMM","prueba"};
+void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change, test_mm, prueba};
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) (char *, int *, char *) = {cat, wc, filter};
 
 
+static void waitMF(int argc, char** argv){
+    while(1){
+        printString("messi");
+    }
+   
+}
+void prueba(char * window, int * offset){
+    char *argv[] = {"Prueba"};
+    sys_loadProcess(&waitMF, 1, argv, 1, NULL, "Prueba");
+    
+    printWindow(window);
+    substractLine(window, offset);
+   
+}
 void substractLine(char * window, int * offset) {
     for (int i = 0; i < ROWS - 1; i++) {
         for (int j = 0; j < COLS; j++) {

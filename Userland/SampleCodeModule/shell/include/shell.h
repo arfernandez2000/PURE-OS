@@ -3,6 +3,7 @@
 
 #include "system.h"
 
+void prueba(char*, int*);
 void shell(int, char**);
 void printWindow(char * window);
 void addText(char * buffer, char * window, int * offset);
