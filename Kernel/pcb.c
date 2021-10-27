@@ -29,7 +29,7 @@ uint64_t scheduler(uint64_t lastRSP){
 //    printStringLen(0x20,"a",1);
     if(!entre1era){
         entre1era = 1;
-        printStringLen(0x20,"aaaa",4);
+        //printStringLen(0x20,"aaaa",4);
         return processesStack[0];
     }
     if(currentProcess < getProcessCount() && currentProcess > 1)
@@ -50,8 +50,8 @@ uint64_t scheduler(uint64_t lastRSP){
 }
 
 void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
-    printStringLen(0x01,"B",1);
-    printStringLen(0x01,"C",1);
+    //printStringLen(0x01,"B",1);
+    //printStringLen(0x01,"C",1);
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
     processQueue[currentProcess]->priority = 1;
     processQueue[currentProcess]->state = READY;

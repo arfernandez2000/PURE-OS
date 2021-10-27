@@ -18,4 +18,3 @@ int main() {
 
 	return 1; 
 }
-//una shell, mm naive, aunque ande todo bien configurar GDB. 

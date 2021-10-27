@@ -16,8 +16,8 @@
 #define SIZE 100
 #define MAX_ARGS 5
 
-#define COLS 40
-#define ROWS 50
+#define COLS 80
+#define ROWS 25
 
 const int len_void = 9;
 const int len_files = 3;
@@ -37,8 +37,8 @@ void prueba(char * window, int * offset){
     char *argv[] = {"Prueba"};
     sys_loadProcess(&waitMF, 1, argv, 1, NULL, "Prueba");
     
-    printWindow(window);
     substractLine(window, offset);
+    printWindow(window);
    
 }
 void substractLine(char * window, int * offset) {
