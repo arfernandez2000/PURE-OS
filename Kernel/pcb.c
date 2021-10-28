@@ -6,9 +6,6 @@
 #include "naiveConsole.h"
 
 
-static const uint8_t * firstProcessAddress = (uint8_t *) 0x18000000;
-static const uint8_t * lastProcessAddress = (uint8_t *) 0x10000001; //64 procesess
-
 int activeProcesses = 0;
 int currentProcess = -1;
 
@@ -89,19 +86,17 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 }
 
 
-uint64_t newStaticStack[STACK_SIZE];
-
 void newProcessStack(void (*fn)) {
 
-    //uint64_t newStack = mallocMM(STACK_SIZE);
+    uint64_t newStack = mallocMM(STACK_SIZE);
     
-    if(newStaticStack == NULL){
+    if(newStack == NULL){
        while(1){
            printStringLen(0x30, "Error",5);
        }; 
     }
 
-    processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStaticStack + STACK_SIZE);
+    processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE);
 }
 
 

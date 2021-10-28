@@ -97,7 +97,7 @@
 #include "memorymanager.h"
 #include "video.h"
 
-char * ptr = 0x60000000;
+char * ptr = 0x600000;
 
 void memInit(void * startingPoint){
 
