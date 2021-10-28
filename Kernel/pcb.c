@@ -113,13 +113,14 @@ void printProcess(PCB *process)
 
 void psDisplay()
 {
-      printStringLen(0x02,"PID      FG       RSP              RBP              STATE        NAME", Stringlen("PID      FG       RSP              RBP              STATE        NAME") );
+    printString
+    //   printStringLen(0x02,"PID      FG       RSP              RBP              STATE        NAME", Stringlen("PID      FG       RSP              RBP              STATE        NAME") );
 
     
-      for(int i = 0; i< activeProcesses; i++)
-      {
-            printProcess(processQueue[i]);
-      }
+    //   for(int i = 0; i< activeProcesses; i++)
+    //   {
+    //         printProcess(processQueue[i]);
+    //   }
 
 }
 
@@ -138,4 +139,16 @@ uint64_t getSampleRSP() {
 void cleanProcesses() {
     activeProcesses = 0;
     currentProcess = -1;
+}
+
+void killProcess(uint64_t pid) {
+    ;
+}
+
+void blockProcess(uint64_t pid) {
+    ;
+}
+
+void unBlockProcess(uint64_t pid) {
+
 }

@@ -1,4 +1,4 @@
-GLOBAL sys_read, sys_write, sys_time, sys_malloc, sys_free
+GLOBAL sys_read, sys_write, sys_time, sys_malloc, sys_free, sys_ps,sys_kill_process, sys_block_process, sys_unblock_process
 GLOBAL _getMem, sys_loadProcess
 GLOBAL raiseOpcodeExc
 GLOBAL _getRegs, sys_switchContext
@@ -219,6 +219,78 @@ sys_ps:
 	mov rdx, rsi
 	mov rsi, rdi
 	mov rdi, 6
+	int 80h
+
+	pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+sys_kill_process:
+    push rbp
+    mov rbp, rsp
+
+	push rdi
+	push rsi
+	push rdx
+	push rcx
+
+	mov rcx, rdx
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 7
+	int 80h
+
+	pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+sys_block_process:
+    push rbp
+    mov rbp, rsp
+
+	push rdi
+	push rsi
+	push rdx
+	push rcx
+
+	mov rcx, rdx
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 8
+	int 80h
+
+	pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+sys_unblock_process:
+    push rbp
+    mov rbp, rsp
+
+	push rdi
+	push rsi
+	push rdx
+	push rcx
+
+	mov rcx, rdx
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 9
 	int 80h
 
 	pop rcx
