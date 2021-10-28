@@ -11,10 +11,8 @@ int ticksElapsed()
 
 void waitCycles(int cycles)
 {
-    int ticksMaradona = ticksElapsed();
       int goal = ticksElapsed() + cycles;
-      while (ticksMaradona < goal)
-            ticksMaradona = ticksElapsed();
+      while (ticksElapsed() < goal);
 }
 void loop(char* window, int * offset){
 

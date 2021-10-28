@@ -36,7 +36,7 @@ void waitMF(int argc, char** argv){
    
 }
 void prueba(char * window, int * offset){
-    sys_loadProcess(&waitMF, 1, 0 , 1, NULL, "Prueba");
+    sys_loadProcess(&waitMF, 1, 0 , 0, 0, "Prueba");
     printWindow(window);
 }
 void substractLine(char * window, int * offset) {

@@ -116,7 +116,7 @@ int getProcessCount(){
 }
 
 uint64_t getPID(){
-    return 2;
+    return processQueue[currentProcess]->pid;
 }
 
 void printProcess(PCB *process)
