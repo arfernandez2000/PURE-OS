@@ -100,18 +100,18 @@ sys_loadProcess:
 
 	push rdi
 	push rsi
-	push rcx
 	push rdx
+	push rcx
 	push r10
 	push r8
 	push r9
 
-
+	
+	mov r10, r9
 	mov r9, r8
-	mov r8, r10
-	mov r10, rdx
-	mov rdx, rcx
-	mov rcx, rsi
+	mov r8, rcx
+	mov rcx, rdx
+	mov rdx, rsi
 	mov rsi, rdi
 	mov rdi, 3
 
@@ -120,8 +120,8 @@ sys_loadProcess:
 	pop r9
 	pop r8
 	pop r10
-	pop rdx
 	pop rcx
+	pop rdx
 	pop rsi
 	pop rdi
 

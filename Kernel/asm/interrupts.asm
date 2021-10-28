@@ -232,21 +232,21 @@ _initialize_stack_frame:
     push 0x08 ; cs -- offset de la GDT
     push rdi ; IP
 
-	push rax
-    push rbx
-	push rcx
-	push rdx
+	push 0x0
+    push 0x1
+	push 0x2
+	push 0x3
 	push rsi ; este es el base pointer
-	push rdi
-	push rsi
-	push r8
-	push r9
-	push r10
-	push r11
-	push r12
-	push r13
-	push r14
-	push r15
+	push 0x1234 ; le estamos pasando al proceso como argumentos el SP y el IP , pero tiene que ser argc y argv 
+	push 0x4321; argv. Pasarselos a la func como parametros
+	push 0x4
+	push 0x5
+	push 0x6
+	push 0x7
+	push 0x8
+	push 0x9
+	push 0x10
+	push 0x11
     
     
 	mov rax, rsp

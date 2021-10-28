@@ -31,7 +31,7 @@ void loopProc(int argc, char** argv){
         printWindow(window);
         substractLine(window, offset);
     }
-
+    exit(); //implementar syscall exit
 }
 
 void loop(char* window, int * offset){

@@ -7,7 +7,7 @@
 
 
 int activeProcesses = 0;
-int currentProcess = -1;
+int currentProcess = 0;
 
 uint64_t processesStack[MAX_PROCESSES];
 PCB* processQueue[MAX_PROCESSES];
@@ -27,9 +27,11 @@ uint64_t scheduler(uint64_t lastRSP){
         entre1era = 1;
         return processesStack[0];
     }
-    if(currentProcess < getProcessCount() && currentProcess > 1)
-        return processesStack[currentProcess++]; //current vamos a usar para iterar
-    return lastRSP;
+    processesStack[currentProcess] = lastRSP;
+    currentProcess = ++currentProcess % activeProcesses;
+    return processesStack[currentProcess]; 
+
+    // return lastRSP;
 
 ////    if(currentPCB){
 ////        if(currentPCB->state == READY && stopInantion > 0){
