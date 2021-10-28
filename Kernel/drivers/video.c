@@ -13,11 +13,6 @@ int limitY[2] = {0, 25};
 
 char windowVideo = 1;
 
-void changeWindow() {
-	windowVideo = 1 - windowVideo;
-	moveToWindowVideo(windowVideo);
-}
-
 void moveToWindowVideo(char window) {
 	if (window == -1) {
 		windowVideo = -1;

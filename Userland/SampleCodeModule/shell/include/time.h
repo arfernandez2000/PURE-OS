@@ -1,5 +1,5 @@
-#ifndef TIME
-#define TIME
+#ifndef TIME_H
+#define TIME_H
 
 int getSeconds();
 int getMinutes();

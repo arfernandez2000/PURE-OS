@@ -23,15 +23,14 @@ void initScheduler(uint64_t rsp){
 }
 
 uint64_t scheduler(uint64_t lastRSP){
-//    printStringLen(0x20,"a",1);
     if(!entre1era){
         entre1era = 1;
-        //printStringLen(0x20,"aaaa",4);
         return processesStack[0];
     }
     if(currentProcess < getProcessCount() && currentProcess > 1)
         return processesStack[currentProcess++]; //current vamos a usar para iterar
     return lastRSP;
+
 ////    if(currentPCB){
 ////        if(currentPCB->state == READY && stopInantion > 0){
 ////            stopInantion--;
@@ -47,13 +46,11 @@ uint64_t scheduler(uint64_t lastRSP){
 }
 
 void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
-    //printStringLen(0x01,"B",1);
-    //printStringLen(0x01,"C",1);
+
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
     processQueue[currentProcess]->priority = 1;
     processQueue[currentProcess]->state = READY;
     currentPCB = processQueue[currentProcess];
-    // entryPoint(argc, argv);
 }
 
 
@@ -69,14 +66,14 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->argv = argv;
     newProcess->pipes[0] = fd[0];
     newProcess->pipes[1] = fd[1];
-    if(processID == 0){
-        newProcess->pid = processID;
-        newProcess->ppid = processID++;
-    }
-    else{
-        newProcess->ppid = processID;
-        newProcess->pid = ++processID;
-    }
+    // if(processID == 0){
+    //     newProcess->pid = processID;
+    //     newProcess->ppid = processID++;
+    // }
+    // else{
+    newProcess->ppid = 0;
+    newProcess->pid = processID++;
+    // }
     
 
     strcpy(newProcess->name, name);
@@ -117,6 +114,11 @@ uint64_t preserveStack(uint64_t rsp) {
 int getProcessCount(){
     return activeProcesses;
 }
+
+uint64_t getPID(){
+    return 2;
+}
+
 void printProcess(PCB *process)
 {
         //TODO> numbers to string ;
@@ -132,6 +134,9 @@ void printProcess(PCB *process)
 
 void psDisplay()
 {
+    int procesosCountAuxiliar = activeProcesses;
+    int aux = processID;
+
     //   printStringLen(0x02,"PID      FG       RSP              RBP              STATE        NAME", Stringlen("PID      FG       RSP              RBP              STATE        NAME") );
 
     

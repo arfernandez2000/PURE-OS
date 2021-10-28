@@ -21,7 +21,6 @@ EXTERN exceptionDispatcher
 EXTERN systemCallsDispatcher
 EXTERN preserveStack
 EXTERN newStack
-EXTERN changeWindow
 EXTERN int_20
 
 GLOBAL switchContext
@@ -265,7 +264,6 @@ _systemCallsHandler:
 _switchContext:
 	pushState
 	
-	call changeWindow
 	mov rdi, rsp
 	call preserveStack
 

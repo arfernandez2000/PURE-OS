@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "memorymanager.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

@@ -2,8 +2,7 @@
 #include "shell.h"
 
 static char * info[] = 
-    {"change: Change the current working terminal (alternatively, press ALT+F1)", 
-    "clear: Clear the shell window", 
+    {"clear: Clear the shell window", 
     "excdiv: Throw exception 0 (zero division)", 
     "excop: Throw exception 6 (opcode error)", 
     "help: Print information about commands", 
@@ -22,7 +21,7 @@ static char * info[] =
     "pipe: Prints list of pipes with each of their properties",
     "phylo: Starts diner philosophers dilemma",
     "testMM: Tests the selected memory manager", };
-static const int len = 20;
+static const int len = 19;
 
 void help(char * window, int * offset) {
     for (int i = 0; i < len; i++) {

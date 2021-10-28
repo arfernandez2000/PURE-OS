@@ -3,6 +3,7 @@ GLOBAL _getMem, sys_loadProcess
 GLOBAL raiseOpcodeExc
 GLOBAL _getRegs, sys_switchContext
 GLOBAL _rbp, _rsp
+GLOBAL syscall
 
 section .text
 
@@ -128,16 +129,30 @@ sys_loadProcess:
     pop rbp
     ret
 
-sys_switchContext:
-	push rbp
+; sys_switchContext:
+; 	push rbp
+;     mov rbp, rsp
+
+;     int 81h
+
+;     mov rsp, rbp
+;     pop rbp
+;     ret
+
+
+syscall:
+    push rbp
     mov rbp, rsp
+	pushStateNoRax
 
-    int 81h
+    int 80h
 
-    mov rsp, rbp
+	popStateNoRax
+	mov rsp, rbp
     pop rbp
-    ret
 
+    ret
+	
 sys_time:
 	push rbp
     mov rbp, rsp

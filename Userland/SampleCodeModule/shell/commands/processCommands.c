@@ -1,6 +1,7 @@
 #include "shell.h"
 #include "libc.h"
+#include "system.h"
 
 void ps(char* window, int* offset) {
-    sys_ps();
+    syscall(PS, 0, 0, 0, 0, 0, 0);
 }

@@ -9,6 +9,5 @@ void new_line();
 void backspace();
 void clear();
 void increment();
-void changeWindow();
 
 #endif

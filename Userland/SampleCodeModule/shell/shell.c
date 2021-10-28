@@ -11,6 +11,7 @@
 #include "files.h"
 #include "test_mm.h"
 #include "processCommands.h"
+#include "loop.h"
 
 
 #define NULL (void *)0
@@ -22,8 +23,8 @@
 
 const int len_void = 10;
 const int len_files = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change", "prueba","testMM","ps"};
-void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change, prueba, test_mm, ps};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","testMM","ps","loop"};
+void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop};
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) (char *, int *, char *) = {cat, wc, filter};
 
@@ -37,7 +38,6 @@ void waitMF(int argc, char** argv){
 void prueba(char * window, int * offset){
     sys_loadProcess(&waitMF, 1, 0 , 1, NULL, "Prueba");
     printWindow(window);
-    substractLine(window,offset);
 }
 void substractLine(char * window, int * offset) {
     for (int i = 0; i < ROWS - 1; i++) {
@@ -68,9 +68,10 @@ void scanfNoPrint(char * buffer, int maxSize, char * window, int * offset) {
     int i = 0;
     while ((c = getChar()) != '\n' && i < maxSize - 1) {
         if (c != -1) {
-            if (c == '\v')
-                sys_switchContext();
-            else if (c == '\b' && i > 0) {
+            // if (c == '\v')
+            //     sys_switchContext();
+            // else 
+            if (c == '\b' && i > 0) {
                 buffer[--i] = ' ';
                 window[--(*offset)] = ' ';
                 printWindow(window);
