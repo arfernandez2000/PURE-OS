@@ -10,6 +10,7 @@
 #include "change.h"
 #include "files.h"
 #include "test_mm.h"
+#include "processCommands.h"
 
 
 #define NULL (void *)0
@@ -19,10 +20,10 @@
 #define COLS 80
 #define ROWS 25
 
-const int len_void = 9;
+const int len_void = 10;
 const int len_files = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change", "prueba","testMM"};
-void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change, prueba, test_mm };
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "change", "prueba","testMM","ps"};
+void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear, change, prueba, test_mm, ps};
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) (char *, int *, char *) = {cat, wc, filter};
 

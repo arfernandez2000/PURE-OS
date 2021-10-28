@@ -63,16 +63,19 @@ typedef struct MM_rq{
 //   } 
   
 // }
-void test_mm(){
+void test_mm(){\
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
   uint32_t total;
 
-  int contador = 10000000;
+  // int contador = 50;
+  int contador = 100000;
 
   // addText("Testing...",0,10);
   // printWindow(0);
-  printString("Testing...");
+
+  //No se por que pero el printString mueve todo a la derecha
+  // printString("Testing...");
 
   while (contador){
     rq = 0;

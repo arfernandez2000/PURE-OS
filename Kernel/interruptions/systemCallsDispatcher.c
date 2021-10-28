@@ -20,7 +20,17 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             freeMM((void *) rsi);
             break;
         case 6:
-            psDisplay(); 
+            psDisplay();
+            break;
+        case 7:
+            killProcess(rsi);
+            break;
+        case 8:
+            blockProcess(rsi);
+            break;
+        case 9:
+            unBlockProcess(rsi);
+            break;
         default:
             return -1;
 	}
