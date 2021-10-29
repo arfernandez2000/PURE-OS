@@ -4,7 +4,7 @@
 #include "pcb.h"
 #include "time.h"
 
-uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10 ) {
+uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
 	switch (rdi) {
 		case 0:
             return write(rsi, rdx, rcx);
@@ -13,7 +13,7 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
         case 2:
             return getTime((char)rsi);
         case 3:
-            createProcess((void(*)(int, char**))rsi,(int)rdx,(char**)rcx,(int)r8,(int*)r9,"process"); //meterlo en primer parametro
+            createProcess((void(*)(int, char**))rsi,(int)rdx,(char**)rcx,(int)r8,(int*)r9); 
             break;
         case 4: 
             return (uint64_t) mallocMM(rsi);
@@ -23,13 +23,13 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
         case 14:
             psDisplay();
             break;
-        case 7:
+        case 10:
             killProcess(rsi);
             break;
-        case 8:
+        case 11:
             blockProcess(rsi);
             break;
-        case 9:
+        case 12:
             unBlockProcess(rsi);
             break;
         case 13:

@@ -221,7 +221,8 @@ haltcpu:
 
 _initialize_stack_frame:
 ;pushear primero el rsp. Armado de stack frame
-    mov rcx, rsp
+    mov r10, rcx
+	mov rcx, rsp
     mov rsp, rsi
     
 	push 0x0 ; ss
@@ -237,8 +238,8 @@ _initialize_stack_frame:
 	push 0x2
 	push 0x3
 	push rsi ; este es el base pointer
-	push 0x1234 ; le estamos pasando al proceso como argumentos el SP y el IP , pero tiene que ser argc y argv 
-	push 0x4321; argv. Pasarselos a la func como parametros
+	push rdx ; le estamos pasando al proceso como argumentos el SP y el IP , pero tiene que ser argc y argv 
+	push r10; argv. Pasarselos a la func como parametros
 	push 0x4
 	push 0x5
 	push 0x6
@@ -251,6 +252,7 @@ _initialize_stack_frame:
     
 	mov rax, rsp
     mov rsp, rcx
+	mov rcx, r10
     ret
 
 ; System calls (int 80h)

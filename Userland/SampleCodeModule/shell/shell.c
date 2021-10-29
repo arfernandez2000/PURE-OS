@@ -21,7 +21,7 @@
 #define COLS 80
 #define ROWS 25
 
-const int len_void = 10;
+const int len_void = 11;
 const int len_files = 3;
 char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","testMM","ps","loop"};
 void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop};
@@ -30,13 +30,11 @@ void (*func_files []) (char *, int *, char *) = {cat, wc, filter};
 
 
 void waitMF(int argc, char** argv){
-    while(1){
-        printString("messi");
-    }
-   
+    while(1);
 }
 void prueba(char * window, int * offset){
-    sys_loadProcess(&waitMF, 1, 0 , 0, 0, "Prueba");
+    char * argv[] = {"prueba"};
+    sys_loadProcess(&waitMF, 1, argv , 0, 0);
     printWindow(window);
 }
 void substractLine(char * window, int * offset) {
@@ -146,6 +144,15 @@ void shell(int argc, char** argv) {
             else {
                 int length = Stringlen(tokens[1]);
                 printmem(window, &offset, atoi(tokens[1], length));
+            }
+            comm_flag = 1;
+        }
+        if (!strcmp(tokens[0], "kill")) {
+            if (*tokens[2] != 0 || *tokens[1] == 0)
+                incorrect_arg(tokens[0], window, &offset);
+            else {
+                int length = Stringlen(tokens[1]);
+                kill(atoi(tokens[1], length));
             }
             comm_flag = 1;
         }

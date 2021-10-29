@@ -60,7 +60,8 @@ int main() {
 	memInit((char *)sampleCodeModuleHeapAddress, (64*1024*1024));
 	load_idt();
 	saveSampleRSP(getRSP());
-	addProcess(sampleCodeModuleAddress, 1, NULL, 1, 0,"Shell");
+	char * argv[] = {"Shell"};
+	addProcess(sampleCodeModuleAddress, 1, argv, 1, 0,"Shell");
 	while(1){
 		_hlt();
 	}

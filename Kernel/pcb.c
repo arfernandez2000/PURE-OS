@@ -28,8 +28,14 @@ uint64_t scheduler(uint64_t lastRSP){
         return processesStack[0];
     }
     processesStack[currentProcess] = lastRSP;
-    currentProcess = ++currentProcess % activeProcesses;
+
+    do {
+        currentProcess = (++currentProcess) % activeProcesses;
+    }while(processQueue[currentProcess]->state != READY);
+    
     return processesStack[currentProcess]; 
+
+
 
     // return lastRSP;
 
@@ -65,7 +71,7 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
     newProcess->foreground = fg;
     newProcess->argc = argc;
-    newProcess->argv = argv;
+    newProcess->argv = argv + 1;
     newProcess->pipes[0] = fd[0];
     newProcess->pipes[1] = fd[1];
     // if(processID == 0){
@@ -75,17 +81,18 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     // else{
     newProcess->ppid = 0;
     newProcess->pid = processID++;
+    newProcess->state = READY;
     // }
     
 
     strcpy(newProcess->name, name);
     //arrastre error 
-    newProcessStack(entryPoint);
+    newProcessStack(entryPoint, argc, argv);
     return newProcess;
 }
 
 
-void newProcessStack(void (*fn)) {
+void newProcessStack(void (*fn), int argc, char** argv) {
 
     uint64_t newStack = mallocMM(STACK_SIZE);
     
@@ -94,8 +101,7 @@ void newProcessStack(void (*fn)) {
            printStringLen(0x30, "Error",5);
        }; 
     }
-
-    processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE);
+    processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, argv + 1);
 }
 
 
@@ -159,21 +165,23 @@ void saveSampleRSP(uint64_t rsp) {
 uint64_t getSampleRSP() {
     return sampleRSP;
 }
-
-
+static void changeState(uint64_t pid, int state)
+{
+    processQueue[pid]->state = state;
+}
 void cleanProcesses() {
     activeProcesses = 0;
     currentProcess = -1;
 }
 
 void killProcess(uint64_t pid) {
-    ;
+    changeState(pid,KILLED);
 }
 
 void blockProcess(uint64_t pid) {
-    ;
+    changeState(pid, BLOCKED);
 }
 
 void unBlockProcess(uint64_t pid) {
-
+        changeState(pid,READY);
 }
