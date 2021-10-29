@@ -28,8 +28,11 @@ char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", 
 void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop};
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) () = {cat, wc, filter};
-char *commands_proc[] = {"kill", "block", "unblock"};
+char *commands_proc[] = {"kill", "block", "unblock","nice"};
 void (*func_proc []) (uint64_t pid) = {kill, block, unblock};
+const int len_proc_2 = 1;
+char *commands_proc_2[] = {"nice"};
+void (*func_proc_2 [])(uint64_t pid, int priority) = {nice};
 
 char window[ROWS * COLS + 1] = {[0 ... ROWS * COLS - 1] = ' ', 0};
 int offset = (ROWS - 1) * COLS;
@@ -158,6 +161,18 @@ void shell(int argc, char** argv) {
                 else {
                     int length = Stringlen(tokens[1]);
                     (*func_proc[i])(atoi(tokens[1], length));
+                }
+                comm_flag = 1;
+            }
+        }
+        for(int i = 0; i < len_proc_2; i++){
+            if (!strcmp(tokens[0], commands_proc_2[i])) {
+                if (*tokens[2] == 0 || *tokens[1] == 0)
+                    incorrect_arg(tokens[0]);
+                else {
+                    int length_1 = Stringlen(tokens[1]);
+                    int length_2 = Stringlen(tokens[2]);
+                    (*func_proc_2[i])(atoi(tokens[1], length_1), atoi(tokens[2], length_2));
                 }
                 comm_flag = 1;
             }

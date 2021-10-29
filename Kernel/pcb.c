@@ -11,7 +11,7 @@ int currentProcess = 0;
 
 uint64_t processesStack[MAX_PROCESSES];
 PCB* processQueue[MAX_PROCESSES];
-int stopInantion = 0;
+int stopInanition = 0;
 PCB* currentPCB = NULL;
 int processID = 0;
 
@@ -28,36 +28,27 @@ uint64_t scheduler(uint64_t lastRSP){
         return processesStack[0];
     }
     processesStack[currentProcess] = lastRSP;
+   
 
     do {
-        currentProcess = (++currentProcess) % activeProcesses;
+        
+        if(stopInanition == 0){
+            currentProcess = (++currentProcess) % activeProcesses;
+            if(processQueue[currentProcess]->state == READY)
+                stopInanition = processQueue[currentProcess]->priority;
+           
+        }
+        if(stopInanition > 0 && processQueue[currentProcess]->state == READY){
+            stopInanition--;
+        }
     }while(processQueue[currentProcess]->state != READY);
     
     return processesStack[currentProcess]; 
-
-
-
-    // return lastRSP;
-
-////    if(currentPCB){
-////        if(currentPCB->state == READY && stopInantion > 0){
-////            stopInantion--;
-////            return lastRSP;
-////        }
-////        //Cambiar de proceso
-////        currentPCB->rsp = lastRSP;
-////    }
-////    //setear la prioridad y crear el proceso, y devolver el nuevo rsp
-////    stopInantion = currentPCB->priority;
-////
-//    return currentPCB->rsp;
 }
 
 void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
 
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
-    processQueue[currentProcess]->priority = 1;
-    processQueue[currentProcess]->state = READY;
     currentPCB = processQueue[currentProcess];
 }
 
@@ -74,16 +65,10 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->argv = &argv[1];
     newProcess->pipes[0] = fd[0];
     newProcess->pipes[1] = fd[1];
-    // if(processID == 0){
-    //     newProcess->pid = processID;
-    //     newProcess->ppid = processID++;
-    // }
-    // else{
     newProcess->ppid = 0;
     newProcess->pid = processID++;
     newProcess->state = READY;
-    // }
-    
+    newProcess->priority = 1;
 
     strcpy(newProcess->name, name);
     //arrastre error 
@@ -185,4 +170,7 @@ void blockProcess(uint64_t pid) {
 
 void unBlockProcess(uint64_t pid) {
     changeState(pid,READY);
+}
+void nice(uint64_t pid, uint64_t priority){
+    processQueue[pid]->priority = priority;
 }

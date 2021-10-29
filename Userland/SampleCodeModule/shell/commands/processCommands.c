@@ -14,3 +14,6 @@ void block(uint64_t pid){
 void unblock(uint64_t pid){
     syscall(UNBLOCK, pid, 0, 0, 0, 0, 0);
 }
+void nice(uint64_t pid, int priority){
+    syscall(NICE, pid, priority,0,0,0,0);
+}

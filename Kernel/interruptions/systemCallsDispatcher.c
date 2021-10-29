@@ -34,6 +34,8 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             break;
         case 13:
             return getPID();
+        case 15 :
+            nice(rsi,rdx);
         case 17:
             return ticks_elapsed();
         default:
