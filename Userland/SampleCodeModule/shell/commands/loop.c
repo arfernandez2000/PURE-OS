@@ -22,14 +22,14 @@ void loopProc(int argc, char** argv){
     uint64_t pid = syscall(GET_PID, 0, 0, 0, 0, 0, 0);
     while (1)
     {
-        waitCycles(20);
+        waitCycles(10);
         char buff[20];
         char* window = argv[1];
         int* offset = (int*) argv[2];
         addText("Hello Nigerian Prince :) ", window, offset);
         addText(itoa(pid, buff, 10), window, offset);
         printWindow(window);
-        substractLine(window,offset);
+        // substractLine(window,offset);
        
     }
     //exit(); //implementar syscall exit

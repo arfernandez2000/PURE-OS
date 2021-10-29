@@ -167,7 +167,8 @@ uint64_t getSampleRSP() {
 }
 static void changeState(uint64_t pid, int state)
 {
-    processQueue[pid]->state = state;
+    if(processQueue[pid]->state != KILLED)
+        processQueue[pid]->state = state;
 }
 void cleanProcesses() {
     activeProcesses = 0;
@@ -183,5 +184,5 @@ void blockProcess(uint64_t pid) {
 }
 
 void unBlockProcess(uint64_t pid) {
-        changeState(pid,READY);
+    changeState(pid,READY);
 }

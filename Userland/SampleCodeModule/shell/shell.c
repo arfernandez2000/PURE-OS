@@ -124,14 +124,14 @@ void shell(int argc, char** argv) {
         }
         
         if(file_comm){
-            for (int i = 1; i < MAX_ARGS; i++) {
+            for (int i = 2; i < MAX_ARGS; i++) {
                 tokens[i] = strtokLib(tokens[i - 1], ' ');
             }
         
             for (int i = 0; i < len_void; i++) {
                 if (!strcmp(tokens[0], commands_void[i])) {
                     if (*tokens[1] != 0)
-                        incorrect_arg(tokens[0], window, &offset);
+                        incorrect_arg(tokens[0], window, &offset, "hola");
                     else
                         (*func[i])(window, &offset);
                     comm_flag = 1;
@@ -140,7 +140,7 @@ void shell(int argc, char** argv) {
         }
         if (!strcmp(tokens[0], "printmem")) {
             if (*tokens[2] != 0 || *tokens[1] == 0)
-                incorrect_arg(tokens[0], window, &offset);
+                incorrect_arg(tokens[0], window, &offset, tokens[2]);
             else {
                 int length = Stringlen(tokens[1]);
                 printmem(window, &offset, atoi(tokens[1], length));
@@ -149,10 +149,28 @@ void shell(int argc, char** argv) {
         }
         if (!strcmp(tokens[0], "kill")) {
             if (*tokens[2] != 0 || *tokens[1] == 0)
-                incorrect_arg(tokens[0], window, &offset);
+                incorrect_arg(tokens[0], window, &offset, tokens[2]);
             else {
                 int length = Stringlen(tokens[1]);
                 kill(atoi(tokens[1], length));
+            }
+            comm_flag = 1;
+        }
+        if (!strcmp(tokens[0], "block")) {
+            if (*tokens[2] != 0 || *tokens[1] == 0)
+                incorrect_arg(tokens[0], window, &offset, tokens[2]);
+            else {
+                int length = Stringlen(tokens[1]);
+                block(atoi(tokens[1], length));
+            }
+            comm_flag = 1;
+        }
+        if (!strcmp(tokens[0], "unblock")) {
+            if (*tokens[2] != 0 || *tokens[1] == 0)
+                incorrect_arg(tokens[0], window, &offset, tokens[2]);
+            else {
+                int length = Stringlen(tokens[1]);
+                unblock(atoi(tokens[1], length));
             }
             comm_flag = 1;
         }
@@ -171,7 +189,8 @@ void incorrect_comm(char * buffer, char* window, int * offset) {
     substractLine(window, offset);
 }
 
-void incorrect_arg(char * command, char* window, int * offset) {
+void incorrect_arg(char * command, char* window, int * offset, char* token) {
+    addText(token, window, offset);
     addText("Incorrect arguments for command ", window, offset);
     addText(command, window, offset);
     printWindow(window);
