@@ -46,7 +46,7 @@ void time() {
     addText(":");
     printTime(getMinutes());
     addText(":");
-    printTime(getSeconds(), );
+    printTime(getSeconds());
     printWindow();
     substractLine();
 }

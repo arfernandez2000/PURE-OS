@@ -27,7 +27,7 @@ void loopProc(int argc, char** argv){
         addText("Hello Nigerian Prince :) ");
         addText(itoa(pid, buff, 10));
         printWindow();
-        // substractLine(window,offset);
+        substractLine();
        
     }
     //exit(); //implementar syscall exit

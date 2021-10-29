@@ -29,7 +29,7 @@ void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_m
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) () = {cat, wc, filter};
 char *commands_proc[] = {"kill", "block", "unblock"};
-void (*func_proc []) (int pid) = {kill, block, unblock};
+void (*func_proc []) (uint64_t pid) = {kill, block, unblock};
 
 char window[ROWS * COLS + 1] = {[0 ... ROWS * COLS - 1] = ' ', 0};
 int offset = (ROWS - 1) * COLS;

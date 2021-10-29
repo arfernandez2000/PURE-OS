@@ -65,9 +65,9 @@ void scanning(char* buffer){
 }
 
 void wc () {
-    int lines = ((Stringlen(input) + 6) / COLS) + 1; //agrego lo que ocupa el $> wx
-    char ret[BUFF_SIZE] = {0};
-    addText(itoa(lines, ret, 10));
+    // int lines = ((Stringlen(input) + 6) / COLS) + 1; //agrego lo que ocupa el $> wx
+    // char ret[BUFF_SIZE] = {0};
+    // addText(itoa(lines, ret, 10));
     printWindow();
     substractLine();
 }
