@@ -1,7 +1,7 @@
 #include "system.h"
 
 
-void ps(char* window, int* offset) {
+void ps() {
     syscall(PS, 0, 0, 0, 0, 0, 0);
 }
 void kill(uint64_t pid){

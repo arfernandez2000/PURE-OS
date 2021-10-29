@@ -23,10 +23,10 @@ static char * info[] =
     "testMM: Tests the selected memory manager", };
 static const int len = 19;
 
-void help(char * window, int * offset) {
+void help() {
     for (int i = 0; i < len; i++) {
-        addText(info[i], window, offset);
-        substractLine(window, offset);
+        addText(info[i]);
+        substractLine();
     }
-    printWindow(window);
+    printWindow();
 }

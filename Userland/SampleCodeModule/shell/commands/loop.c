@@ -24,19 +24,17 @@ void loopProc(int argc, char** argv){
     {
         waitCycles(10);
         char buff[20];
-        char* window = argv[1];
-        int* offset = (int*) argv[2];
-        addText("Hello Nigerian Prince :) ", window, offset);
-        addText(itoa(pid, buff, 10), window, offset);
-        printWindow(window);
+        addText("Hello Nigerian Prince :) ");
+        addText(itoa(pid, buff, 10));
+        printWindow();
         // substractLine(window,offset);
        
     }
     //exit(); //implementar syscall exit
 }
 
-void loop(char* window, int * offset){
-    char* argv[3] = {"loop", window, (char*) offset};
+void loop(){
+    char* argv[] = {"loop"};
     sys_loadProcess(&loopProc, 3, argv, 0, NULL);
 }
 

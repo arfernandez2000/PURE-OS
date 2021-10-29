@@ -71,7 +71,7 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
     newProcess->foreground = fg;
     newProcess->argc = argc;
-    newProcess->argv = argv + 1;
+    newProcess->argv = &argv[1];
     newProcess->pipes[0] = fd[0];
     newProcess->pipes[1] = fd[1];
     // if(processID == 0){
@@ -101,7 +101,7 @@ void newProcessStack(void (*fn), int argc, char** argv) {
            printStringLen(0x30, "Error",5);
        }; 
     }
-    processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, argv + 1);
+    processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, &argv[1]);
 }
 
 

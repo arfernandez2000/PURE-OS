@@ -23,21 +23,27 @@
 
 const int len_void = 11;
 const int len_files = 3;
+const int len_proc = 3;
 char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","testMM","ps","loop"};
-void (*func []) (char *, int *) = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop};
+void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop};
 char *commands_files[] = {"cat", "wc", "filter"};
-void (*func_files []) (char *, int *, char *) = {cat, wc, filter};
+void (*func_files []) () = {cat, wc, filter};
+char *commands_proc[] = {"kill", "block", "unblock"};
+void (*func_proc []) (int pid) = {kill, block, unblock};
+
+char window[ROWS * COLS + 1] = {[0 ... ROWS * COLS - 1] = ' ', 0};
+int offset = (ROWS - 1) * COLS;
 
 
 void waitMF(int argc, char** argv){
     while(1);
 }
-void prueba(char * window, int * offset){
+void prueba(){
     char * argv[] = {"prueba"};
     sys_loadProcess(&waitMF, 1, argv , 0, 0);
-    printWindow(window);
+    printWindow();
 }
-void substractLine(char * window, int * offset) {
+void substractLine() {
     for (int i = 0; i < ROWS - 1; i++) {
         for (int j = 0; j < COLS; j++) {
             window[i * COLS + j] = window[(i + 1) * COLS + j];
@@ -47,21 +53,21 @@ void substractLine(char * window, int * offset) {
         window[(ROWS - 1) * COLS + i - 1] = ' ';
         window[ROWS * COLS] = 0;
     }
-    *offset = (ROWS - 1) * COLS;
+    offset = (ROWS - 1) * COLS;
 }
 
-void addText(char * buffer, char * window, int * offset) {
+void addText(char * buffer) {
     while (*buffer != 0) {
-        if (*offset == ROWS * COLS - 1) substractLine(window, offset);
-        window[(*offset)++] = *buffer++;
+        if (offset == ROWS * COLS - 1) substractLine();
+        window[(offset)++] = *buffer++;
     }
 }
 
-void printWindow(char * window) {
+void printWindow() {
     printString(window);
 }
 
-void scanfNoPrint(char * buffer, int maxSize, char * window, int * offset) {
+void scanfNoPrint(char * buffer, int maxSize) {
     char c;
     int i = 0;
     while ((c = getChar()) != '\n' && i < maxSize - 1) {
@@ -71,43 +77,41 @@ void scanfNoPrint(char * buffer, int maxSize, char * window, int * offset) {
             // else 
             if (c == '\b' && i > 0) {
                 buffer[--i] = ' ';
-                window[--(*offset)] = ' ';
-                printWindow(window);
+                window[--(offset)] = ' ';
+                printWindow();
             }
             else if (c != 0 && c != '\b') { 
                 buffer[i++] = c;
-                if (*offset == ROWS * COLS - 1) substractLine(window, offset);
-                window[(*offset)++] = c;
-                printWindow(window);
+                if (offset == ROWS * COLS - 1) substractLine();
+                window[(offset)++] = c;
+                printWindow();
             } 
         }
     }
     buffer[i] = '\0';
-    if (*offset == ROWS * COLS - 1) substractLine(window, offset);
-    window[*offset] = ' ';
+    if (offset == ROWS * COLS - 1) substractLine();
+    window[offset] = ' ';
 }
 
-void clearWindow(char * window, int * offset) {
+void clearWindow() {
     for (int i = 0; i <= ROWS * COLS; i++) {
         window[i] = ' ';
     }
     window[ROWS * COLS] = 0;
-    *offset = (ROWS - 1) * COLS;
-    printWindow(window);
+    offset = (ROWS - 1) * COLS;
+    printWindow();
 }
 
 void shell(int argc, char** argv) {
-    char window[ROWS * COLS + 1] = {[0 ... ROWS * COLS - 1] = ' ', 0};
-    int offset = (ROWS - 1) * COLS;
 
-    printWindow(window);
+    printWindow();
     while (1) {
         int comm_flag = 0;
-        addText("$> ", window, &offset);
-        printWindow(window);
+        addText("$> ");
+        printWindow();
         char buffer[SIZE] = {0};
-        scanfNoPrint(buffer, SIZE, window, &offset);
-        substractLine(window, &offset);
+        scanfNoPrint(buffer, SIZE);
+        substractLine();
         char* tokens[SIZE] = {0};
         int file_comm = 1;
         tokens[0] = strstrip(buffer, ' ');
@@ -117,7 +121,7 @@ void shell(int argc, char** argv) {
         
         for (int i = 0; i < len_files; i++) {  
             if (!strcmp(tokens[0], commands_files[i])) {
-                (*func_files[i])(window, &offset, tokens[1]);
+                (*func_files[i])();
                 file_comm = 0;
                 comm_flag = 1;
             }
@@ -131,68 +135,63 @@ void shell(int argc, char** argv) {
             for (int i = 0; i < len_void; i++) {
                 if (!strcmp(tokens[0], commands_void[i])) {
                     if (*tokens[1] != 0)
-                        incorrect_arg(tokens[0], window, &offset, "hola");
+                        incorrect_arg(tokens[0]);
                     else
-                        (*func[i])(window, &offset);
+                        (*func[i])();
                     comm_flag = 1;
                 }
             }
         }
         if (!strcmp(tokens[0], "printmem")) {
             if (*tokens[2] != 0 || *tokens[1] == 0)
-                incorrect_arg(tokens[0], window, &offset, tokens[2]);
+                incorrect_arg(tokens[0]);
             else {
                 int length = Stringlen(tokens[1]);
-                printmem(window, &offset, atoi(tokens[1], length));
+                printmem(atoi(tokens[1], length));
             }
             comm_flag = 1;
         }
-        if (!strcmp(tokens[0], "kill")) {
-            if (*tokens[2] != 0 || *tokens[1] == 0)
-                incorrect_arg(tokens[0], window, &offset, tokens[2]);
-            else {
-                int length = Stringlen(tokens[1]);
-                kill(atoi(tokens[1], length));
+        for(int i = 0; i < len_proc; i++){
+            if (!strcmp(tokens[0], commands_proc[i])) {
+                if (*tokens[2] != 0 || *tokens[1] == 0)
+                    incorrect_arg(tokens[0]);
+                else {
+                    int length = Stringlen(tokens[1]);
+                    (*func_proc[i])(atoi(tokens[1], length));
+                }
+                comm_flag = 1;
             }
-            comm_flag = 1;
         }
-        if (!strcmp(tokens[0], "block")) {
-            if (*tokens[2] != 0 || *tokens[1] == 0)
-                incorrect_arg(tokens[0], window, &offset, tokens[2]);
-            else {
-                int length = Stringlen(tokens[1]);
-                block(atoi(tokens[1], length));
-            }
-            comm_flag = 1;
-        }
-        if (!strcmp(tokens[0], "unblock")) {
-            if (*tokens[2] != 0 || *tokens[1] == 0)
-                incorrect_arg(tokens[0], window, &offset, tokens[2]);
-            else {
-                int length = Stringlen(tokens[1]);
-                unblock(atoi(tokens[1], length));
-            }
-            comm_flag = 1;
-        }
-
+        
         if (!comm_flag) {
             if (*tokens[0] != 0)
-                incorrect_comm(tokens[0], window, &offset);
+                incorrect_comm(tokens[0]);
         }
     }
 }
 
-void incorrect_comm(char * buffer, char* window, int * offset) {
-    addText(buffer, window, offset);
-    addText(" is not a BottlerShell command", window, offset);
-    printWindow(window);
-    substractLine(window, offset);
+void incorrect_comm(char * buffer) {
+    addText(buffer);
+    addText(" is not a BottlerShell command");
+    printWindow();
+    substractLine();
 }
 
-void incorrect_arg(char * command, char* window, int * offset, char* token) {
-    addText(token, window, offset);
-    addText("Incorrect arguments for command ", window, offset);
-    addText(command, window, offset);
-    printWindow(window);
-    substractLine(window, offset);
+void incorrect_arg(char * command) {
+    addText("Incorrect arguments for command ");
+    addText(command);
+    printWindow();
+    substractLine();
+}
+
+char * getWindow(){
+    return window;
+}
+
+int getOffset(){
+    return offset;
+}
+
+void setOffset(int of){
+    offset = of;
 }
