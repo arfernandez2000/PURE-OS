@@ -32,6 +32,10 @@ uint64_t scheduler(uint64_t lastRSP){
 
     do {
         
+        if(processQueue[currentProcess]->state!= READY){
+            stopInanition = 0;
+        }
+
         if(stopInanition == 0){
             currentProcess = (++currentProcess) % activeProcesses;
             if(processQueue[currentProcess]->state == READY)
@@ -40,7 +44,7 @@ uint64_t scheduler(uint64_t lastRSP){
         }
         if(stopInanition > 0 && processQueue[currentProcess]->state == READY){
             stopInanition--;
-        }
+         }
     }while(processQueue[currentProcess]->state != READY);
     
     return processesStack[currentProcess]; 
@@ -125,19 +129,9 @@ void printProcess(PCB *process)
               
 }
 
-void psDisplay()
+PCB** psDisplay()
 {
-    int procesosCountAuxiliar = activeProcesses;
-    int aux = processID;
-
-    //   printStringLen(0x02,"PID      FG       RSP              RBP              STATE        NAME", Stringlen("PID      FG       RSP              RBP              STATE        NAME") );
-
-    
-    //   for(int i = 0; i< activeProcesses; i++)
-    //   {
-    //         printProcess(processQueue[i]);
-    //   }
-
+   return processQueue;
 }
 
 
