@@ -38,6 +38,9 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             nice(rsi,rdx);
         case 17:
             return ticks_elapsed();
+        case 22:
+            killProcess(rsi);
+            break;
         default:
             return -1;
 	}

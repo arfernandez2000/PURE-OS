@@ -38,6 +38,7 @@ char window[ROWS * COLS + 1] = {[0 ... ROWS * COLS - 1] = ' ', 0};
 int offset = (ROWS - 1) * COLS;
 
 
+
 void waitMF(int argc, char** argv){
     while(1);
 }
@@ -61,7 +62,13 @@ void substractLine() {
 
 void addText(char * buffer) {
     while (*buffer != 0) {
-        if (offset == ROWS * COLS - 1) substractLine();
+        if (offset == ROWS * COLS - 1 || *buffer == '\n') {
+           substractLine(); 
+           if(*buffer == '\n'){
+               *buffer++;
+           }
+        }
+        
         window[(offset)++] = *buffer++;
     }
 }
@@ -127,6 +134,7 @@ void shell(int argc, char** argv) {
                 (*func_files[i])();
                 file_comm = 0;
                 comm_flag = 1;
+                block(0);
             }
         }
         

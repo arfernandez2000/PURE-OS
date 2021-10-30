@@ -70,7 +70,7 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->state = READY;
     newProcess->priority = 1;
 
-    strcpy(newProcess->name, name);
+    strcpy(name, newProcess->name);
     //arrastre error 
     newProcessStack(entryPoint, argc, argv);
     return newProcess;

@@ -2,6 +2,7 @@
 #include "libc.h"
 #include "shell.h"
 #include "processCommands.h"
+#include "system.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -18,6 +19,8 @@
 int openFile(char *file);
 
 void catProc(int argc, char** argv);
+void wcProc(int argc, char** argv);
+void filterProc (int argc, char** argv);
 void scanning(char* buffer);
 
 void cat (){
@@ -29,12 +32,14 @@ void catProc(int argc, char** argv){
     printWindow();
     substractLine();
     char buffer[BUFF_SIZE] = {0};
-    block(0);
         scanning(buffer);
+        substractLine();
+        addText(buffer);
+        substractLine();
+        addText("$> ");
+        printWindow();
     unblock(0);
-    addText(buffer);
-    printWindow();
-    substractLine();
+    exit();
 }
 
 void scanning(char* buffer){
@@ -50,9 +55,18 @@ void scanning(char* buffer){
                     setOffset(offset);
                     printWindow();
                 }
+                if (c == '\n'){
+                    buffer[i++] = c;
+                    substractLine();
+                    offset = getOffset();
+                    printWindow();
+                }
                 else if (c != 0 && c != '\b') { 
                     buffer[i++] = c;
-                    if (offset == ROWS * COLS - 1) substractLine();
+                    if (offset == ROWS * COLS - 1) {
+                        substractLine();
+                        offset = getOffset();
+                    }
                     window[offset++] = c;
                     setOffset(offset);
                     printWindow();
@@ -65,24 +79,58 @@ void scanning(char* buffer){
 }
 
 void wc () {
-    // int lines = ((Stringlen(input) + 6) / COLS) + 1; //agrego lo que ocupa el $> wx
-    // char ret[BUFF_SIZE] = {0};
-    // addText(itoa(lines, ret, 10));
-    printWindow();
-    substractLine();
+    char* argv[] = {"wc"};
+    sys_loadProcess(&wcProc, 1, argv, 0, NULL);
 }
 
-void filter () {
-    int vocals = 0;
-    // while(*input != '\0'){
-    //     if(*input == 'a' || *input == 'e' || *input == 'i' || *input == 'o' || *input == 'u' ||
-    //         *input == 'A' || *input == 'E' || *input == 'I' || *input == 'O' || *input == 'U'){
-    //         vocals++;
-    //     }
-    //     *input++;
-    // }
-    char ret[BUFF_SIZE] = {0};
-    addText(itoa(vocals, ret, 10));
+void wcProc(int argc, char** argv){
     printWindow();
     substractLine();
+    char buffer[BUFF_SIZE] = {0};
+    block(0);
+        scanning(buffer);
+        substractLine();
+        int lines = 1;
+        for (size_t i = 0; buffer[i] != '\0'; i++)
+        {
+            if(buffer[i] == '\n'){
+                lines++;
+            }
+        }
+        char ret[BUFF_SIZE] = {0};
+        addText(itoa(lines, ret, 10));
+        substractLine();
+        addText("$> ");
+        printWindow();
+    unblock(0);
+    exit();
+}
+
+void filter(){
+    char* argv[] = {"filter"};
+    sys_loadProcess(&filterProc, 1, argv, 0, NULL);
+}
+
+void filterProc (int argc, char** argv) {
+    printWindow();
+    substractLine();
+    char buffer[BUFF_SIZE] = {0};
+    block(0);
+        scanning(buffer);
+        substractLine();
+        int vocals = 0;
+        for (size_t i = 0; buffer[i] != '\0'; i++)
+        {
+            if(buffer[i] == 'a' || buffer[i] == 'e' || buffer[i] == 'i' || buffer[i] == 'o' || buffer[i] == 'u' ||
+            buffer[i] == 'A' || buffer[i] == 'E' || buffer[i] == 'I' || buffer[i] == 'O' || buffer[i] == 'U'){
+            vocals++;
+        }
+        }
+        char ret[BUFF_SIZE] = {0};
+        addText(itoa(vocals, ret, 10));
+        substractLine();
+        addText("$> ");
+        printWindow();
+    unblock(0);
+    exit();
 }
