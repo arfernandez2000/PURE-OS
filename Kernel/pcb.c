@@ -5,7 +5,6 @@
 #include "video.h"
 #include "naiveConsole.h"
 
-
 int activeProcesses = 0;
 int currentProcess = 0;
 
@@ -74,7 +73,7 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->state = READY;
     newProcess->priority = 1;
 
-    strcpy(newProcess->name, name);
+    strcpy(name, newProcess->name);
     //arrastre error 
     newProcessStack(entryPoint, argc, argv);
     return newProcess;
@@ -129,9 +128,27 @@ void printProcess(PCB *process)
               
 }
 
-PCB** psDisplay()
-{
-   return processQueue;
+//TODO Imprimir name y rbp
+char** psDisplay() {
+    char *processString[100];
+    processString[0][0] = 0;
+    strcpy(processQueue[0]->name ,processString[0]);
+    char buff[10];
+    for (int i = 0; i < activeProcesses; i++) {
+        // strcat(processString[i],processQueue[i]->name);
+        // strcat(processString[i],"   ");
+        strcat(processString[i], itoa(processQueue[i]->pid, buff, 10,2));
+        strcat(processString[i],"       ");
+        strcat(processString[i], itoa(processQueue[i]->priority, buff, 10,3));
+        strcat(processString[i],"       ");
+        strcat(processString[i], itoa(processQueue[i]->foreground, buff, 10,3));
+        strcat(processString[i],"       ");
+        strcat(processString[i],"0x");
+        strcat(processString[i], itoa(processesStack[i], buff, 10,8));
+        strcat(processString[i],"       ");
+        strcat(processString[i], itoa(processQueue[i]->state, buff, 10,3));
+    };
+    return processString;
 }
 
 
