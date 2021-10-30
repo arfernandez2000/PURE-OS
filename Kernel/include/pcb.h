@@ -13,7 +13,7 @@ typedef struct
       int foreground;
       char *name;
       void *rsp;
-      void *rbp;
+      uint64_t rbp;
       int priority;
       int argc;
       char **argv;

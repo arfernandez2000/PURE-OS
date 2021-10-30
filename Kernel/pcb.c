@@ -91,6 +91,8 @@ void newProcessStack(void (*fn), int argc, char** argv) {
        }; 
     }
     processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, &argv[1]);
+    
+    
 }
 
 
@@ -131,22 +133,31 @@ void printProcess(PCB *process)
 
 //TODO Imprimir name y rbp
 char** psDisplay() {
-    char *processString[100];
-    strcpy(processQueue[0]->name ,processString[0]);
-    char buff[10];
+    char** processString = mallocMM(1000);
+
+  
+    //strcpy(processQueue[0]->name ,processString[0])
     for (int i = 0; i < activeProcesses; i++) {
-        // strcat(processString[i],processQueue[i]->name);
-        // strcat(processString[i],"   ");
-        strcat(processString[i], itoa(processQueue[i]->pid, buff, 10,2));
+        processString[i] =  mallocMM(1024);
+        strcat(processString[i],processQueue[i]->name);
+        strcat(processString[i],"        ");
+        
+        char buff[10]={0};
+        char * messi = itoa(processQueue[i]->pid, buff, 10,10);
+        strcat(processString[i], messi);
         strcat(processString[i],"       ");
-        strcat(processString[i], itoa(processQueue[i]->priority, buff, 10,3));
-        strcat(processString[i],"       ");
-        strcat(processString[i], itoa(processQueue[i]->foreground, buff, 10,3));
-        strcat(processString[i],"       ");
+        strcat(processString[i], itoa(processQueue[i]->priority, buff, 10,10));
+        strcat(processString[i],"           ");
+        strcat(processString[i], itoa(processQueue[i]->foreground, buff, 10,10));
+        strcat(processString[i],"        ");
         strcat(processString[i],"0x");
-        strcat(processString[i], itoa(processesStack[i], buff, 10,8));
-        strcat(processString[i],"       ");
-        strcat(processString[i], itoa(processQueue[i]->state, buff, 10,3));
+        //TODO: ARREGLAR ESTO
+        strcat(processString[i], itoa(processesStack[i] - STACK_SIZE, buff, 10,10));
+        strcat(processString[i],"        ");
+        strcat(processString[i],"0x");
+        strcat(processString[i], itoa(processesStack[i], buff, 10,10));
+        strcat(processString[i],"        ");
+        strcat(processString[i], itoa(processQueue[i]->state, buff, 10,10));
     };
     return processString;
 }
