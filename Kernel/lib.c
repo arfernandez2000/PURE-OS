@@ -110,3 +110,18 @@ int Stringlen(const char * s) {
     for (i = 0; s[i] != '\0'; i++);
     return i;
 }
+
+char *strcat(char *strg1, char *strg2)
+{
+    char *start = strg1;
+    while(*strg1 != '\0') {
+        strg1++;
+    }
+    while(*strg2 != '\0') {
+        *strg1 = *strg2;
+        strg1++;
+        strg2++;
+    }
+    *strg1 = '\0';
+    return start;
+}
