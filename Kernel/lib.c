@@ -125,3 +125,7 @@ char *strcat(char *strg1, char *strg2)
     *strg1 = '\0';
     return start;
 }
+
+int isAlpha(char letter) {
+    return (letter < 'a' || letter > 'z' || letter < 'A' || letter > 'Z');
+}

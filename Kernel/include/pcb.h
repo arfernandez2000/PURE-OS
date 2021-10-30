@@ -5,6 +5,7 @@
 #include <defs.h>
 
 #define MAX_PROCESSES 64
+#define MAX_NAME_LENGHT 7
 
 typedef struct
 {

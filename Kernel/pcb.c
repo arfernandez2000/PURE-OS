@@ -139,28 +139,40 @@ char** psDisplay() {
     //strcpy(processQueue[0]->name ,processString[0])
     for (int i = 0; i < activeProcesses; i++) {
         processString[i] =  mallocMM(1024);
-        strcat(processString[i],processQueue[i]->name);
-        strcat(processString[i],"        ");
-        
+        char* auxName;
         char buff[10]={0};
+        strcpy(processQueue[i]->name, auxName);
+        int j;
+        int aux;
+        for (j = 0; processQueue[i]->name[j] != 0; j++) {
+            auxName[j] = processQueue[i]->name[j];
+        }
+        for (aux = j; aux < MAX_NAME_LENGHT; aux++) {
+            auxName[aux] = ' ';
+        }
+        auxName[aux] = 0;
+        strcat(processString[i],auxName);
+        strcat(processString[i],"    ");
+
+        
         char * messi = itoa(processQueue[i]->pid, buff, 10,10);
         strcat(processString[i], messi);
-        strcat(processString[i],"       ");
+        strcat(processString[i],"         ");
         strcat(processString[i], itoa(processQueue[i]->priority, buff, 10,10));
-        strcat(processString[i],"           ");
+        strcat(processString[i],"            ");
         strcat(processString[i], itoa(processQueue[i]->foreground, buff, 10,10));
-        strcat(processString[i],"        ");
+        strcat(processString[i],"       ");
         strcat(processString[i],"0x");
         //TODO: ARREGLAR ESTO
         strcat(processString[i], itoa(processesStack[i] - STACK_SIZE, buff, 10,10));
-        strcat(processString[i],"        ");
+        strcat(processString[i],"   ");
         strcat(processString[i],"0x");
         strcat(processString[i], itoa(processesStack[i], buff, 10,10));
         strcat(processString[i],"        ");
         strcat(processString[i], itoa(processQueue[i]->state, buff, 10,10));
     };
     return processString;
-}
+    }
 
 
 static uint64_t sampleRSP;
