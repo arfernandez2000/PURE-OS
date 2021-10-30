@@ -73,8 +73,9 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->state = READY;
     newProcess->priority = 1;
 
-    strcpy(name, newProcess->name);
-    //arrastre error 
+    newProcess->name = mallocMM(20);
+    strcpy(name,newProcess->name);
+     
     newProcessStack(entryPoint, argc, argv);
     return newProcess;
 }
@@ -131,7 +132,6 @@ void printProcess(PCB *process)
 //TODO Imprimir name y rbp
 char** psDisplay() {
     char *processString[100];
-    processString[0][0] = 0;
     strcpy(processQueue[0]->name ,processString[0]);
     char buff[10];
     for (int i = 0; i < activeProcesses; i++) {
