@@ -13,7 +13,7 @@ typedef struct
       uint64_t ppid;
       int foreground;
       char *name;
-      void *rsp;
+      uint64_t rsp;
       uint64_t rbp;
       int priority;
       int argc;
@@ -25,7 +25,7 @@ typedef struct
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name);
 uint64_t scheduler(uint64_t lastRSP);
 uint64_t preserveStack(uint64_t rsp);
-void newProcessStack(void (*fn), int argc, char ** argv);
+void newProcessStack(void (*fn), int argc, char ** argv, PCB* newProcess);
 void newStack(uint64_t rsp);
 void cleanProcesses();
 int getProcessCount();

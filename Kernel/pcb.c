@@ -76,12 +76,12 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->name = mallocMM(20);
     strcpy(name,newProcess->name);
      
-    newProcessStack(entryPoint, argc, argv);
+    newProcessStack(entryPoint, argc, argv, newProcess);
     return newProcess;
 }
 
 
-void newProcessStack(void (*fn), int argc, char** argv) {
+void newProcessStack(void (*fn), int argc, char** argv, PCB* newProcess) {
 
     uint64_t newStack = mallocMM(STACK_SIZE);
     
@@ -90,15 +90,12 @@ void newProcessStack(void (*fn), int argc, char** argv) {
            printStringLen(0x30, "Error",5);
        }; 
     }
-    processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, &argv[1]);
+    newProcess->rbp =  newStack + STACK_SIZE;
+    newProcess->rsp = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, &argv[1]);
+    processesStack[activeProcesses++] =  newProcess->rsp;
     
     
 }
-
-
-// void newStack(uint64_t rsp) {
-//     processesStack[activeProcesses++] = rsp;
-// }
 
 uint64_t preserveStack(uint64_t rsp) {
     if (currentProcess != -1) {
@@ -164,7 +161,7 @@ char** psDisplay() {
         strcat(processString[i],"       ");
         strcat(processString[i],"0x");
         //TODO: ARREGLAR ESTO
-        strcat(processString[i], itoa(processesStack[i] - STACK_SIZE, buff, 10,10));
+        strcat(processString[i], itoa((uint64_t)processQueue[i]->rbp, buff, 10,10));
         strcat(processString[i],"   ");
         strcat(processString[i],"0x");
         strcat(processString[i], itoa(processesStack[i], buff, 10,10));
