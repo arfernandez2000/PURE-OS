@@ -35,6 +35,6 @@ void loopProc(int argc, char** argv){
 
 void loop(){
     char* argv[] = {"loop"};
-    sys_loadProcess(&loopProc, 3, argv, 0, NULL);
+    sys_loadProcess(&loopProc, 1, argv, 0, NULL);
 }
 
