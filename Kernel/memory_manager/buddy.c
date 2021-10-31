@@ -190,7 +190,7 @@ void *mallocMM(unsigned request) {
 
 
 
-void freeMM(void *ptr) {
+int freeMM(void *ptr) {
   size_t bucket, i;
 
   if (!ptr) {

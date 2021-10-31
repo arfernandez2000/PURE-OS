@@ -76,16 +76,16 @@ void *mallocMM(unsigned nbytes)
       }
 }
 
-void freeMM(void *freeMem)
+int freeMM(void *freeMem)
 {
       if (freeMem == NULL || (((long)freeMem - (long)base) % sizeof(Header)) != 0)
-            return;
+            return -1;
 
       Header *freeBlock, *currNode;
       freeBlock = (Header *)freeMem - 1; //Add header to mem to free
 
       if (freeBlock < base || freeBlock >= (base + totalUnits * sizeof(Header)))
-            return;
+            return -1;
 
       char isExternal = 0;
 
@@ -93,7 +93,7 @@ void freeMM(void *freeMem)
       {
 
             if (freeBlock == currNode || freeBlock == currNode->data.ptr)
-                  return;
+                  return -1 ;
 
             if (currNode >= currNode->data.ptr && (freeBlock > currNode || freeBlock < currNode->data.ptr))
             {
@@ -103,7 +103,7 @@ void freeMM(void *freeMem)
       }
 
       if (!isExternal && (currNode + currNode->data.size > freeBlock || freeBlock + freeBlock->data.size > currNode->data.ptr)) //Absurd!!
-            return;
+            return -1;
 
       if (freeBlock + freeBlock->data.size == currNode->data.ptr) //Join right
       {

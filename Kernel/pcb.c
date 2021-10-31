@@ -122,13 +122,10 @@ uint64_t getPID(){
 char** psDisplay() {
     char** processString = mallocMM(1000);
 
-  
-    //strcpy(processQueue[0]->name ,processString[0])
     for (int i = 0; i < activeProcesses; i++) {
         processString[i] =  mallocMM(1024);
         char* auxName = NULL;
         char buff[10]={0};
-        //strcpy(processQueue[i]->name, auxName);
         int j;
         int aux;
         for (j = 0; processQueue[i]->name[j] != 0; j++) {
@@ -150,7 +147,6 @@ char** psDisplay() {
         strcat(processString[i], itoa(processQueue[i]->foreground, buff, 10,10));
         strcat(processString[i],"       ");
         strcat(processString[i],"0x");
-        //TODO: ARREGLAR ESTO
         strcat(processString[i], itoa((uint64_t)processQueue[i]->rbp, buff, 10,10));
         strcat(processString[i],"   ");
         strcat(processString[i],"0x");
@@ -192,7 +188,20 @@ void cleanProcesses() {
 }
 
 int  killProcess(uint64_t pid) {
-    return changeState(pid,KILLED);
+    int error = freeMM(processQueue[pid]->name);
+    if(error == -1){
+        return -2;
+    }
+    
+    int res = changeState(pid,KILLED);
+    if(res != -1){
+        int error = freeMM(processQueue[pid]->name);
+        if(error == -1){
+            return -2;
+        }
+    }
+        
+    return res;
 }
 
 int blockProcess(uint64_t pid) {

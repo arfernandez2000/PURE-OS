@@ -11,7 +11,9 @@ void ps() {
         addText(result[i]);
         substractLine();
         printWindow();
+        syscall(FREE, result[i],0, 0, 0, 0, 0);
     }
+    syscall(FREE, result,0, 0, 0, 0, 0);
 }
 int kill(uint64_t pid){
     return syscall(KILL, pid, 0, 0, 0, 0, 0);
