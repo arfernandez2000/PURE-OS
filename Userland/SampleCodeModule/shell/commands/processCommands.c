@@ -25,6 +25,11 @@ int block(uint64_t pid){
 int unblock(uint64_t pid){
     return syscall(UNBLOCK, pid, 0, 0, 0, 0, 0);
 }
+
 int nice(uint64_t pid, int priority){
     return syscall(NICE, pid, priority,0,0,0,0);
+void exit(){
+    uint64_t pid = syscall(GET_PID, 0, 0, 0, 0, 0, 0);
+    kill(pid);
+    while (1);
 }
