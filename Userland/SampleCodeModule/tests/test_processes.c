@@ -26,7 +26,7 @@ uint32_t my_unblock_proc(uint32_t pid){
 }
 
 #define PROCESSES 51//Should be around 80% of the the processes handled by the kernel  | 80% of 64 is aprox 51
-#define MAX_PROCESSES 51 //only run once per shell to add Maximum amount of processes.
+#define MAX_PROCESSES 64 //only run once per shell to add Maximum amount of processes.
 
 enum State { RUNNING, BLOCKED, KILLED};
 
@@ -44,9 +44,17 @@ void test_processes(){
   int initialProcessCount =  syscall(PROCESS_COUNT, 0,0,0,0,0,0);
   int maxProcesses = PROCESSES + initialProcessCount;
 
+  if(maxProcesses > MAX_PROCESSES){
+    substractLine();
+    addText("You can only execute this test once. Restart Qemu");
+    substractLine();
+    printWindow();
+    return;
+  }
+
     // Create MAX_PROCESSES processes
     for(rq = initialProcessCount; rq < maxProcesses; rq++){
-      error = my_create_process_proc("endless_loop");
+      error = my_create_process_proc("proc_loop");
       if(error == -1 ){
         addText("Error creating process");
         substractLine();

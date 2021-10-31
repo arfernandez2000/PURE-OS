@@ -26,7 +26,7 @@
 const int len_void = 13;
 const int len_files = 3;
 const int len_proc = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","testMM","ps","loop","test_prio","test_proc","testSync"};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","test_mm","ps","loop","test_priority","test_processes","test_sync"};
 void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop, test_prio, test_processes,test_sync};
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) () = {cat, wc, filter};

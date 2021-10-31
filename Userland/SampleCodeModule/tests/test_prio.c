@@ -39,6 +39,7 @@ void endless_loop_prio(){
   while(1){
     char buffer[2];
     addText(itoa(pid,buffer,10));
+    addText(" ");
     printWindow();
     bussy_wait_prio(MINOR_WAIT);
   }
@@ -53,7 +54,7 @@ void test_prio(){
   int currentPID = syscall(PROCESS_COUNT, 0,0,0,0,0,0);
 
   for(i = 0; i < TOTAL_PROCESSES; i++){
-    res =  my_create_process_prio("inf_loop");
+    res =  my_create_process_prio("prio_loop");
     if(res == -1){
       addText("Error creating process");
       substractLine();

@@ -39,6 +39,7 @@ clean:
 	rm -rf *.o
 	cd shell; rm -rf *.o
 	cd shell/commands; rm -rf *.o
+	cd tests; rm -rf *.o
 
 .PHONY: all clean print
 
