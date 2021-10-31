@@ -1,5 +1,6 @@
 #include "system.h"
 #include "shell.h"
+#include <stdint.h>
 
 void ps() {
     addText("Name      PID     priority    foreground     rbp          rsp          state");
@@ -11,9 +12,9 @@ void ps() {
         addText(result[i]);
         substractLine();
         printWindow();
-        syscall(FREE, result[i],0, 0, 0, 0, 0);
+        syscall(FREE,(uint64_t)result[i],0, 0, 0, 0, 0);
     }
-    syscall(FREE, result,0, 0, 0, 0, 0);
+    syscall(FREE, (uint64_t) result,0, 0, 0, 0, 0);
 }
 int kill(uint64_t pid){
     return syscall(KILL, pid, 0, 0, 0, 0, 0);
@@ -28,6 +29,7 @@ int unblock(uint64_t pid){
 
 int nice(uint64_t pid, int priority){
     return syscall(NICE, pid, priority,0,0,0,0);
+}
 void exit(){
     uint64_t pid = syscall(GET_PID, 0, 0, 0, 0, 0, 0);
     kill(pid);
