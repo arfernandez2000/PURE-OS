@@ -189,7 +189,7 @@ void test_prio(){
     }
   }
   substractLine();
-  addText("Test Successful");
+  addText("Test Priority OK");
   substractLine();
   printWindow();
 }

@@ -173,12 +173,15 @@ uint64_t getSampleRSP() {
 }
 static int changeState(uint64_t pid, int state)
 {
-    if(activeProcesses > pid && processQueue[pid]->state !=KILLED){
-        processQueue[pid]->state = state;
-        return 1;
+    if(activeProcesses > pid){
+        if(processQueue[pid]->state !=KILLED){
+                processQueue[pid]->state = state;
+                return 1;
+        }
+        else if(processQueue[pid]->state == KILLED && state == KILLED){
+            return 1;
+        }
     }
-    if (processQueue[pid]->state == KILLED && state == KILLED)
-        return 1;
     return -1;
     
         

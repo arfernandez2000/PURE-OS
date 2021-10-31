@@ -1,4 +1,3 @@
-#include "../include/shell.h"
 #include "test_processes.h"
 
 //TO BE INCLUDED
@@ -26,7 +25,8 @@ uint32_t my_unblock_proc(uint32_t pid){
 
 }
 
-#define MAX_PROCESSES 51//Should be around 80% of the the processes handled by the kernel  | 80% of 64 is aprox 51
+#define PROCESSES 51//Should be around 80% of the the processes handled by the kernel  | 80% of 64 is aprox 51
+#define MAX_PROCESSES 51 //only run once per shell to add Maximum amount of processes.
 
 enum State { RUNNING, BLOCKED, KILLED};
 
@@ -41,29 +41,29 @@ void test_processes(){
   uint8_t alive = 0;
   uint8_t action;
   int error;
-
-  while (1){
+  int initialProcessCount =  syscall(PROCESS_COUNT, 0,0,0,0,0,0);
+  int maxProcesses = PROCESSES + initialProcessCount;
 
     // Create MAX_PROCESSES processes
-    for(rq = 0; rq < MAX_PROCESSES; rq++){
+    for(rq = initialProcessCount; rq < maxProcesses; rq++){
       error = my_create_process_proc("endless_loop");
-      if(error != -1 ){
-        p_rqs[rq].pid = rq;
-         p_rqs[rq].state = RUNNING;
-        alive++;
-      }
-      else{
+      if(error == -1 ){
         addText("Error creating process");
         substractLine();
         printWindow();            
-        return;
       }
+      else{
+        p_rqs[rq].pid = rq;
+        p_rqs[rq].state = RUNNING;
+        alive++;
+      }
+      
     }
 
-    // Randomly kills, blocks or unblocks processes until every one has been killed
+    // Randomly kills, blocks or unblocks processes until every one has been killed exclude shell for demonstration purposes
     while (alive > 0){
 
-      for(rq = 0; rq < MAX_PROCESSES; rq++){
+      for(rq = initialProcessCount; rq < maxProcesses; rq++){
         action = GetUniform(2) % 2; 
 
         switch(action){
@@ -73,10 +73,11 @@ void test_processes(){
                 addText("Error killing process");  
                 substractLine();
                 printWindow();         // TODO: Port this as required
-                return;
+              }else{
+                   p_rqs[rq].state = KILLED; 
+                  alive--;
               }
-              p_rqs[rq].state = KILLED; 
-              alive--;
+             
             }
             break;
 
@@ -86,27 +87,29 @@ void test_processes(){
                 addText("Error blocking process");
                 substractLine();
                 printWindow();          
-                return;
+              }else{
+                p_rqs[rq].state = BLOCKED; 
               }
-              p_rqs[rq].state = BLOCKED; 
+             
             }
             break;
         }
       }
 
-      // Randomly unblocks processes
-      for(rq = 0; rq < MAX_PROCESSES; rq++)
+      // Randomly unblocks processes exclude shell for demonstration purposes
+      for(rq = initialProcessCount; rq < maxProcesses; rq++)
         if (p_rqs[rq].state == BLOCKED && GetUniform(2) % 2){
           if(my_unblock_proc(p_rqs[rq].pid) == -1){            
             addText("Error unblocking process");  
             substractLine();
-            printWindow();          
-            return;
+            printWindow();         
           }
-          p_rqs[rq].state = RUNNING; 
+          else{
+            p_rqs[rq].state = RUNNING; 
+          }
         }
     } 
-  }
+ 
   addText("ProcessTest OK");
   substractLine();
   printWindow();

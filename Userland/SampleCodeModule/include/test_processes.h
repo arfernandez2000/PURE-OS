@@ -3,7 +3,7 @@
 
 #include "test_util.h"
 #include "processCommands.h"
-
+#include "system.h"
 #include "shell.h"
 
 void endless_loop_proc();
