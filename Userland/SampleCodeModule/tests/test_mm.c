@@ -108,6 +108,7 @@ void test_mm(){\
         sys_free(mm_rqs[i].address);  // TODO: Port this call as required
     contador--;
   } 
-  addText("eeeeee");
-
+  addText("Memory manager test OK");
+  substractLine();
+  printWindow();
 }
