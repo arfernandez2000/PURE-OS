@@ -177,6 +177,8 @@ static int changeState(uint64_t pid, int state)
         processQueue[pid]->state = state;
         return 1;
     }
+    if (processQueue[pid]->state == KILLED && state == KILLED)
+        return 1;
     return -1;
     
         
@@ -198,7 +200,7 @@ int unBlockProcess(uint64_t pid) {
     return changeState(pid,READY);
 }
 int nice(uint64_t pid, uint64_t priority){
-    if(activeProcesses >= pid || priority <= 0){
+    if(activeProcesses < pid || priority <= 0){
         return -1;
     }
     processQueue[pid]->priority = priority;
