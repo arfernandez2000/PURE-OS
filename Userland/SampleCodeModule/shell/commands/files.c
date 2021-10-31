@@ -30,7 +30,6 @@ void cat (){
 
 void catProc(int argc, char** argv){
     printWindow();
-    substractLine();
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer);
         substractLine();

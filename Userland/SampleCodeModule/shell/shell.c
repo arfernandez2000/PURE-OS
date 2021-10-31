@@ -66,6 +66,7 @@ void addText(char * buffer) {
            substractLine(); 
            if(*buffer == '\n'){
                *buffer++;
+               continue;
            }
         }
         
