@@ -35,6 +35,9 @@ void loopProc(int argc, char** argv){
 
 void loop(){
     char* argv[] = {"loop"};
-    sys_loadProcess(&loopProc, 1, argv, 0, NULL);
+    int error = sys_loadProcess(&loopProc, 1, argv, 0, NULL);
+    if(error == -1){
+        addText("Error al crear el proceso");
+    }
 }
 

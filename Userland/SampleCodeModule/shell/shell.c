@@ -12,7 +12,9 @@
 #include "test_mm.h"
 #include "processCommands.h"
 #include "loop.h"
-
+#include "test_processes.h"
+#include "test_prio.h"
+#include "test_sync.h"
 
 #define NULL (void *)0
 #define SIZE 100
@@ -21,18 +23,18 @@
 #define COLS 80
 #define ROWS 25
 
-const int len_void = 11;
+const int len_void = 13;
 const int len_files = 3;
 const int len_proc = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","testMM","ps","loop"};
-void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","testMM","ps","loop","test_prio","test_proc","testSync"};
+void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop, test_prio, test_processes,test_sync};
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) () = {cat, wc, filter};
-char *commands_proc[] = {"kill", "block", "unblock","nice"};
-void (*func_proc []) (uint64_t pid) = {kill, block, unblock};
+char *commands_proc[] = {"kill", "block", "unblock"};
+int (*func_proc []) (uint64_t pid) = {kill, block, unblock};
 const int len_proc_2 = 1;
 char *commands_proc_2[] = {"nice"};
-void (*func_proc_2 [])(uint64_t pid, int priority) = {nice};
+int (*func_proc_2 [])(uint64_t pid, uint64_t priority) = {nice};
 
 char window[ROWS * COLS + 1] = {[0 ... ROWS * COLS - 1] = ' ', 0};
 int offset = (ROWS - 1) * COLS;
@@ -43,7 +45,10 @@ void waitMF(int argc, char** argv){
 }
 void prueba(){
     char * argv[] = {"prueba"};
-    sys_loadProcess(&waitMF, 1, argv , 0, 0);
+    int error = sys_loadProcess(&waitMF, 1, argv , 0, 0);
+    if(error == -1){
+        addText("Error al crear el proceso");
+    }
     printWindow();
 }
 void substractLine() {

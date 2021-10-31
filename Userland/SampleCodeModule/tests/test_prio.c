@@ -1,44 +1,45 @@
-#include <stdint.h>
-#include <stdio.h>
+#include "../include/test_prio.h"
 
 #define MINOR_WAIT 1000000                               // TODO: To prevent a process from flooding the screen
 #define WAIT      10000000                              // TODO: Long enough to see theese processes beeing run at least twice
 
-uint64_t my_getpid(){
-  return 0;
+uint64_t my_getpid_prio(){
+  return syscall(GET_PID,0,0,0,0,0,0);
 }
 
-uint64_t my_create_process(char * name){
-  return 0;
+uint64_t my_create_process_prio(char * name){
+  char * argv[]= {name};
+  return sys_loadProcess(&endless_loop_prio, 1, argv,0,0);
 }
 
-uint64_t my_nice(uint64_t pid, uint64_t newPrio){
-  return 0;
+uint64_t my_nice_prio(uint64_t pid, uint64_t newPrio){
+  return nice(pid,newPrio);
 }
 
-uint64_t my_kill(uint64_t pid){
-  return 0;
+uint64_t my_kill_prio(uint64_t pid){
+  return kill(pid);
 }
 
-uint64_t my_block(uint64_t pid){
-  return 0;
+uint64_t my_block_prio(uint64_t pid){
+  return block(pid);
 }
 
-uint64_t my_unblock(uint64_t pid){
-  return 0;
+uint64_t my_unblock_prio(uint64_t pid){
+  return unblock(pid);
 }
 
-void bussy_wait(uint64_t n){
+void bussy_wait_prio(uint64_t n){
   uint64_t i;
   for (i = 0; i < n; i++);
 }
 
-void endless_loop(){
-  uint64_t pid = my_getpid();
+void endless_loop_prio(){
+  uint64_t pid = my_getpid_prio();
 
   while(1){
-    printf("%d ",pid);
-    bussy_wait(MINOR_WAIT);
+    char buffer[2];
+    addText(itoa(pid,buffer,10));
+    bussy_wait_prio(MINOR_WAIT);
   }
 }
 
@@ -47,61 +48,140 @@ void endless_loop(){
 void test_prio(){
   uint64_t pids[TOTAL_PROCESSES];
   uint64_t i;
+  int res, resNice, resNice2, resNice3, resNice4, resNice5, resNice6, res_block, res_unblock, res_kill = -1;
 
-  for(i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = my_create_process("endless_loop");
+  for(i = 0; i < TOTAL_PROCESSES; i++){
+    res =  my_create_process_prio("endless_loop");
+    if(res == -1){
+      addText("Error creating process");
+      substractLine();
+      printWindow();
+      return;
+    }
+    pids[i] = res;
+    
+  }
+    
 
-  bussy_wait(WAIT);
-  printf("\nCHANGING PRIORITIES...\n");
+  bussy_wait_prio(WAIT);
+  addText("CHANGING PRIORITIES...");
+  substractLine();
+  printWindow();
 
   for(i = 0; i < TOTAL_PROCESSES; i++){
     switch (i % 3){
       case 0:
-        my_nice(pids[i], 0); //lowest priority 
+        resNice = my_nice_prio(pids[i], 0); 
+        if(resNice == -1){
+          addText("Error updating priority");
+          substractLine();
+          printWindow();
+          return;
+        }//lowest priority 
         break;
+
       case 1:
-        my_nice(pids[i], 1); //medium priority
+        resNice2 = my_nice_prio(pids[i], 1); //medium priority
+        if(resNice2 == -1){
+          addText("Error updating priority");
+          substractLine();
+          printWindow();
+          return;
+        }
         break;
       case 2:
-        my_nice(pids[i], 2); //highest priority
+        resNice3 = my_nice_prio(pids[i], 2); //highest priority
+        if(resNice3 == -1){
+          addText("Error updating priority");
+          substractLine();
+          printWindow();
+          return;
+        }
         break;
     }
   }
 
-  bussy_wait(WAIT);
-  printf("\nBLOCKING...\n");
+  bussy_wait_prio(WAIT);
+  addText("BLOCKING...");
+  substractLine();
+  printWindow();
 
-  for(i = 0; i < TOTAL_PROCESSES; i++)
-    my_block(pids[i]);
+  for(i = 0; i < TOTAL_PROCESSES; i++){
+      res_block = my_block_prio(pids[i]);
+       if(res_block == -1){
+          addText("Error blocking process");
+          substractLine();
+          printWindow();
+          return;
+        }
 
-  printf("CHANGING PRIORITIES WHILE BLOCKED...\n");
+  }
+   
+
+  addText("CHANGING PRIORITIES WHILE BLOCKED...");
+  substractLine();
+  printWindow();
+
   for(i = 0; i < TOTAL_PROCESSES; i++){
     switch (i % 3){
       case 0:
-        my_nice(pids[i], 1); //medium priority 
+        resNice4 = my_nice_prio(pids[i], 1); //medium priority
+        if(resNice4 == -1){
+          addText("Error updating priority");
+          substractLine();
+          printWindow();
+          return;
+        }
         break;
       case 1:
-        my_nice(pids[i], 1); //medium priority
+        resNice5 = my_nice_prio(pids[i], 1); //medium priority
+        if(resNice5 == -1){
+          addText("Error updating priority");
+          substractLine();
+          printWindow();
+          return;
+        }
         break;
       case 2:
-        my_nice(pids[i], 1); //medium priority
+        resNice6 = my_nice_prio(pids[i], 1); //medium priority
+        if(resNice6 == -1){
+          addText("Error updating priority");
+          substractLine();
+          printWindow();
+          return;
+        }
         break;
     }
   }
 
-  printf("UNBLOCKING...\n");
+  addText("UNBLOCKING...");
+  substractLine();
+  printWindow();
 
-  for(i = 0; i < TOTAL_PROCESSES; i++)
-    my_unblock(pids[i]);
+  for(i = 0; i < TOTAL_PROCESSES; i++){
+    res_unblock = my_unblock_prio(pids[i]);
+    if(res_unblock == -1){
+          addText("Error unblocking process");
+          substractLine();
+          printWindow();
+          return;
+        }
+  }
+   
 
-  bussy_wait(WAIT);
-  printf("\nKILLING...\n");
+  bussy_wait_prio(WAIT);
+  addText("KILLING...");
+  substractLine();
+  printWindow();
 
-  for(i = 0; i < TOTAL_PROCESSES; i++)
-    my_kill(pids[i]);
+  for(i = 0; i < TOTAL_PROCESSES; i++) {
+    res_kill = my_kill_prio(pids[i]);
+    if (res_kill == -1) {
+      addText("Error killing process");
+      substractLine();
+      printWindow();
+      return;
+    }
+  }
 }
 
-int main(){
-  test_prio();
-  return 0;
-}

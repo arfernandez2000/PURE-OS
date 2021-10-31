@@ -30,11 +30,12 @@ void newStack(uint64_t rsp);
 void cleanProcesses();
 int getProcessCount();
 void initScheduler();
-void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name);
+int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name);
 uint64_t _initialize_stack_frame(void * rip, const void * rsp, int argc, char** argv);
 char** psDisplay();
 void saveSampleRSP(uint64_t rsp);
 uint64_t getSampleRSP();
 uint64_t getPID();
+
 
 #endif

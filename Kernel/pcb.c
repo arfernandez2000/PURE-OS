@@ -49,10 +49,14 @@ uint64_t scheduler(uint64_t lastRSP){
     return processesStack[currentProcess]; 
 }
 
-void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
+int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
 
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
     currentPCB = processQueue[currentProcess];
+    if(currentPCB == NULL){
+        return -1;
+    }
+    return 1;
 }
 
 
@@ -114,20 +118,6 @@ int getProcessCount(){
 uint64_t getPID(){
     return processQueue[currentProcess]->pid;
 }
-
-void printProcess(PCB *process)
-{
-        //TODO> numbers to string ;
-      if (process != NULL){
-            char * pid = process->pid;
-            char * foreground = process->foreground;
-            char * rsp = process->rsp;
-            char * state = process->state;
-            char * name = process->name;
-      }
-              
-}
-
 //TODO Imprimir name y rbp
 char** psDisplay() {
     char** processString = mallocMM(1000);
@@ -136,9 +126,9 @@ char** psDisplay() {
     //strcpy(processQueue[0]->name ,processString[0])
     for (int i = 0; i < activeProcesses; i++) {
         processString[i] =  mallocMM(1024);
-        char* auxName;
+        char* auxName = NULL;
         char buff[10]={0};
-        strcpy(processQueue[i]->name, auxName);
+        //strcpy(processQueue[i]->name, auxName);
         int j;
         int aux;
         for (j = 0; processQueue[i]->name[j] != 0; j++) {
@@ -181,27 +171,37 @@ void saveSampleRSP(uint64_t rsp) {
 uint64_t getSampleRSP() {
     return sampleRSP;
 }
-static void changeState(uint64_t pid, int state)
+static int changeState(uint64_t pid, int state)
 {
-    if(processQueue[pid]->state != KILLED)
+    if(activeProcesses > pid && processQueue[pid]->state !=KILLED){
         processQueue[pid]->state = state;
+        return 1;
+    }
+    return -1;
+    
+        
 }
 void cleanProcesses() {
     activeProcesses = 0;
     currentProcess = -1;
 }
 
-void killProcess(uint64_t pid) {
-    changeState(pid,KILLED);
+int  killProcess(uint64_t pid) {
+    return changeState(pid,KILLED);
 }
 
-void blockProcess(uint64_t pid) {
-    changeState(pid, BLOCKED);
+int blockProcess(uint64_t pid) {
+    return changeState(pid, BLOCKED);
 }
 
-void unBlockProcess(uint64_t pid) {
-    changeState(pid,READY);
+int unBlockProcess(uint64_t pid) {
+    return changeState(pid,READY);
 }
-void nice(uint64_t pid, uint64_t priority){
+int nice(uint64_t pid, uint64_t priority){
+    if(activeProcesses >= pid || priority <= 0){
+        return -1;
+    }
     processQueue[pid]->priority = priority;
+    return 1;
 }
+

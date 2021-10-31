@@ -20,7 +20,8 @@ static char * info[] =
     "filter: Prints amount of vowels from stdin",
     "pipe: Prints list of pipes with each of their properties",
     "phylo: Starts diner philosophers dilemma",
-    "testMM: Tests the selected memory manager", };
+    "testMM: Tests the selected memory manager",
+    "test_prio: "};
 static const int len = 19;
 
 void help() {

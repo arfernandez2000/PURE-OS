@@ -22,7 +22,10 @@ void scanning(char* buffer);
 
 void cat (){
     char* argv[] = {"cat"};
-    sys_loadProcess(&catProc, 1, argv, 0, NULL);
+    int error = sys_loadProcess(&catProc, 1, argv, 0, NULL);
+    if(error == -1){
+        addText("Error al crear el proceso");
+    }
 }
 
 void catProc(int argc, char** argv){

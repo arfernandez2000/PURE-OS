@@ -13,8 +13,7 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
         case 2:
             return getTime((char)rsi);
         case 3:
-            createProcess((void(*)(int, char**))rsi,(int)rdx,(char**)rcx,(int)r8,(int*)r9); 
-            break;
+            return createProcess((void(*)(int, char**))rsi,(int)rdx,(char**)rcx,(int)r8,(int*)r9); 
         case 4: 
             return (uint64_t) mallocMM(rsi);
         case 5:
@@ -23,18 +22,18 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
         case 14:
             return psDisplay();
         case 10:
-            killProcess(rsi);
+            return killProcess(rsi);
             break;
         case 11:
-            blockProcess(rsi);
+            return blockProcess(rsi);
             break;
         case 12:
-            unBlockProcess(rsi);
+            return unBlockProcess(rsi);
             break;
         case 13:
             return getPID();
         case 15 :
-            nice(rsi,rdx);
+            return nice(rsi,rdx);
         case 17:
             return ticks_elapsed();
         case 31:
@@ -42,4 +41,5 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
         default:
             return -1;
 	}
+    return 1;
 }
