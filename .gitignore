@@ -9,3 +9,10 @@
 
 #Object files
 *.o
+
+*.sh
+*.bat
+*.elf
+
+.gdbinit
+.bash_history

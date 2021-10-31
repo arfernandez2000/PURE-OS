@@ -5,7 +5,6 @@
 #include "video.h"
 #include "naiveConsole.h"
 
-
 int activeProcesses = 0;
 int currentProcess = 0;
 
@@ -32,6 +31,10 @@ uint64_t scheduler(uint64_t lastRSP){
 
     do {
         
+        if(processQueue[currentProcess]->state!= READY){
+            stopInanition = 0;
+        }
+
         if(stopInanition == 0){
             currentProcess = (++currentProcess) % activeProcesses;
             if(processQueue[currentProcess]->state == READY)
@@ -40,7 +43,7 @@ uint64_t scheduler(uint64_t lastRSP){
         }
         if(stopInanition > 0 && processQueue[currentProcess]->state == READY){
             stopInanition--;
-        }
+         }
     }while(processQueue[currentProcess]->state != READY);
     
     return processesStack[currentProcess]; 
@@ -70,14 +73,15 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->state = READY;
     newProcess->priority = 1;
 
-    strcpy(name, newProcess->name);
-    //arrastre error 
-    newProcessStack(entryPoint, argc, argv);
+    newProcess->name = mallocMM(20);
+    strcpy(name,newProcess->name);
+     
+    newProcessStack(entryPoint, argc, argv, newProcess);
     return newProcess;
 }
 
 
-void newProcessStack(void (*fn), int argc, char** argv) {
+void newProcessStack(void (*fn), int argc, char** argv, PCB* newProcess) {
 
     uint64_t newStack = mallocMM(STACK_SIZE);
     
@@ -86,13 +90,12 @@ void newProcessStack(void (*fn), int argc, char** argv) {
            printStringLen(0x30, "Error",5);
        }; 
     }
-    processesStack[activeProcesses++] = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, &argv[1]);
+    newProcess->rbp =  newStack + STACK_SIZE;
+    newProcess->rsp = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, &argv[1]);
+    processesStack[activeProcesses++] =  newProcess->rsp;
+    
+    
 }
-
-
-// void newStack(uint64_t rsp) {
-//     processesStack[activeProcesses++] = rsp;
-// }
 
 uint64_t preserveStack(uint64_t rsp) {
     if (currentProcess != -1) {
@@ -125,20 +128,48 @@ void printProcess(PCB *process)
               
 }
 
-void psDisplay()
-{
-    int procesosCountAuxiliar = activeProcesses;
-    int aux = processID;
+//TODO Imprimir name y rbp
+char** psDisplay() {
+    char** processString = mallocMM(1000);
 
-    //   printStringLen(0x02,"PID      FG       RSP              RBP              STATE        NAME", Stringlen("PID      FG       RSP              RBP              STATE        NAME") );
+  
+    //strcpy(processQueue[0]->name ,processString[0])
+    for (int i = 0; i < activeProcesses; i++) {
+        processString[i] =  mallocMM(1024);
+        char* auxName;
+        char buff[10]={0};
+        strcpy(processQueue[i]->name, auxName);
+        int j;
+        int aux;
+        for (j = 0; processQueue[i]->name[j] != 0; j++) {
+            auxName[j] = processQueue[i]->name[j];
+        }
+        for (aux = j; aux < MAX_NAME_LENGHT; aux++) {
+            auxName[aux] = ' ';
+        }
+        auxName[aux] = 0;
+        strcat(processString[i],auxName);
+        strcat(processString[i],"    ");
 
-    
-    //   for(int i = 0; i< activeProcesses; i++)
-    //   {
-    //         printProcess(processQueue[i]);
-    //   }
-
-}
+        
+        char * messi = itoa(processQueue[i]->pid, buff, 10,10);
+        strcat(processString[i], messi);
+        strcat(processString[i],"         ");
+        strcat(processString[i], itoa(processQueue[i]->priority, buff, 10,10));
+        strcat(processString[i],"            ");
+        strcat(processString[i], itoa(processQueue[i]->foreground, buff, 10,10));
+        strcat(processString[i],"       ");
+        strcat(processString[i],"0x");
+        //TODO: ARREGLAR ESTO
+        strcat(processString[i], itoa((uint64_t)processQueue[i]->rbp, buff, 10,10));
+        strcat(processString[i],"   ");
+        strcat(processString[i],"0x");
+        strcat(processString[i], itoa(processesStack[i], buff, 10,10));
+        strcat(processString[i],"        ");
+        strcat(processString[i], itoa(processQueue[i]->state, buff, 10,10));
+    };
+    return processString;
+    }
 
 
 static uint64_t sampleRSP;

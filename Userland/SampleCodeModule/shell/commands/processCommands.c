@@ -1,8 +1,17 @@
 #include "system.h"
-
+#include "shell.h"
 
 void ps() {
-    syscall(PS, 0, 0, 0, 0, 0, 0);
+    addText("Name      PID     priority    foreground     rbp          rsp          state");
+    substractLine();
+    printWindow();
+    char** result = (char**) syscall(PS,0,0,0,0,0,0);
+    int processCount =  syscall(PROCESS_COUNT, 0, 0, 0, 0, 0, 0);
+    for (int i = 0; i < processCount; i++) {
+        addText(result[i]);
+        substractLine();
+        printWindow();
+    }
 }
 void kill(uint64_t pid){
     syscall(KILL, pid, 0, 0, 0, 0, 0);
