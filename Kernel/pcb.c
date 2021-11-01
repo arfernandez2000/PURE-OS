@@ -58,10 +58,17 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     }
     return 1;
 }
-
+static int argsCopy(char **buffer, char **argv, int argc)
+{
+      for (int i = 0; i < argc; i++)
+      {
+            buffer[i] = mallocMM(sizeof(char) * (Stringlen(argv[i]) + 1));
+            strcpy(argv[i], buffer[i]);
+      }
+      return 1;
+}
 
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
-    
     PCB* newProcess = mallocMM(sizeof(PCB));
     if(newProcess == NULL){
         return NULL; 
@@ -69,7 +76,14 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
     newProcess->foreground = fg;
     newProcess->argc = argc;
-    newProcess->argv = &argv[1];
+
+    char **argvCopy = mallocMM(sizeof(char *) * argc);
+      if (argvCopy == 0)
+            return -1;
+    argsCopy(argvCopy, &argv[1], argc - 1);
+
+    newProcess->argv = argvCopy;
+
     newProcess->pipes[0] = fd[0];
     newProcess->pipes[1] = fd[1];
     newProcess->ppid = 0;
@@ -80,10 +94,9 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->name = mallocMM(20);
     strcpy(name,newProcess->name);
      
-    newProcessStack(entryPoint, argc, argv, newProcess);
+    newProcessStack(entryPoint, argc, argvCopy, newProcess);
     return newProcess;
 }
-
 
 void newProcessStack(void (*fn), int argc, char** argv, PCB* newProcess) {
 
@@ -95,10 +108,8 @@ void newProcessStack(void (*fn), int argc, char** argv, PCB* newProcess) {
        }; 
     }
     newProcess->rbp =  newStack + STACK_SIZE;
-    newProcess->rsp = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, &argv[1]);
+    newProcess->rsp = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, argv);
     processesStack[activeProcesses++] =  newProcess->rsp;
-    
-    
 }
 
 uint64_t preserveStack(uint64_t rsp) {
