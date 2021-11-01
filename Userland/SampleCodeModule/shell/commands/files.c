@@ -32,9 +32,9 @@ void cat (int fg){
 }
 
 void catProc(int argc, char** argv){
-    printWindow();
-    if (!argv[1])
-        while(1){};
+    if (!argv[0]){ 
+        while(1);   
+    }
     block(0);
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer);
@@ -86,12 +86,10 @@ void scanning(char* buffer){
 void wc (int fg) {
     char* argv[] = {"wc", fg};
     sys_loadProcess(&wcProc, 1, argv, fg, NULL);
-    unblock(0);
 }
 
 void wcProc(int argc, char** argv){
-    printWindow();
-    substractLine();
+    block(0);
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer);
         substractLine();
@@ -107,21 +105,22 @@ void wcProc(int argc, char** argv){
         substractLine();
         addText("$> ");
         printWindow();
+    unblock(0);
     exit();
+  
 }
 
 void filter(int fg){
     char* argv[] = {"filter"};
-    if(fg){
-        block(0);
-    }
     sys_loadProcess(&filterProc, 1, argv, fg, NULL);
-    unblock(0);
+
 }
 
 void filterProc (int argc, char** argv) {
-    printWindow();
-    substractLine();
+    if (!argv[0]){ 
+        while(1);   
+    }
+    block(0);
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer);
         substractLine();
@@ -138,5 +137,6 @@ void filterProc (int argc, char** argv) {
         substractLine();
         addText("$> ");
         printWindow();
+    unblock(0);
     exit();
 }

@@ -7,7 +7,7 @@ void endless_loop_proc(){
 
 uint32_t my_create_process_proc(char * name){
   char * argv[] = {name};
-  return sys_loadProcess(&endless_loop_proc, 1, argv,0,0);
+  return sys_loadProcess(&endless_loop_proc,1, argv,0,0);
   
 }
 
