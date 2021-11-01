@@ -8,6 +8,7 @@
 
 #define MAX_BLOCKS 128
 #define MAX_MEMORY 1024 //Should be around 80% of memory managed by the MM
+#define LOOPS 100000
 
 typedef struct MM_rq{
   void *address;
@@ -19,7 +20,7 @@ void test_mm(){
   uint8_t rq;
   uint32_t total;
 
-  int contador = 100000;
+  int contador = LOOPS;
 
    addText("Testing...");
    substractLine();
@@ -57,6 +58,12 @@ void test_mm(){
       if (mm_rqs[i].address != NULL)
         sys_free(mm_rqs[i].address);  // TODO: Port this call as required
     contador--;
+
+    if(LOOPS >= 100000 && contador == LOOPS/2 ){
+      addText("Yeah, it takes a while ;)");
+      substractLine();
+      printWindow();
+    }
   } 
   addText("Memory manager test OK");
   substractLine();
