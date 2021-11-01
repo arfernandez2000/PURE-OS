@@ -12,9 +12,9 @@ void ps() {
         addText(result[i]);
         substractLine();
         printWindow();
-        syscall(FREE,(uint64_t)result[i],0, 0, 0, 0, 0);
+        sys_free(result[i]);
     }
-    syscall(FREE, (uint64_t) result,0, 0, 0, 0, 0);
+    sys_free(result);
 }
 int kill(uint64_t pid){
     return syscall(KILL, pid, 0, 0, 0, 0, 0);
