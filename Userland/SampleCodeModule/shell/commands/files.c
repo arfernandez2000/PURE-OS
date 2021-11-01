@@ -23,9 +23,9 @@ void wcProc(int argc, char** argv);
 void filterProc (int argc, char** argv);
 void scanning(char* buffer);
 
-void cat (){
-    char* argv[] = {"cat"};
-    int error = sys_loadProcess(&catProc, 1, argv, 0, NULL);
+void cat (int fg){
+    char* argv[] = {"cat", fg};
+    int error = sys_loadProcess(&catProc, 1, argv, fg, NULL);
     if(error == -1){
         addText("Error al crear el proceso");
     }
@@ -33,6 +33,9 @@ void cat (){
 
 void catProc(int argc, char** argv){
     printWindow();
+    if (!argv[1])
+        while(1){};
+    block(0);
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer);
         substractLine();
@@ -40,7 +43,7 @@ void catProc(int argc, char** argv){
         substractLine();
         addText("$> ");
         printWindow();
-    unblock(0);
+    unblock(0);    
     exit();
 }
 
@@ -80,16 +83,16 @@ void scanning(char* buffer){
         window[offset] = ' ';
 }
 
-void wc () {
-    char* argv[] = {"wc"};
-    sys_loadProcess(&wcProc, 1, argv, 0, NULL);
+void wc (int fg) {
+    char* argv[] = {"wc", fg};
+    sys_loadProcess(&wcProc, 1, argv, fg, NULL);
+    unblock(0);
 }
 
 void wcProc(int argc, char** argv){
     printWindow();
     substractLine();
     char buffer[BUFF_SIZE] = {0};
-    block(0);
         scanning(buffer);
         substractLine();
         int lines = 1;
@@ -104,20 +107,22 @@ void wcProc(int argc, char** argv){
         substractLine();
         addText("$> ");
         printWindow();
-    unblock(0);
     exit();
 }
 
-void filter(){
+void filter(int fg){
     char* argv[] = {"filter"};
-    sys_loadProcess(&filterProc, 1, argv, 0, NULL);
+    if(fg){
+        block(0);
+    }
+    sys_loadProcess(&filterProc, 1, argv, fg, NULL);
+    unblock(0);
 }
 
 void filterProc (int argc, char** argv) {
     printWindow();
     substractLine();
     char buffer[BUFF_SIZE] = {0};
-    block(0);
         scanning(buffer);
         substractLine();
         int vocals = 0;
@@ -133,6 +138,5 @@ void filterProc (int argc, char** argv) {
         substractLine();
         addText("$> ");
         printWindow();
-    unblock(0);
     exit();
 }

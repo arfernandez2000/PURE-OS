@@ -23,13 +23,13 @@
 #define COLS 80
 #define ROWS 25
 
-const int len_void = 13;
-const int len_files = 3;
+const int len_void = 12;
+const int len_files = 6;
 const int len_proc = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","test_mm","ps","loop","test_priority","test_processes","test_sync"};
-void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop, test_prio, test_processes,test_sync};
-char *commands_files[] = {"cat", "wc", "filter"};
-void (*func_files []) () = {cat, wc, filter};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","test_mm","ps","test_priority","test_processes","test_sync"};
+void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, test_prio, test_processes,test_sync};
+char *commands_files[] = {"cat", "cat&", "wc", "wc&", "filter", "filter&","loop", "loop&"};
+void (*func_files []) () = {cat, wc, filter,loop};
 char *commands_proc[] = {"kill", "block", "unblock"};
 int (*func_proc []) (uint64_t pid) = {kill, block, unblock};
 const int len_proc_2 = 1;
@@ -134,13 +134,20 @@ void shell(int argc, char** argv) {
 
         tokens[1] = strtokLib(tokens[0], ' ');
         tokens[2] = strtokLib(tokens[1], '\n');
-        
         for (int i = 0; i < len_files; i++) {  
             if (!strcmp(tokens[0], commands_files[i])) {
-                (*func_files[i])();
+                // addText(itoa());
+                // substractLine();
+                // printWindow();
+
+                if (i % 2) {
+                    (*func_files[i/2])(0);
+                }
+                else{
+                    (*func_files[i/2])(1);
+                }
                 file_comm = 0;
                 comm_flag = 1;
-                block(0);
             }
         }
         

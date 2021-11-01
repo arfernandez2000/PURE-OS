@@ -2,6 +2,7 @@
 #include "system.h"
 #include "shell.h"
 #include "libc.h"
+#include "processCommands.h"
 
 #define NULL (void*) 0 
 
@@ -30,14 +31,18 @@ void loopProc(int argc, char** argv){
         substractLine();
        
     }
-    //exit(); //implementar syscall exit
 }
 
-void loop(){
+void loop(int fg){
     char* argv[] = {"loop"};
-    int error = sys_loadProcess(&loopProc, 1, argv, 0, NULL);
+    if(fg){
+        block(0);
+    }
+    int error = sys_loadProcess(&loopProc, 1, argv, fg, NULL);
     if(error == -1){
         addText("Error al crear el proceso");
     }
+    exit();
+    unblock(0);
 }
 
