@@ -30,7 +30,7 @@ void take_forks(int i) /* i: philosopher number, from 0 to N−1 */
     down(&s[i]); /* block if for ks were not acquired */
 }
 
-void put forks(i) /* i: philosopher number, from 0 to N−1 */
+void put_forks(i) /* i: philosopher number, from 0 to N−1 */
 {
     down(&mutex); /* enter critical region */
     state[i] = THINKING; /* philosopher has finished eating */
@@ -44,4 +44,11 @@ void test(i) /* i: philosopher number, from 0 to N−1 */
         state[i] = EATING;
         up(&s[i]);
     }
+}
+
+void phylo(int fg){
+    //proceso para la mesa
+    //proceso para cada uno de los filosofos iniciales
+    //que cada filosofo imprima su estado?
+    //ver en fg y en bg
 }

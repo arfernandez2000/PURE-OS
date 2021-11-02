@@ -15,6 +15,7 @@
 #include "test_processes.h"
 #include "test_prio.h"
 #include "test_sync.h"
+#include "phylo.h"
 
 #define NULL (void *)0
 #define SIZE 100
@@ -24,12 +25,12 @@
 #define ROWS 25
 
 const int len_void = 12;
-const int len_files = 6;
+const int len_files = 7;
 const int len_proc = 3;
 char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","test_mm","ps","test_priority","test_processes","test_sync"};
 void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, test_prio, test_processes,test_sync};
-char *commands_files[] = {"cat", "cat&", "wc", "wc&", "filter", "filter&","loop", "loop&"};
-void (*func_files []) () = {cat, wc, filter,loop};
+char *commands_files[] = {"cat", "cat&", "wc", "wc&", "filter", "filter&","loop", "loop&","phylo","pyhlo&"};
+void (*func_files []) () = {cat, wc, filter,loop, phylo};
 char *commands_proc[] = {"kill", "block", "unblock"};
 int (*func_proc []) (uint64_t pid) = {kill, block, unblock};
 const int len_proc_2 = 1;
