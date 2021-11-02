@@ -51,4 +51,5 @@ void phylo(int fg){
     //proceso para cada uno de los filosofos iniciales
     //que cada filosofo imprima su estado?
     //ver en fg y en bg
+    return;
 }
