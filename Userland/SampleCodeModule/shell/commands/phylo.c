@@ -17,10 +17,26 @@ semaphore s[MAX_PHYLOS]; /* one semaphore per philosopher */
 
 int phylosCount = INITIAL_PHYLOS;
 
+static void think(){
+  return;
+}
+static void eat(){
+    return;
+}
+
+void philosopher(int i) /* i: philosopher number, from 0 to N−1 */
+{
+    while (1) { /* repeat forever */
+        think(); /* philosopher is thinking */
+        //take_forks(i); /* acquire two for ks or block */
+        eat(); /* yum-yum, spaghetti */
+        //put_forks(i); /* put both for ks back on table */
+    }
+}
 void addInitialPhylos(int fg){
     char buffer[10];
     char *argv[] = { "phylosopher", itoa(fg,buffer,10)};
-    for(int i=0; i< N; i++){
+    for(int i=0; i< INITIAL_PHYLOS; i++){
         int error = sys_loadProcess(&philosopher,2,argv,fg,0);
         if(error == -1){
         addText("Error Loading Phylosopher");
@@ -38,22 +54,7 @@ void table(int argc, char** argv){
     }
 
 }
-static void think(){
-  return;
-}
-static void eat(){
-    return;
-}
 
-void philosopher(int i) /* i: philosopher number, from 0 to N−1 */
-{
-    while (1) { /* repeat forever */
-        think(); /* philosopher is thinking */
-        //take_forks(i); /* acquire two for ks or block */
-        eat(); /* yum-yum, spaghetti */
-        //put_forks(i); /* put both for ks back on table */
-    }
-}
 
 // void take_forks(int i) /* i: philosopher number, from 0 to N−1 */
 // {
