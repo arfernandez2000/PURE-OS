@@ -14,4 +14,9 @@ void strcpy(char *str1, char *str2);
 int Stringlen(const char * s);
 char *strcat(char *strg1, char *strg2);
 
+void acquire(int *mutex);
+void release(int *mutex);
+int _xchg(int *mutex, int value);
+
+
 #endif

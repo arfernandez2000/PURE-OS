@@ -37,4 +37,10 @@ void saveSampleRSP(uint64_t rsp);
 uint64_t getSampleRSP();
 uint64_t getPID();
 
+void killProcess(uint64_t pid);
+void blockProcess(uint64_t pid);
+void unBlockProcess(uint64_t pid);
+void yield();
+static int argsCopy(char **buffer, char **argv, int argc);
+
 #endif

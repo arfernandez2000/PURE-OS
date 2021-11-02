@@ -12,6 +12,7 @@
 #include "test_mm.h"
 #include "processCommands.h"
 #include "loop.h"
+#include "test_sync.h"
 
 
 #define NULL (void *)0
@@ -21,11 +22,11 @@
 #define COLS 80
 #define ROWS 25
 
-const int len_void = 11;
+const int len_void = 12;
 const int len_files = 3;
 const int len_proc = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","testMM","ps","loop"};
-void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","testMM","ps","loop", "test_sync"};
+void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop, test_sync};
 char *commands_files[] = {"cat", "wc", "filter"};
 void (*func_files []) () = {cat, wc, filter};
 char *commands_proc[] = {"kill", "block", "unblock","nice"};

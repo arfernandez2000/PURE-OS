@@ -27,7 +27,7 @@ typedef enum
     SEM_POST = 19,
     SEM_WAIT = 20,
     SEM_CLOSE = 21,
-    EXIT = 22,
+    YIELD = 22,
     DUMP_SEM = 23,
     PIPE_OPEN = 24,
     PIPE_READ = 25,

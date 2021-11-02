@@ -1,4 +1,4 @@
-GLOBAL getCharInterrupt, getTimeGen, getMemGen, getRegs, getRSP, switchProcess
+GLOBAL getCharInterrupt, getTimeGen, getMemGen, getRegs, getRSP, switchProcess, _xchg, _callTick
 
 section .text
 
@@ -78,6 +78,14 @@ getRegs:
 	pop rbp
 	ret
 
+_xchg:
+    mov rax, rsi
+    xchg [rdi], eax
+    ret
+
+_callTick:
+	int 20h
+	ret
 
 section .bss
 	regs resb 120 ; 8 bytes * 16 regs

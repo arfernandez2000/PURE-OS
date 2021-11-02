@@ -7,5 +7,6 @@ void kill(uint64_t);
 void block(uint64_t);
 void unblock(uint64_t);
 void nice(uint64_t);
+void yield();
 
 #endif
