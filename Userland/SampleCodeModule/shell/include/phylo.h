@@ -13,7 +13,7 @@ void test(int i);
 void think();
 void eat();
 void philosopher(int argc, char ** argv);
-void addInitialPhylos(int fg);
+int addPhylo(int fg , int table);
 void table(int argc, char** argv);
 
 

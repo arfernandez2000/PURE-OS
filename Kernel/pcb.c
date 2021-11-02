@@ -28,9 +28,15 @@ uint64_t scheduler(uint64_t lastRSP){
     }
     processesStack[currentProcess] = lastRSP;
    
-
+//shell table phylo phylo loop 
     do {
-        
+        int processParentID = processQueue[currentProcess]->ppid;
+        if( processParentID!=0 && processQueue[processParentID]->state == BLOCKED){
+            currentProcess = (++currentProcess) % activeProcesses;
+            if(processQueue[currentProcess]->state == READY)
+                    stopInanition = processQueue[currentProcess]->priority;
+            continue;
+        }
         if(processQueue[currentProcess]->state!= READY){
             stopInanition = 0;
         }
@@ -43,20 +49,17 @@ uint64_t scheduler(uint64_t lastRSP){
         }
         if(stopInanition > 0 && processQueue[currentProcess]->state == READY){
             stopInanition--;
-         }
+        }
+       
+
     }while(processQueue[currentProcess]->state != READY);
     
     return processesStack[currentProcess]; 
 }
 
 int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
-
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
-    currentPCB = processQueue[currentProcess];
-    if(currentPCB == NULL){
-        return -1;
-    }
-    return 1;
+    return processID++;
 }
 static int argsCopy(char **buffer, char **argv, int argc)
 {
@@ -86,8 +89,12 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
     newProcess->pipes[0] = fd[0];
     newProcess->pipes[1] = fd[1];
-    newProcess->ppid = 0;
-    newProcess->pid = processID++;
+    if(newProcess->name == "philosopher"){
+          newProcess->ppid = argv[1];
+    }else{
+         newProcess->ppid = 0;
+    }
+    newProcess->pid = processID;
     newProcess->state = READY;
     newProcess->priority = 1;
 

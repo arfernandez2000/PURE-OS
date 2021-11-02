@@ -61,7 +61,7 @@ void put_forks(int i)
 
 void philosopher(int argc, char ** argv)
 {
-    int i = atoi(argv[1],10);
+    int i = syscall(GET_PID,0,0,0,0,0,0);
     while (1) { /* repeat forever */
         //think(); /* philosopher is thinking */
         take_forks(i); /* acquire two for ks or block */
@@ -75,19 +75,18 @@ int removePhylo(){
         return -1;
     }
     phylosCount--;
-    //kill(phylosPid[phylosCount]);
-    kill(phylosCount + 1); 
+    kill(phylosPid[phylosCount]);
     up(&mutex);
     return 1;
 
 }
-int addPhylo(int fg){
+int addPhylo(int fg, int table){
     if(phylosCount == MAX_PHYLOS)
         return -1;
     down(&mutex);
     char buffer[10];
-    char *argv[] = { "phylosopher", itoa(fg, buffer,10), itoa(phylosCount,buffer,10)};
-    int pid = sys_loadProcess(&philosopher,2, argv, fg, 0); //tenemos que devolver el pid
+    char *argv[] = { "phylosopher", itoa(fg, buffer,10), itoa(table,buffer,10)};
+    int pid = sys_loadProcess(&philosopher,3, argv, fg, 0); 
     
     if(pid == -1){
         addText("Error Loading Phylosopher");
@@ -122,7 +121,7 @@ void table(int argc, char** argv){
         printWindow();
 
     }
-    unblock(0);
+
     exit();
 }
 
@@ -132,24 +131,25 @@ void phylo(int fg){
     int run = 1;
     char buffer[10];
     char * argv[] = {"Phylosophers table", itoa(fg, buffer,10)};
-    int error = sys_loadProcess(&table,2,argv,0,0);
-    if(error == -1){
+    int tableID = sys_loadProcess(&table,2,argv,fg,0);
+    if(tableID == -1){
         addText("Error Loading Table");
         substractLine();
         printWindow();
         return;
     }
-    block(1);
-    for(int i=0; i< INITIAL_PHYLOS; i++){
-       addPhylo(fg);
+   block(tableID);
+   for(int i=0; i< INITIAL_PHYLOS; i++){
+       addPhylo(fg,tableID);
    }
-   unblock(2);
+   unblock(tableID);
+
    while(run){
        char key = getChar();
         switch (key)
         {
         case 'a':
-            if (addPhylo(fg) == -1){
+            if (addPhylo(fg,tableID) == -1){
                 addText("Can\'t add another philosopher. Maximum 8 philosophers.");
                 substractLine();
                 printWindow();
