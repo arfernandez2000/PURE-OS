@@ -137,10 +137,6 @@ void shell(int argc, char** argv) {
         tokens[2] = strtokLib(tokens[1], '\n');
         for (int i = 0; i < len_files; i++) {  
             if (!strcmp(tokens[0], commands_files[i])) {
-                // addText(itoa());
-                // substractLine();
-                // printWindow();
-
                 if (i % 2 == 0) {
                     (*func_files[i/2])(1);
                 }
