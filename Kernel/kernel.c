@@ -57,7 +57,8 @@ uint64_t getRSP();
 
 int main() {
     _cli();
-	memInit((char *)sampleCodeModuleHeapAddress, (64*1024*1024));
+	//memInit((char *)sampleCodeModuleHeapAddress, (64*1024*1024));
+	memInit(sampleCodeModuleHeapAddress);
 	load_idt();
 	saveSampleRSP(getRSP());
 	char * argv[] = {"Shell"};

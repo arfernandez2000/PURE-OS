@@ -129,9 +129,13 @@ int getProcessCount(){
 uint64_t getPID(){
     return processQueue[currentProcess]->pid;
 }
-//TODO Imprimir name y rbp
+
 char** psDisplay() {
     char** processString = mallocMM(1000);
+    for(int i=0; i< activeProcesses; i++){
+        processString[i] = " ";
+    }
+    
 
     for (int i = 0; i < activeProcesses; i++) {
         processString[i] =  mallocMM(1024);
@@ -199,17 +203,17 @@ void cleanProcesses() {
 }
 
 int  killProcess(uint64_t pid) {
-    int error = freeMM(processQueue[pid]->name);
-    if(error == -1){
-        return -2;
-    }
+    //int error = freeMM(processQueue[pid]->name);
+    // if(error == -1){
+    //     return -2;
+    // }
     
     int res = changeState(pid,KILLED);
     if(res != -1){
-        int error = freeMM(processQueue[pid]->name);
-        if(error == -1){
-            return -2;
-        }
+        //int error = freeMM(processQueue[pid]->name);
+        // if(error == -1){
+        //     return -2;
+        // }
     }
         
     return res;

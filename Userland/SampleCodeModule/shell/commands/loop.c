@@ -19,10 +19,9 @@ void waitCycles(int cycles)
 }
 
 void loopProc(int argc, char** argv){
-    if (!argv[0]){ 
-        while(1);   
+    if (atoi(argv[0],1)){ 
+       block(0);
     }
-    block(0);
     uint64_t pid = syscall(GET_PID, 0, 0, 0, 0, 0, 0);
     int loop = 1;
     while (loop)
@@ -35,13 +34,13 @@ void loopProc(int argc, char** argv){
         substractLine();
         //TODO Ari scanearlo y sacarlo del loop
     }
-    unblock(0);
     exit();
 }
 
 void loop(int fg){
-    char* argv[] = {"loop"};
-    int error = sys_loadProcess(&loopProc, 1, argv, fg, NULL);
+    char buffer[10];
+    char* argv[] = {"loop", itoa(fg, buffer,10)};
+    int error = sys_loadProcess(&loopProc, 2, argv, fg, NULL);
     if(error == -1){
         addText("Error al crear el proceso");
     }

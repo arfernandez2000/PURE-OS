@@ -140,11 +140,11 @@ void shell(int argc, char** argv) {
                 // substractLine();
                 // printWindow();
 
-                if (i % 2) {
-                    (*func_files[i/2])(0);
+                if (i % 2 == 0) {
+                    (*func_files[i/2])(1);
                 }
                 else{
-                    (*func_files[i/2])(1);
+                    (*func_files[i/2])(0);
                 }
                 file_comm = 0;
                 comm_flag = 1;

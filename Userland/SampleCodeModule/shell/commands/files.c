@@ -24,15 +24,16 @@ void filterProc (int argc, char** argv);
 void scanning(char* buffer);
 
 void cat (int fg){
-    char* argv[] = {"cat", fg};
-    int error = sys_loadProcess(&catProc, 1, argv, fg, NULL);
+    char buffer[10];
+    char* argv[] = {"cat", itoa(fg, buffer,10)};
+    int error = sys_loadProcess(&catProc, 2, argv, fg, NULL);
     if(error == -1){
         addText("Error al crear el proceso");
     }
 }
 
 void catProc(int argc, char** argv){
-    if (!argv[0]){ 
+    if (!atoi(argv[0],1)){ 
         while(1);   
     }
     block(0);
@@ -84,11 +85,15 @@ void scanning(char* buffer){
 }
 
 void wc (int fg) {
-    char* argv[] = {"wc", fg};
-    sys_loadProcess(&wcProc, 1, argv, fg, NULL);
+    char buffer[10];
+    char* argv[] = {"wc", itoa(fg, buffer,10)};
+    sys_loadProcess(&wcProc, 2, argv, fg, NULL);
 }
 
 void wcProc(int argc, char** argv){
+    if (!atoi(argv[0],1)){ 
+       while(1);   
+    }
     block(0);
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer);
@@ -111,13 +116,14 @@ void wcProc(int argc, char** argv){
 }
 
 void filter(int fg){
-    char* argv[] = {"filter"};
-    sys_loadProcess(&filterProc, 1, argv, fg, NULL);
+    char buffer[10];
+    char* argv[] = {"filter", itoa(fg, buffer,10)};
+    sys_loadProcess(&filterProc, 2, argv, fg, NULL);
 
 }
 
 void filterProc (int argc, char** argv) {
-    if (!argv[0]){ 
+      if (!atoi(argv[0],1)){ 
         while(1);   
     }
     block(0);
