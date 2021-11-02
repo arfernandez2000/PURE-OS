@@ -17,18 +17,23 @@ semaphore s[MAX_PHYLOS]; /* one semaphore per philosopher */
 
 int phylosCount = INITIAL_PHYLOS;
 
-static void think(){
-  return;
+void think(){
+    addText("Pensando en como voy a recursar SO...");
+    substractLine();
+    printWindow();
 }
-static void eat(){
-    return;
+
+void eat(){
+    addText("Comiendo una ensalada de frutas...");
+    substractLine();
+    printWindow();
 }
 
 void philosopher(int i) /* i: philosopher number, from 0 to N−1 */
 {
     while (1) { /* repeat forever */
         think(); /* philosopher is thinking */
-        //take_forks(i); /* acquire two for ks or block */
+        // take_forks(i); /* acquire two for ks or block */
         eat(); /* yum-yum, spaghetti */
         //put_forks(i); /* put both for ks back on table */
     }
