@@ -5,6 +5,7 @@
 #include "libc.h"
 #include "shell.h"
 #include "processCommands.h"
+#include "sem.h"
 
 void phylo( int fg);
 void take_forks(int i);

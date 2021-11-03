@@ -1,5 +1,6 @@
 #include "phylo.h"
 
+
 #define INITIAL_PHYLOS 4 /* number of philosophers */
 #define MAX_PHYLOS 9
 
@@ -7,6 +8,8 @@
 #define HUNGRY 1
 #define EATING 2
 #define GONE 3
+
+#define SEM_SHELL 104
 
 typedef int semaphore; /* semaphores are a special kind of int */
 int state[MAX_PHYLOS]; /* array to keep track of everyone’s state */
@@ -150,10 +153,6 @@ void tablePrint(int argc, char** argv) {
 
 void table(int argc, char **argv)
 {
-    if (atoi(argv[0], 1) == 1)
-    {
-        block(0);
-    }
     if(atoi(argv[0], 1) != 1) {
         while(1);
     }
@@ -202,11 +201,10 @@ void table(int argc, char **argv)
     addText("Finished");
     substractLine();
     printWindow();
-    unblock(0);
+    sPost(SEM_SHELL);
+    sClose(SEM_SHELL);
     kill(tablePrintID);
     killAllPhylos();
-    addText("$> ");
-    printWindow();
     exit();
 }
 void killAllPhylos()
@@ -233,6 +231,10 @@ void phylo(int fg)
 {
     int run = 1;
     char buffer[10];
+    if(fg){
+        if(!sOpen(SEM_SHELL, -1))
+            return;
+    }
     
     initialize();
     char *argv[] = {"table", itoa(fg, buffer, 10)};
@@ -256,4 +258,6 @@ void phylo(int fg)
     sleep(10);
     unblock(tableID);
     unblock(tablePrintID);
+    if(fg)
+        sWait(SEM_SHELL);
 }
