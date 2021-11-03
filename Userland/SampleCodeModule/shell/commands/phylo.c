@@ -76,9 +76,13 @@ void put_forks(int i)
 
 void philosopher(int argc, char **argv)
 {
+    printWindow();
     int i = atoi(argv[2], 1); // esto cambiarlo. HAY QUE RECIBIR POR PARAMETRO EL IDX DEL phylosopher
+    char buffer[10];
     while (1)
     { /* repeat forever */
+        addText(itoa(tablePrintID, buffer, 10));
+        printWindow();
         //think(); /* philosopher is thinking */
         take_forks(i); /* acquire two for ks or block */
         //eat(); /* yum-yum, spaghetti */
@@ -97,7 +101,7 @@ int removePhylo()
     up(&mutex);
     return 1;
 }
-int addPhylo(int fg, int table)
+int addPhylo(int fg)
 {
     if (phylosCount == MAX_PHYLOS)
         return -1;
@@ -105,7 +109,7 @@ int addPhylo(int fg, int table)
     char buffer[10];
     char buffer2[10];
     char buffer3[10];
-    char *argv[] = {"phylo", itoa(fg, buffer, 10), itoa(table, buffer2, 10), itoa(phylosCount, buffer3, 10)};
+    char *argv[] = {"phylo", itoa(fg, buffer, 10), itoa(tablePrintID, buffer2, 10), itoa(phylosCount, buffer3, 10)};
     int pid = sys_loadProcess(&philosopher, 4, argv, fg, 0);
 
     if (pid == -1)
@@ -156,7 +160,7 @@ void table(int argc, char **argv)
         switch (key)
         {
         case 'a':
-            if (addPhylo(atoi(argv[0], 1), syscall(GET_PID,0,0,0,0,0,0)) == -1)
+            if (addPhylo(atoi(argv[0], 1)) == -1)
             {
                 addText("Can\'t add another philosopher. Maximum 9 philosophers.");
                 substractLine();
@@ -225,7 +229,7 @@ void phylo(int fg)
     block(tableID);
     for (int i = 0; i < INITIAL_PHYLOS; i++)
     {
-        addPhylo(fg, tableID);
+        addPhylo(fg);
     }
     sleep(10);
     unblock(tableID);
