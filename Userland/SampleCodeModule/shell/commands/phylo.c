@@ -1,7 +1,7 @@
 #include "phylo.h"
 
-#define INITIAL_PHYLOS 5 /* number of philosophers */
-#define MAX_PHYLOS 62
+#define INITIAL_PHYLOS 4 /* number of philosophers */
+#define MAX_PHYLOS 9
 
 
 #define THINKING 0 
@@ -70,7 +70,7 @@ void put_forks(int i)
 
 void philosopher(int argc, char ** argv)
 {
-    int i = syscall(GET_PID,0,0,0,0,0,0)- 2; // esto cambiarlo. HAY QUE RECIBIR POR PARAMETRO EL IDX DEL phylosopher
+    int i = atoi(argv[2],1); // esto cambiarlo. HAY QUE RECIBIR POR PARAMETRO EL IDX DEL phylosopher
     while (1) { /* repeat forever */
         //think(); /* philosopher is thinking */
         take_forks(i); /* acquire two for ks or block */
@@ -94,8 +94,10 @@ int addPhylo(int fg, int table){
         return -1;
     down(&mutex);
     char buffer[10];
-    char *argv[] = { "phylosopher", itoa(fg, buffer,10), itoa(table,buffer,10)};
-    int pid = sys_loadProcess(&philosopher,3, argv, fg, 0); 
+    char buffer2[10];
+    char buffer3[10];
+    char *argv[] = { "phylo", itoa(fg, buffer,10), itoa(table,buffer2,10), itoa(phylosCount,buffer3,10)};
+    int pid = sys_loadProcess(&philosopher,4, argv, fg, 0); 
     
     if(pid == -1){
         addText("Error Loading Phylosopher");
@@ -135,13 +137,16 @@ void table(int argc, char** argv){
 
     exit();
 }
-
+void killAllPhylos(){
+    for(int i=0; i< phylosCount; i++)
+        kill(phylosPid[i]);
+}
 
 //---------------------------------------------------
 void phylo(int fg){
     int run = 1;
     char buffer[10];
-    char * argv[] = {"Phylosophers table", itoa(fg, buffer,10)};
+    char * argv[] = {"table", itoa(fg, buffer,10)};
     int tableID = sys_loadProcess(&table,2,argv,fg,0);
     if(tableID == -1){
         addText("Error Loading Table");
@@ -162,7 +167,7 @@ void phylo(int fg){
         {
         case 'a':
             if (addPhylo(fg,tableID) == -1){
-                addText("Can\'t add another philosopher. Maximum 8 philosophers.");
+                addText("Can\'t add another philosopher. Maximum 9 philosophers.");
                 substractLine();
                 printWindow();
             }else{
@@ -193,4 +198,8 @@ void phylo(int fg){
    addText("Finished.");
    substractLine();
    printWindow();
+   killAllPhylos();
+   kill(tableID);
+
+
 }
