@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "lib.h"
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -128,6 +129,16 @@ char *strcat(char *strg1, char *strg2)
 
 int isAlpha(char letter) {
     return (letter < 'a' || letter > 'z' || letter < 'A' || letter > 'Z');
+}
+
+void acquire(int *mutex)
+{
+	while (_xchg(mutex, 1) != 0);
+}
+
+void release(int *mutex)
+{
+	_xchg(mutex, 0);
 }
 
 int strcmp(const char * s1, const char * s2) {

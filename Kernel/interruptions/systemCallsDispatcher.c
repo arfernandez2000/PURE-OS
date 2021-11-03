@@ -3,6 +3,7 @@
 #include "memorymanager.h"
 #include "pcb.h"
 #include "time.h"
+#include "semaphores.h"
 
 uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
 	switch (rdi) {
@@ -33,7 +34,18 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
         case 17:
             return ticks_elapsed();
         case 31:
-            return getProcessCount(); 
+            return getProcessCount();
+        case 22:
+            yield();
+            break;
+        case 18:
+            return sOpen(rsi, rdx);
+        case 19:
+            return sPost(rsi);
+        case 20:
+            return sWait(rsi);
+        case 21: 
+            return sClose(rsi);
         default:
             return -1;
 	}

@@ -37,5 +37,7 @@ void saveSampleRSP(uint64_t rsp);
 uint64_t getSampleRSP();
 uint64_t getPID();
 
+void yield();
+static int argsCopy(char **buffer, char **argv, int argc);
 
 #endif

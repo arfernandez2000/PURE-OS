@@ -5,6 +5,7 @@
 #include "shell.h"
 
 void ps();
+void yield();
 int kill(uint64_t);
 int block(uint64_t);
 int unblock(uint64_t);

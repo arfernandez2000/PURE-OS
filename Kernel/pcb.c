@@ -228,7 +228,9 @@ int  killProcess(uint64_t pid) {
 }
 
 int blockProcess(uint64_t pid) {
-    return changeState(pid, BLOCKED);
+    changeState(pid, BLOCKED);
+    if(getPID() == pid)
+        yield();
 }
 
 int unBlockProcess(uint64_t pid) {
@@ -241,4 +243,7 @@ int nice(uint64_t pid, uint64_t priority){
     processQueue[pid]->priority = priority;
     return 1;
 }
-
+void yield(){
+    stopInanition = 0;
+    _callTick();
+}

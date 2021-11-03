@@ -35,3 +35,7 @@ void exit(){
     kill(pid);
     while (1);
 }
+
+void yield(){
+    syscall(YIELD, 0, 0, 0, 0, 0, 0);
+}

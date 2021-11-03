@@ -126,10 +126,15 @@ char* itoa(int value, char* buffer, int base) {
 
 int atoi(char * string, int length) {
     int res = 0, i = 0;
+    int neg = 0;
+    if(string[0] == '-'){
+        neg = 1;
+        i++;
+    }
     while (i < length) {
         res = res * 10 + string[i++] - '0';
     }
-    return res;
+    return neg? -res : res;
 }
 
 int pow(int base, int exponent) {

@@ -21,7 +21,8 @@ int openFile(char *file);
 void catProc(int argc, char** argv);
 void wcProc(int argc, char** argv);
 void filterProc (int argc, char** argv);
-void scanning(char* buffer);
+void scanning(char* buffer, int filterVow);
+int isVow(char c);
 
 void cat (int fg){
     char buffer[10];
@@ -38,17 +39,16 @@ void catProc(int argc, char** argv){
     }
     block(0);
     char buffer[BUFF_SIZE] = {0};
-        scanning(buffer);
+        scanning(buffer, 0);
         substractLine();
         addText(buffer);
         substractLine();
-        addText("$> ");
         printWindow();
     unblock(0);    
     exit();
 }
 
-void scanning(char* buffer){
+void scanning(char* buffer, int filterVow){
     char c;
         int i = 0;
         char* window = getWindow();
@@ -68,7 +68,9 @@ void scanning(char* buffer){
                     printWindow();
                 }
                 else if (c != 0 && c != '\b') { 
-                    buffer[i++] = c;
+                    if(!filterVow || !isVow(c)){
+                        buffer[i++] = c;
+                    }
                     if (offset == ROWS * COLS - 1) {
                         substractLine();
                         offset = getOffset();
@@ -96,7 +98,7 @@ void wcProc(int argc, char** argv){
     }
     block(0);
     char buffer[BUFF_SIZE] = {0};
-        scanning(buffer);
+        scanning(buffer, 0);
         substractLine();
         int lines = 1;
         for (size_t i = 0; buffer[i] != '\0'; i++)
@@ -108,7 +110,6 @@ void wcProc(int argc, char** argv){
         char ret[BUFF_SIZE] = {0};
         addText(itoa(lines, ret, 10));
         substractLine();
-        addText("$> ");
         printWindow();
     unblock(0);
     exit();
@@ -128,21 +129,16 @@ void filterProc (int argc, char** argv) {
     }
     block(0);
     char buffer[BUFF_SIZE] = {0};
-        scanning(buffer);
+        scanning(buffer, 1);
         substractLine();
-        int vocals = 0;
-        for (size_t i = 0; buffer[i] != '\0'; i++)
-        {
-            if(buffer[i] == 'a' || buffer[i] == 'e' || buffer[i] == 'i' || buffer[i] == 'o' || buffer[i] == 'u' ||
-            buffer[i] == 'A' || buffer[i] == 'E' || buffer[i] == 'I' || buffer[i] == 'O' || buffer[i] == 'U'){
-            vocals++;
-        }
-        }
-        char ret[BUFF_SIZE] = {0};
-        addText(itoa(vocals, ret, 10));
+        addText(buffer);
         substractLine();
-        addText("$> ");
         printWindow();
     unblock(0);
     exit();
+}
+
+int isVow(char c){
+    return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+            c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U');
 }
