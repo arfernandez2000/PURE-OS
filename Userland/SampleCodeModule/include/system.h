@@ -11,7 +11,7 @@ typedef enum
     WRITE = 3,
     GETCHAR = 4,
     CLEAR = 5,
-    CREATE_PROC = 6,
+    GET_PPID = 6,
     INFOREG = 7,
     MALLOC = 8,
     FREE = 9,

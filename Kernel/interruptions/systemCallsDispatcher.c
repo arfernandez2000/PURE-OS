@@ -19,6 +19,8 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             return (uint64_t) mallocMM(rsi);
         case 5:
             return freeMM((void *) rsi);
+        case 6:
+            return getPPID();
         case 14:
             return psDisplay();
         case 10:

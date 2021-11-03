@@ -6,12 +6,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "sem.h"
 
 #define BUFF_SIZE 1024
 
 #define NULL (void *)0
 #define SIZE 100
 #define MAX_ARGS 5
+#define SEM_SHELL 103
 
 #define COLS 80
 #define ROWS 25
@@ -26,25 +28,31 @@ int isVow(char c);
 
 void cat (int fg){
     char buffer[10];
+    if(fg){
+        if(!sOpen(SEM_SHELL, -1))
+            return;
+    }
     char* argv[] = {"cat", itoa(fg, buffer,10)};
     int error = sys_loadProcess(&catProc, 2, argv, fg, NULL);
     if(error == -1){
         addText("Error al crear el proceso");
     }
+    if(fg)
+        sWait(SEM_SHELL);
 }
 
 void catProc(int argc, char** argv){
     if (!atoi(argv[0],1)){ 
-        while(1);   
+        while (1);           
     }
-    block(0);
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer, 0);
         substractLine();
         addText(buffer);
         substractLine();
         printWindow();
-    unblock(0);    
+    sPost(SEM_SHELL);
+    sClose(SEM_SHELL);    
     exit();
 }
 
@@ -88,15 +96,20 @@ void scanning(char* buffer, int filterVow){
 
 void wc (int fg) {
     char buffer[10];
+    if(fg){
+        if(!sOpen(SEM_SHELL, -1))
+            return;
+    }
     char* argv[] = {"wc", itoa(fg, buffer,10)};
     sys_loadProcess(&wcProc, 2, argv, fg, NULL);
+    if(fg)
+        sWait(SEM_SHELL);
 }
 
 void wcProc(int argc, char** argv){
     if (!atoi(argv[0],1)){ 
        while(1);   
     }
-    block(0);
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer, 0);
         substractLine();
@@ -111,15 +124,22 @@ void wcProc(int argc, char** argv){
         addText(itoa(lines, ret, 10));
         substractLine();
         printWindow();
-    unblock(0);
+    sPost(SEM_SHELL);
+    sClose(SEM_SHELL);
     exit();
   
 }
 
 void filter(int fg){
     char buffer[10];
+    if(fg){
+        if(!sOpen(SEM_SHELL, -1))
+            return;
+    }
     char* argv[] = {"filter", itoa(fg, buffer,10)};
     sys_loadProcess(&filterProc, 2, argv, fg, NULL);
+    if(fg)
+        sWait(SEM_SHELL);
 
 }
 
@@ -127,14 +147,14 @@ void filterProc (int argc, char** argv) {
       if (!atoi(argv[0],1)){ 
         while(1);   
     }
-    block(0);
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer, 1);
         substractLine();
         addText(buffer);
         substractLine();
         printWindow();
-    unblock(0);
+    sPost(SEM_SHELL);
+    sClose(SEM_SHELL);
     exit();
 }
 

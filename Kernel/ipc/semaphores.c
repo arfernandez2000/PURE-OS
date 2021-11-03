@@ -8,7 +8,7 @@
 typedef struct Semaphore
 {
     uint32_t id;
-    uint32_t value;
+    int value;
     uint16_t listeners;
     uint32_t blockedPIDs[MAX_BLOCKED_PIDS];
     uint16_t blockedPIDsSize;
@@ -22,7 +22,7 @@ Semaphore *semaphores = NULL;
 static void dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize);
 static Semaphore *findSem(uint32_t id);
 
-uint32_t sOpen(uint32_t id, uint32_t initValue)
+uint32_t sOpen(uint32_t id, int initValue)
 {
 
     Semaphore *sem = findSem(id);
