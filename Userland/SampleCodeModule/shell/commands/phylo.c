@@ -12,6 +12,7 @@
 typedef int semaphore; /* semaphores are a special kind of int */
 int state[MAX_PHYLOS]; /* array to keep track of everyone’s state */
 semaphore mutex = 1; /* mutual exclusion for critical regions */
+semaphore mutexTable = 1;
 semaphore s[MAX_PHYLOS]; /* one semaphore per philosopher */
 int phylosPid[MAX_PHYLOS];
 
@@ -20,11 +21,19 @@ int phylosCount = 0;
 #define RIGHT(i) ((i) + 1) % (phylosCount)                         /* number of i’s right neighbor */
 #define LEFT(i) ((i) + phylosCount - 1) % (phylosCount) /* number of i’s left neighbor */
 
+void sleep(unsigned int seconds)
+{
+      unsigned int limitTime = seconds + ticksElapsed();
+      while (ticksElapsed() < limitTime)
+            ;
+}
 void think(){
+    sleep(10);
     return;
 }
 
 void eat(){
+    sleep(10);
     return;
 }
 static void up(int * sem){
@@ -61,7 +70,7 @@ void put_forks(int i)
 
 void philosopher(int argc, char ** argv)
 {
-    int i = syscall(GET_PID,0,0,0,0,0,0);
+    int i = syscall(GET_PID,0,0,0,0,0,0)- 2; // esto cambiarlo. HAY QUE RECIBIR POR PARAMETRO EL IDX DEL phylosopher
     while (1) { /* repeat forever */
         //think(); /* philosopher is thinking */
         take_forks(i); /* acquire two for ks or block */
@@ -109,6 +118,8 @@ void table(int argc, char** argv){
     }
     int run = 1;
     while(run){
+        sleep(10);
+        down(&mutexTable);
         for(int i=0; i< phylosCount; i++){
             if(state[i] == EATING){
                 addText(" E ");
@@ -119,7 +130,7 @@ void table(int argc, char** argv){
         }
         substractLine();
         printWindow();
-
+        up(&mutexTable);
     }
 
     exit();
@@ -142,6 +153,7 @@ void phylo(int fg){
    for(int i=0; i< INITIAL_PHYLOS; i++){
        addPhylo(fg,tableID);
    }
+   sleep(10);
    unblock(tableID);
 
    while(run){
@@ -177,9 +189,6 @@ void phylo(int fg){
         default:
             break;
         }
-
-
-
    }
    addText("Finished.");
    substractLine();

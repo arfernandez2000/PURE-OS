@@ -129,3 +129,11 @@ char *strcat(char *strg1, char *strg2)
 int isAlpha(char letter) {
     return (letter < 'a' || letter > 'z' || letter < 'A' || letter > 'Z');
 }
+
+int strcmp(const char * s1, const char * s2) {
+    while(*s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+    }
+    return *s1 - *s2;
+}

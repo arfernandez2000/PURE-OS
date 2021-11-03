@@ -89,7 +89,7 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
     newProcess->pipes[0] = fd[0];
     newProcess->pipes[1] = fd[1];
-    if(newProcess->name == "philosopher"){
+    if(strcmp(name,"philosopher")){
           newProcess->ppid = argv[1];
     }else{
          newProcess->ppid = 0;
