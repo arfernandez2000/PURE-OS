@@ -131,6 +131,7 @@ void tablePrint(int argc, char** argv) {
     while (1) {
         sleep(10);
         down(&mutexTable);
+        printWindow();
         for (int i = 0; i < phylosCount; i++)
         {
             if (state[i] == EATING)
@@ -153,8 +154,7 @@ void table(int argc, char **argv)
     if (atoi(argv[0], 1) == 1)
     {
         block(0);
-    }
-    if(atoi(argv[0], 1) != 1) {
+    }else{
         while(1);
     }
     int run = 1;
@@ -214,17 +214,16 @@ void killAllPhylos()
     down(&mutex);
     for (int i = 0; i < phylosCount; i++){
          kill(phylosPid[i]);
-         phylosPid[i] = 0;
-         s[i]= 0;
-         state[i] = GONE;
     }
     phylosCount = 0;
     up(&mutex);
 }
 void initialize(){
-    mutex =1;
+    down(&mutex);
     mutexTable = 1;
     phylosCount = 0;
+    tablePrintID = 0;
+    up(&mutex);
 }
 
 //---------------------------------------------------
@@ -253,7 +252,9 @@ void phylo(int fg)
     {
         addPhylo(fg);
     }
-    sleep(10);
+    addText("Welcome to the philosopher's problem");
+    printWindow();
+    substractLine();
     unblock(tableID);
     unblock(tablePrintID);
 }

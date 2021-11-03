@@ -90,7 +90,7 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->pipes[1] = fd[1];
 
     if(strcmp(name,"phylo") == 0){
-          newProcess->ppid = atoi(newProcess->argv[1],1);
+          newProcess->ppid = atoi(newProcess->argv[1],Stringlen(newProcess->argv[1]));
     }else{
          newProcess->ppid = 0;
     }
