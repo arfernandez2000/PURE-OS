@@ -154,10 +154,14 @@ void table(int argc, char **argv)
     {
         block(0);
     }
+    if(atoi(argv[0], 1) != 1) {
+        while(1);
+    }
     int run = 1;
     while (run)
     {
         char key = getChar();
+        
         switch (key)
         {
         case 'a':
@@ -222,7 +226,9 @@ void initialize(){
     mutexTable = 1;
     phylosCount = 0;
 }
+
 //---------------------------------------------------
+
 void phylo(int fg)
 {
     int run = 1;
