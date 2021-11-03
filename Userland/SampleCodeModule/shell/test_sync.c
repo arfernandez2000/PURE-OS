@@ -6,7 +6,7 @@
 #include "libc.h"
 #include "processCommands.h" 
 
-#define TOTAL_PAIR_PROCESSES 1
+#define TOTAL_PAIR_PROCESSES 2
 #define SEM_ID 101
 #define NULL (void*) 0
 
@@ -17,10 +17,6 @@ void slowInc(int64_t *p, int64_t inc){
   aux += inc;
   yield();
   *p = aux;
-  char* buff;
-  addText(itoa(global, buff, 10));
-  substractLine();
-  printWindow();
 }
 
 void inc(int argc, char *argv[]){
@@ -41,8 +37,6 @@ void inc(int argc, char *argv[]){
     if (sem) sPost(SEM_ID);
   }
 
-  addText("estoy cerrando el semaforo\n");
-
   if (sem) sClose(SEM_ID);
   
   addText("Final value: ");
@@ -50,6 +44,7 @@ void inc(int argc, char *argv[]){
   addText(itoa(global, buff, 10));
   substractLine();
   printWindow();
+  exit();
 }
 
 void test_sync(){
@@ -62,17 +57,17 @@ void test_sync(){
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     char **argv1 = sys_malloc(4*sizeof(char));
-    
     argv1[0] = "inc";
     argv1[1] = "1";
     argv1[2] = "1";
-    argv1[3] = "2";
+    argv1[3] = "100";
     sys_loadProcess(&inc, 4, argv1, 0, NULL);
+    
     char **argv2 = sys_malloc(4*sizeof(char));
     argv2[0] = "inc";
     argv2[1] = "1";
     argv2[2] = "-1";
-    argv2[3] = "2";
+    argv2[3] = "100";
     sys_loadProcess(&inc, 4, argv2, 0, NULL);
   }
 }
@@ -87,9 +82,9 @@ void test_no_sync(){
   
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    char *argv1[4] = {"inc", "1", "1", "2"};
+    char *argv1[4] = {"inc", "1", "1", "100"};
     sys_loadProcess(&inc, 4, argv1, 0, NULL);
-    char *argv2[4] = {"inc", "0", "-1", "2"};
+    char *argv2[4] = {"inc", "0", "-1", "100"};
     sys_loadProcess(&inc, 4, argv2, 0, NULL);
   }
 }

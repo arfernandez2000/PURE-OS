@@ -204,6 +204,8 @@ void killProcess(uint64_t pid) {
 
 void blockProcess(uint64_t pid) {
     changeState(pid, BLOCKED);
+    if(getPID() == pid)
+        yield();
 }
 
 void unBlockProcess(uint64_t pid) {

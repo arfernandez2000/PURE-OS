@@ -36,7 +36,6 @@ void catProc(int argc, char** argv){
         substractLine();
         addText(buffer);
         substractLine();
-        addText("$> ");
         printWindow();
     unblock(0);
     exit();
@@ -102,7 +101,6 @@ void wcProc(int argc, char** argv){
         char ret[BUFF_SIZE] = {0};
         addText(itoa(lines, ret, 10));
         substractLine();
-        addText("$> ");
         printWindow();
     unblock(0);
     exit();
@@ -121,7 +119,6 @@ void filterProc (int argc, char** argv) {
         substractLine();
         addText(buffer);
         substractLine();
-        addText("$> ");
         printWindow();
     unblock(0);
     exit();
