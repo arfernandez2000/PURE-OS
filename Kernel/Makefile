@@ -42,5 +42,6 @@ $(LOADEROBJECT):
 
 clean:
 	rm -rf $(ALL_OBJECTS) *.bin
+	rm -rf $(ALL_OBJECTS) *.elf
 
 .PHONY: all clean

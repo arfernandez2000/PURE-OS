@@ -24,20 +24,27 @@ void filterProc (int argc, char** argv);
 void scanning(char* buffer, int filterVow);
 int isVow(char c);
 
-void cat (){
-    char* argv[] = {"cat"};
-    sys_loadProcess(&catProc, 1, argv, 0, NULL);
+void cat (int fg){
+    char buffer[10];
+    char* argv[] = {"cat", itoa(fg, buffer,10)};
+    int error = sys_loadProcess(&catProc, 2, argv, fg, NULL);
+    if(error == -1){
+        addText("Error al crear el proceso");
+    }
 }
 
 void catProc(int argc, char** argv){
-    printWindow();
+    if (!atoi(argv[0],1)){ 
+        while(1);   
+    }
+    block(0);
     char buffer[BUFF_SIZE] = {0};
         scanning(buffer, 0);
         substractLine();
         addText(buffer);
         substractLine();
         printWindow();
-    unblock(0);
+    unblock(0);    
     exit();
 }
 
@@ -79,16 +86,18 @@ void scanning(char* buffer, int filterVow){
         window[offset] = ' ';
 }
 
-void wc () {
-    char* argv[] = {"wc"};
-    sys_loadProcess(&wcProc, 1, argv, 0, NULL);
+void wc (int fg) {
+    char buffer[10];
+    char* argv[] = {"wc", itoa(fg, buffer,10)};
+    sys_loadProcess(&wcProc, 2, argv, fg, NULL);
 }
 
 void wcProc(int argc, char** argv){
-    printWindow();
-    substractLine();
-    char buffer[BUFF_SIZE] = {0};
+    if (!atoi(argv[0],1)){ 
+       while(1);   
+    }
     block(0);
+    char buffer[BUFF_SIZE] = {0};
         scanning(buffer, 0);
         substractLine();
         int lines = 1;
@@ -104,17 +113,22 @@ void wcProc(int argc, char** argv){
         printWindow();
     unblock(0);
     exit();
+  
 }
 
-void filter(){
-    char* argv[] = {"filter"};
-    sys_loadProcess(&filterProc, 1, argv, 0, NULL);
+void filter(int fg){
+    char buffer[10];
+    char* argv[] = {"filter", itoa(fg, buffer,10)};
+    sys_loadProcess(&filterProc, 2, argv, fg, NULL);
+
 }
 
 void filterProc (int argc, char** argv) {
-    printWindow();
-    char buffer[BUFF_SIZE] = {0};
+      if (!atoi(argv[0],1)){ 
+        while(1);   
+    }
     block(0);
+    char buffer[BUFF_SIZE] = {0};
         scanning(buffer, 1);
         substractLine();
         addText(buffer);

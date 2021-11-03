@@ -40,7 +40,7 @@ typedef enum
 } syscallID;
 
 // void sys_switchContext();
-void sys_loadProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2]);
+int sys_loadProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2]);
 uint64_t syscall(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r10, uint64_t r8, uint64_t r9);
 int sys_time(char);
 void sys_write(int, char *, int);

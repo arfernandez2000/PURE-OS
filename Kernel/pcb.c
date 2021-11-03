@@ -28,36 +28,49 @@ uint64_t scheduler(uint64_t lastRSP){
     }
     processesStack[currentProcess] = lastRSP;
    
-
+    int phylo = 0;
     do {
-        
+        phylo = 0;
         if(processQueue[currentProcess]->state!= READY){
             stopInanition = 0;
         }
 
         if(stopInanition == 0){
             currentProcess = (++currentProcess) % activeProcesses;
+            if(processQueue[currentProcess]->ppid != 0 && processQueue[processQueue[currentProcess]->ppid]->state !=READY){
+                phylo = 1; //awful fix but we are running out of time . Works temporarily
+                continue;
+            }
+         
             if(processQueue[currentProcess]->state == READY)
                 stopInanition = processQueue[currentProcess]->priority;
            
         }
         if(stopInanition > 0 && processQueue[currentProcess]->state == READY){
             stopInanition--;
-         }
-    }while(processQueue[currentProcess]->state != READY);
+        }
+       
+
+    }while(phylo || processQueue[currentProcess]->state != READY);
     
     return processesStack[currentProcess]; 
 }
 
-void addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
-
+int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
-    currentPCB = processQueue[currentProcess];
+    return processID++;
+}
+static int argsCopy(char **buffer, char **argv, int argc)
+{
+      for (int i = 0; i < argc; i++)
+      {
+            buffer[i] = mallocMM(sizeof(char) * (Stringlen(argv[i]) + 1));
+            strcpy(argv[i], buffer[i]);
+      }
+      return 1;
 }
 
-
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
-    
     PCB* newProcess = mallocMM(sizeof(PCB));
     if(newProcess == NULL){
         return NULL; 
@@ -75,8 +88,14 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
     newProcess->pipes[0] = fd[0];
     newProcess->pipes[1] = fd[1];
-    newProcess->ppid = 0;
-    newProcess->pid = processID++;
+
+    if(strcmp(name,"phylo") == 0){
+          newProcess->ppid = atoi(newProcess->argv[1],1);
+    }else{
+         newProcess->ppid = 0;
+    }
+
+    newProcess->pid = processID;
     newProcess->state = READY;
     newProcess->priority = 1;
 
@@ -86,7 +105,6 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcessStack(entryPoint, argc, argvCopy, newProcess);
     return newProcess;
 }
-
 
 void newProcessStack(void (*fn), int argc, char** argv, PCB* newProcess) {
 
@@ -100,8 +118,6 @@ void newProcessStack(void (*fn), int argc, char** argv, PCB* newProcess) {
     newProcess->rbp =  newStack + STACK_SIZE;
     newProcess->rsp = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, argv);
     processesStack[activeProcesses++] =  newProcess->rsp;
-    
-    
 }
 
 uint64_t preserveStack(uint64_t rsp) {
@@ -122,30 +138,17 @@ uint64_t getPID(){
     return processQueue[currentProcess]->pid;
 }
 
-void printProcess(PCB *process)
-{
-        //TODO> numbers to string ;
-      if (process != NULL){
-            char * pid = process->pid;
-            char * foreground = process->foreground;
-            char * rsp = process->rsp;
-            char * state = process->state;
-            char * name = process->name;
-      }
-              
-}
-
-//TODO Imprimir name y rbp
 char** psDisplay() {
     char** processString = mallocMM(1000);
+    for(int i=0; i< activeProcesses; i++){
+        processString[i] = " ";
+    }
+    
 
-  
-    //strcpy(processQueue[0]->name ,processString[0])
     for (int i = 0; i < activeProcesses; i++) {
         processString[i] =  mallocMM(1024);
-        char* auxName;
+        char* auxName = NULL;
         char buff[10]={0};
-        strcpy(processQueue[i]->name, auxName);
         int j;
         int aux;
         for (j = 0; processQueue[i]->name[j] != 0; j++) {
@@ -167,7 +170,6 @@ char** psDisplay() {
         strcat(processString[i], itoa(processQueue[i]->foreground, buff, 10,10));
         strcat(processString[i],"       ");
         strcat(processString[i],"0x");
-        //TODO: ARREGLAR ESTO
         strcat(processString[i], itoa((uint64_t)processQueue[i]->rbp, buff, 10,10));
         strcat(processString[i],"   ");
         strcat(processString[i],"0x");
@@ -188,43 +190,60 @@ void saveSampleRSP(uint64_t rsp) {
 uint64_t getSampleRSP() {
     return sampleRSP;
 }
-static void changeState(uint64_t pid, int state)
+static int changeState(uint64_t pid, int state)
 {
-    if(processQueue[pid]->state != KILLED)
-        processQueue[pid]->state = state;
+    if(activeProcesses > pid){
+        if(processQueue[pid]->state !=KILLED){
+                processQueue[pid]->state = state;
+                return 1;
+        }
+        else if(processQueue[pid]->state == KILLED && state == KILLED){
+            return 1;
+        }
+    }
+    return -1;
+    
+        
 }
 void cleanProcesses() {
     activeProcesses = 0;
     currentProcess = -1;
 }
 
-void killProcess(uint64_t pid) {
-    changeState(pid,KILLED);
+int  killProcess(uint64_t pid) {
+    //int error = freeMM(processQueue[pid]->name);
+    // if(error == -1){
+    //     return -2;
+    // }
+    
+    int res = changeState(pid,KILLED);
+    if(res != -1){
+        //int error = freeMM(processQueue[pid]->name);
+        // if(error == -1){
+        //     return -2;
+        // }
+    }
+        
+    return res;
 }
 
-void blockProcess(uint64_t pid) {
+int blockProcess(uint64_t pid) {
     changeState(pid, BLOCKED);
     if(getPID() == pid)
         yield();
 }
 
-void unBlockProcess(uint64_t pid) {
-    changeState(pid,READY);
+int unBlockProcess(uint64_t pid) {
+    return changeState(pid,READY);
 }
-void nice(uint64_t pid, uint64_t priority){
+int nice(uint64_t pid, uint64_t priority){
+    if(activeProcesses < pid || priority <= 0){
+        return -1;
+    }
     processQueue[pid]->priority = priority;
+    return 1;
 }
 void yield(){
     stopInanition = 0;
     _callTick();
-}
-
-static int argsCopy(char **buffer, char **argv, int argc)
-{
-      for (int i = 0; i < argc; i++)
-      {
-            buffer[i] = mallocMM(sizeof(char) * (Stringlen(argv[i]) + 1));
-            strcpy(argv[i], buffer[i]);
-      }
-      return 1;
 }

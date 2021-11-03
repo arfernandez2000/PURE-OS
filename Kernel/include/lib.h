@@ -13,10 +13,12 @@ char * itoa(int value, char * buffer, int base, int length);
 void strcpy(char *str1, char *str2);
 int Stringlen(const char * s);
 char *strcat(char *strg1, char *strg2);
+int strcmp(const char * s1, const char * s2);
 
 void acquire(int *mutex);
 void release(int *mutex);
 int _xchg(int *mutex, int value);
+void _callTick();
 
 
 #endif

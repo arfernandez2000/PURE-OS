@@ -1,9 +1,10 @@
 #ifndef MEMORYMANAGER_H
 #define MEMORYMANAGER_H
 
-char * mallocMM(unsigned int qnbytes);
+// void * mallocMM(unsigned nbytes);
+// void memInit(char *memBase, unsigned long memSize);
+// int freeMM(void *ap);
 void memInit(void * startingPoint);
-//void memInit(char *memBase, unsigned long memSize);
-void freeMM(void *ap);
-
+char * mallocMM(unsigned int bytes);
+int freeMM(void *freeMem);
 #endif

@@ -1,7 +1,14 @@
 #include "test_mm.h"
+#include "system.h"
+#include <string.h>
+
+#include "shell.h"
+#include "libc.h"
+
 
 #define MAX_BLOCKS 128
 #define MAX_MEMORY 1024 //Should be around 80% of memory managed by the MM
+#define LOOPS 100000
 
 typedef struct MM_rq{
   void *address;
@@ -13,14 +20,21 @@ void test_mm(){
   uint8_t rq;
   uint32_t total;
 
-  while (1){
+  int contador = LOOPS;
+
+   addText("Testing...");
+   substractLine();
+   printWindow();
+
+
+
+  while (contador){
     rq = 0;
     total = 0;
-
     // Request as many blocks as we can
     while(rq < MAX_BLOCKS && total < MAX_MEMORY){
       mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
-      mm_rqs[rq].address = malloc(mm_rqs[rq].size); // TODO: Port this call as required
+      mm_rqs[rq].address = sys_malloc(mm_rqs[rq].size); // TODO: Port this call as required
 //TODO: check if NULL
       total += mm_rqs[rq].size;
       rq++;
@@ -36,11 +50,22 @@ void test_mm(){
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
         if(!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
-          printf("ERROR!\n"); // TODO: Port this call as required
+          printString("Error!");
+
 
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
-        free(mm_rqs[i].address);  // TODO: Port this call as required
+        sys_free(mm_rqs[i].address);  // TODO: Port this call as required
+    contador--;
+
+    if(LOOPS >= 100000 && contador == LOOPS/2 ){
+      addText("Yeah, it takes a while ;)");
+      substractLine();
+      printWindow();
+    }
   } 
+  addText("Memory manager test OK");
+  substractLine();
+  printWindow();
 }

@@ -12,8 +12,10 @@
 #include "test_mm.h"
 #include "processCommands.h"
 #include "loop.h"
+#include "test_processes.h"
+#include "test_prio.h"
 #include "test_sync.h"
-
+#include "phylo.h"
 
 #define NULL (void *)0
 #define SIZE 100
@@ -23,17 +25,17 @@
 #define ROWS 25
 
 const int len_void = 13;
-const int len_files = 3;
+const int len_files = 10;
 const int len_proc = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","testMM","ps","loop", "test_sync", "test_no_sync"};
-void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, loop, test_sync, test_no_sync};
-char *commands_files[] = {"cat", "wc", "filter"};
-void (*func_files []) () = {cat, wc, filter};
-char *commands_proc[] = {"kill", "block", "unblock","nice"};
-void (*func_proc []) (uint64_t pid) = {kill, block, unblock};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba","test_mm","ps","test_priority","test_processes","test_sync", "test_no_sync"};
+void (*func []) () = {help, time, inforeg, excdiv, excop, clear,  prueba, test_mm, ps, test_prio, test_processes,test_sync, test_no_sync};
+char *commands_files[] = {"cat", "cat&", "wc", "wc&", "filter", "filter&","loop", "loop&","phylo","phylo&"};
+void (*func_files []) () = {cat, wc, filter,loop, phylo};
+char *commands_proc[] = {"kill", "block", "unblock"};
+int (*func_proc []) (uint64_t pid) = {kill, block, unblock};
 const int len_proc_2 = 1;
 char *commands_proc_2[] = {"nice"};
-void (*func_proc_2 [])(uint64_t pid, int priority) = {nice};
+int (*func_proc_2 [])(uint64_t pid, uint64_t priority) = {nice};
 
 char window[ROWS * COLS + 1] = {[0 ... ROWS * COLS - 1] = ' ', 0};
 int offset = (ROWS - 1) * COLS;
@@ -45,7 +47,10 @@ void waitMF(int argc, char** argv){
 }
 void prueba(){
     char * argv[] = {"prueba"};
-    sys_loadProcess(&waitMF, 1, argv , 0, 0);
+    int error = sys_loadProcess(&waitMF, 1, argv , 0, 0);
+    if(error == -1){
+        addText("Error al crear el proceso");
+    }
     printWindow();
 }
 void substractLine() {
@@ -130,13 +135,16 @@ void shell(int argc, char** argv) {
 
         tokens[1] = strtokLib(tokens[0], ' ');
         tokens[2] = strtokLib(tokens[1], '\n');
-        
         for (int i = 0; i < len_files; i++) {  
             if (!strcmp(tokens[0], commands_files[i])) {
-                (*func_files[i])();
+                if (i % 2 == 0) {
+                    (*func_files[i/2])(1);
+                }
+                else{
+                    (*func_files[i/2])(0);
+                }
                 file_comm = 0;
                 comm_flag = 1;
-                block(0);
             }
         }
         

@@ -1,30 +1,34 @@
-#include <stdio.h>
-#include "test_util.h"
+#include "test_processes.h"
 
 //TO BE INCLUDED
-void endless_loop(){
+void endless_loop_proc(){
   while(1);
 }
 
-uint32_t my_create_process(char * name){
-  return 0;
+uint32_t my_create_process_proc(char * name){
+  char * argv[] = {name};
+  return sys_loadProcess(&endless_loop_proc,1, argv,0,0);
+  
 }
 
-uint32_t my_kill(uint32_t pid){
-  return 0;
+uint32_t my_kill_proc(uint32_t pid){
+  return kill(pid);
+  
 }
 
-uint32_t my_block(uint32_t pid){
-  return 0;
+uint32_t my_block_proc(uint32_t pid){
+  return block(pid);
 }
 
-uint32_t my_unblock(uint32_t pid){
-  return 0;
+uint32_t my_unblock_proc(uint32_t pid){
+  return unblock(pid);
+
 }
 
-#define MAX_PROCESSES 10 //Should be around 80% of the the processes handled by the kernel
+#define PROCESSES 51//Should be around 80% of the the processes handled by the kernel  | 80% of 64 is aprox 51
+#define MAX_PROCESSES 64 //only run once per shell to add Maximum amount of processes.
 
-enum State {ERROR, RUNNING, BLOCKED, KILLED};
+enum State { RUNNING, BLOCKED, KILLED};
 
 typedef struct P_rq{
   uint32_t pid;
@@ -36,66 +40,86 @@ void test_processes(){
   uint8_t rq;
   uint8_t alive = 0;
   uint8_t action;
+  int error;
+  int initialProcessCount =  syscall(PROCESS_COUNT, 0,0,0,0,0,0);
+  int maxProcesses = PROCESSES + initialProcessCount;
 
-  while (1){
+  if(maxProcesses > MAX_PROCESSES){
+    substractLine();
+    addText("You can only execute this test once. Restart Qemu");
+    substractLine();
+    printWindow();
+    return;
+  }
 
     // Create MAX_PROCESSES processes
-    for(rq = 0; rq < MAX_PROCESSES; rq++){
-      p_rqs[rq].pid = my_create_process("endless_loop");  // TODO: Port this call as required
-
-      if (p_rqs[rq].pid == -1){                           // TODO: Port this as required
-        printf("Error creating process\n");               // TODO: Port this as required
-        return;
-      }else{
+    for(rq = initialProcessCount; rq < maxProcesses; rq++){
+      error = my_create_process_proc("proc_loop");
+      if(error == -1 ){
+        addText("Error creating process");
+        substractLine();
+        printWindow();            
+      }
+      else{
+        p_rqs[rq].pid = rq;
         p_rqs[rq].state = RUNNING;
         alive++;
       }
+      
     }
 
-    // Randomly kills, blocks or unblocks processes until every one has been killed
+    // Randomly kills, blocks or unblocks processes until every one has been killed exclude shell for demonstration purposes
     while (alive > 0){
 
-      for(rq = 0; rq < MAX_PROCESSES; rq++){
+      for(rq = initialProcessCount; rq < maxProcesses; rq++){
         action = GetUniform(2) % 2; 
 
         switch(action){
           case 0:
             if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED){
-              if (my_kill(p_rqs[rq].pid) == -1){          // TODO: Port this as required
-                printf("Error killing process\n");        // TODO: Port this as required
-                return;
+              if (my_kill_proc(p_rqs[rq].pid) == -1){          // TODO: Port this as required
+                addText("Error killing process");  
+                substractLine();
+                printWindow();         // TODO: Port this as required
+              }else{
+                   p_rqs[rq].state = KILLED; 
+                  alive--;
               }
-              p_rqs[rq].state = KILLED; 
-              alive--;
+             
             }
             break;
 
           case 1:
             if (p_rqs[rq].state == RUNNING){
-              if(my_block(p_rqs[rq].pid) == -1){          // TODO: Port this as required
-                printf("Error blocking process\n");       // TODO: Port this as required
-                return;
+              if(my_block_proc(p_rqs[rq].pid) == -1){          
+                addText("Error blocking process");
+                substractLine();
+                printWindow();          
+              }else{
+                p_rqs[rq].state = BLOCKED; 
               }
-              p_rqs[rq].state = BLOCKED; 
+             
             }
             break;
         }
       }
 
-      // Randomly unblocks processes
-      for(rq = 0; rq < MAX_PROCESSES; rq++)
+      // Randomly unblocks processes exclude shell for demonstration purposes
+      for(rq = initialProcessCount; rq < maxProcesses; rq++)
         if (p_rqs[rq].state == BLOCKED && GetUniform(2) % 2){
-          if(my_unblock(p_rqs[rq].pid) == -1){            // TODO: Port this as required
-            printf("Error unblocking process\n");         // TODO: Port this as required
-            return;
+          if(my_unblock_proc(p_rqs[rq].pid) == -1){            
+            addText("Error unblocking process");  
+            substractLine();
+            printWindow();         
           }
-          p_rqs[rq].state = RUNNING; 
+          else{
+            p_rqs[rq].state = RUNNING; 
+          }
         }
     } 
-  }
+ 
+  addText("ProcessTest OK");
+  substractLine();
+  printWindow();
 }
 
-int main(){
-  test_processes();
-  return 0;
-}

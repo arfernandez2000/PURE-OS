@@ -17,11 +17,14 @@ static char * info[] =
     "sem: Prints list of semaphores with each of their properties",
     "cat: Prints stdin",
     "wc: Prints amount of lines of stdin",
-    "filter: Prints amount of vowels from stdin",
+    "filter: Filters vowels from input string",
     "pipe: Prints list of pipes with each of their properties",
     "phylo: Starts diner philosophers dilemma",
-    "testMM: Tests the selected memory manager", };
-static const int len = 19;
+    "test_mm: Tests the selected memory manager",
+    "test_priority: Tests processes' priority",
+    "test_processes: Test block, unblock and kill processes. You'll only be able to run it once",
+    "test_sync: Test semaphores and process synchronization"};
+static const int len = 21;
 
 void help() {
     for (int i = 0; i < len; i++) {
