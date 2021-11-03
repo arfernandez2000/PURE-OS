@@ -28,21 +28,20 @@ uint64_t scheduler(uint64_t lastRSP){
     }
     processesStack[currentProcess] = lastRSP;
    
-//shell table phylo phylo loop 
+    int phylo = 0;
     do {
-        int processParentID = processQueue[currentProcess]->ppid;
-        if( processParentID!=0 && processQueue[processParentID]->state == BLOCKED){
-            currentProcess = (++currentProcess) % activeProcesses;
-            if(processQueue[currentProcess]->state == READY)
-                    stopInanition = processQueue[currentProcess]->priority;
-            continue;
-        }
+        phylo = 0;
         if(processQueue[currentProcess]->state!= READY){
             stopInanition = 0;
         }
 
         if(stopInanition == 0){
             currentProcess = (++currentProcess) % activeProcesses;
+            if(processQueue[currentProcess]->ppid != 0 && processQueue[processQueue[currentProcess]->ppid]->state !=READY){
+                phylo = 1; //awful fix but we are running out of time . Works temporarily
+                continue;
+            }
+         
             if(processQueue[currentProcess]->state == READY)
                 stopInanition = processQueue[currentProcess]->priority;
            
@@ -52,7 +51,7 @@ uint64_t scheduler(uint64_t lastRSP){
         }
        
 
-    }while(processQueue[currentProcess]->state != READY);
+    }while(phylo || processQueue[currentProcess]->state != READY);
     
     return processesStack[currentProcess]; 
 }
@@ -91,7 +90,7 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->pipes[1] = fd[1];
 
     if(strcmp(name,"phylo") == 0){
-          newProcess->ppid = atoi(argv[2],1);
+          newProcess->ppid = atoi(newProcess->argv[1],1);
     }else{
          newProcess->ppid = 0;
     }

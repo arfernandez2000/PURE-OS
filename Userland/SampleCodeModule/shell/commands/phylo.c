@@ -76,13 +76,11 @@ void put_forks(int i)
 
 void philosopher(int argc, char **argv)
 {
-    printWindow();
     int i = atoi(argv[2], 1); // esto cambiarlo. HAY QUE RECIBIR POR PARAMETRO EL IDX DEL phylosopher
     char buffer[10];
     while (1)
-    { /* repeat forever */
-        addText(itoa(tablePrintID, buffer, 10));
-        printWindow();
+    { 
+        /* repeat forever */
         //think(); /* philosopher is thinking */
         take_forks(i); /* acquire two for ks or block */
         //eat(); /* yum-yum, spaghetti */
@@ -227,10 +225,13 @@ void phylo(int fg)
         return;
     }
     block(tableID);
+    block(tablePrintID);
+   
     for (int i = 0; i < INITIAL_PHYLOS; i++)
     {
         addPhylo(fg);
     }
     sleep(10);
     unblock(tableID);
+    unblock(tablePrintID);
 }
