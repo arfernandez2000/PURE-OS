@@ -6,15 +6,16 @@
 #define THINKING 0
 #define HUNGRY 1
 #define EATING 2
+#define GONE 3
 
 typedef int semaphore; /* semaphores are a special kind of int */
 int state[MAX_PHYLOS]; /* array to keep track of everyone’s state */
-semaphore mutex = 1;   /* mutual exclusion for critical regions */
-semaphore mutexTable = 1;
+semaphore mutex;   /* mutual exclusion for critical regions */
+semaphore mutexTable;
 semaphore s[MAX_PHYLOS]; /* one semaphore per philosopher */
 int phylosPid[MAX_PHYLOS];
 
-int phylosCount = 0;
+int phylosCount;
 
 #define RIGHT(i) ((i) + 1) % (phylosCount)              /* number of i’s right neighbor */
 #define LEFT(i) ((i) + phylosCount - 1) % (phylosCount) /* number of i’s left neighbor */
@@ -94,8 +95,10 @@ int removePhylo()
     {
         return -1;
     }
+  
     phylosCount--;
     kill(phylosPid[phylosCount]);
+    state[phylosCount] = GONE;
     up(&mutex);
     return 1;
 }
@@ -185,7 +188,7 @@ void table(int argc, char **argv)
                 printWindow();
             }
             break;
-        case 'q':
+        case '\t':
             run = 0;
             break;
         default:
@@ -204,15 +207,28 @@ void table(int argc, char **argv)
 }
 void killAllPhylos()
 {
-    for (int i = 0; i < phylosCount; i++)
-        kill(phylosPid[i]);
+    down(&mutex);
+    for (int i = 0; i < phylosCount; i++){
+         kill(phylosPid[i]);
+         phylosPid[i] = 0;
+         s[i]= 0;
+         state[i] = GONE;
+    }
+    phylosCount = 0;
+    up(&mutex);
 }
-
+void initialize(){
+    mutex =1;
+    mutexTable = 1;
+    phylosCount = 0;
+}
 //---------------------------------------------------
 void phylo(int fg)
 {
     int run = 1;
     char buffer[10];
+    
+    initialize();
     char *argv[] = {"table", itoa(fg, buffer, 10)};
     int tableID = sys_loadProcess(&table, 2, argv, fg, 0);
     char *argv2[] = {"tableP", itoa(fg, buffer,10)};
