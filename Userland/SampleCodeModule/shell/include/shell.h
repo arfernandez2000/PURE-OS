@@ -11,10 +11,12 @@ void incorrect_comm(char * buffer);
 void incorrect_arg(char * command);
 void incorrect_proc(char * command);
 void loop_error();
+void bg_error();
 void clearWindow();
 void substractLine();
 char *getWindow();
 int getOffset();
 void setOffset(int of);
+int isBG(char* command);
 
 #endif
