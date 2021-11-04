@@ -10,6 +10,7 @@ void new_line();
 char getChar();
 int abs();
 int atoi(char * buffer, int len);
+void strcpy2(char *str1, char *str2);
 int Stringlen(const char * s);
 void scanf(char * buffer, int maxLen);
 int strcmp(const char * s1, const char * s2);

@@ -45,7 +45,7 @@ void cat(int fg, int *pipes)
 
 void catProc(int argc, char **argv)
 {
-    char* charRead;
+    char charRead[BUFF_SIZE];
     if (!atoi(argv[0], 1))
     {
         while (1)
@@ -67,10 +67,17 @@ void catProc(int argc, char **argv)
     }
     if (pipes[0] == -1 && pipes[1] >= 0) {
         //Habria que hacer un while porque esto solo devuelve un char
-        *charRead++ = pRead(pipes[1]);
-        *charRead = 0;
+        int i;
+        char* c;
+        strcpy2(pRead(pipes[1]), c);
+        while (*c != '\0')
+        {
+            charRead[i++] = c[0];
+            strcpy2(pRead(pipes[1]), c);
+        }
+        
+        charRead[i] = '\0';
         addText(charRead);
-        addText("holaaa");
         substractLine();
         printWindow();  
 

@@ -24,7 +24,7 @@ typedef struct
     Pipe pipes[PIPE_COUNT];
 } PipeArray;
 
-uint32_t semId = 100;
+uint32_t semId = 200;
 static PipeArray pipesArray;
 
 static int putCharPipeByIdx(int pipeIndex, char c);
@@ -70,7 +70,7 @@ int pClose(uint32_t pipeId)
     return 1;
 }
 
-int pRead(uint32_t pipeId)
+char* pRead(uint32_t pipeId)
 {
     int pipeIndex = getPipeIdx(pipeId);
 
@@ -86,7 +86,7 @@ int pRead(uint32_t pipeId)
 
     sPost(pipe->lockW);
 
-    return c;
+    return &c;
 }
 
 uint32_t pWrite(uint32_t pipeId, char *str)
@@ -98,7 +98,7 @@ uint32_t pWrite(uint32_t pipeId, char *str)
 
     while (*str != 0)
         putCharPipeByIdx(pipeIndex, *str++);
-
+    putCharPipeByIdx(pipeIndex, 0);
     return pipeId;
 }
 
@@ -107,10 +107,10 @@ static int putCharPipeByIdx(int pipeIndex, char c)
     Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
     sWait(pipe->lockW);
-
+    
     pipe->buffer[pipe->writeIndex] = c;
     pipe->writeIndex = (pipe->writeIndex + 1) % BUFF_SIZE;
-
+    
     sPost(pipe->lockR);
 
     return 0;
