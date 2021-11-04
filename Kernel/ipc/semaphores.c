@@ -160,7 +160,6 @@ char** semDisplay()
     char** result = (char**) mallocMM(1024);
 
     Semaphore *sem = semaphores;
-    int i = 1;
     int line =0;
     while (sem)
     {   
