@@ -10,7 +10,7 @@ int sWait(uint32_t id) { return syscall(SEM_WAIT, id, 0, 0, 0, 0, 0); }
 int sPost(uint32_t id) { return syscall(SEM_POST, id, 0, 0, 0, 0, 0); }
 int sClose(uint32_t id) { return syscall(SEM_CLOSE, id, 0, 0, 0, 0, 0); }
 void sem() {
-  
+
   char **result = (char **)syscall(SEM_DUMP, 0, 0, 0, 0, 0, 0);
   int linesDump = syscall(DUMP_LINES, 0, 0, 0, 0, 0, 0);
   if (linesDump == 1) {

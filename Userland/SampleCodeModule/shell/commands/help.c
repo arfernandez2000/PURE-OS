@@ -4,14 +4,16 @@
 #include "shell.h"
 
 static char *info[] = {
-    "clear: Clear the shell window", "help: Print information about commands",
+    "clear: Clear the shell window",
+    "help: Print information about commands",
     "ps: Prints a list of processes with relevant information",
-    "loop: Prints the process id with a message every few second", 
+    "loop: Prints the process id with a message every few second",
     "kill: Kills a process given its id",
     "nice: Changes process priority. Receives PID and Priority",
     "block: Changes process state between ready and block. Receives pid",
     "sem: Prints list of semaphores with each of their properties",
-    "cat: Prints stdin", "wc: Prints amount of lines of stdin",
+    "cat: Prints stdin",
+    "wc: Prints amount of lines of stdin",
     "filter: Filters vowels from input string",
     "phylo: Starts diner philosophers dilemma",
     "test_mm: Tests the selected memory manager",
