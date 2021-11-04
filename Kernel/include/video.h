@@ -4,10 +4,10 @@
 #include <stdint.h>
 
 void moveToWindowVideo(char window);
-int printStringLen(int color, const char * string, int maxLen);
+int printStringLen(int color, const char *string, int maxLen);
 void new_line();
 void backspace();
 void clear();
 void increment();
-int atoi(char * string, int length) ;
+int atoi(char *string, int length);
 #endif

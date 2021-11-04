@@ -3,7 +3,7 @@
 
 #include "shell.h"
 
-uint64_t my_create_process_sync(char * name);
+uint64_t my_create_process_sync(char *name);
 uint64_t my_sem_open_sync(char *sem_id, uint64_t initialValue);
 uint64_t my_sem_wait_sync(char *sem_id);
 uint64_t my_sem_post_sync(char *sem_id);

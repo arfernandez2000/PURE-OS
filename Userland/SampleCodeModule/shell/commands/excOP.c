@@ -4,6 +4,4 @@
 
 void raiseOpcodeExc();
 
-void excop() {
-    raiseOpcodeExc();
-}
+void excop() { raiseOpcodeExc(); }

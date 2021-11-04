@@ -1,24 +1,18 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
-
 #include "memorymanager.h"
-char * ptr = 0x600000;
+char *ptr = 0x600000;
 
-void memInit(void * startingPoint){
+void memInit(void *startingPoint) { ptr = (char *)startingPoint; }
 
-    ptr = (char *) startingPoint;
+char *mallocMM(unsigned int bytes) {
+  char *aux = ptr;
+  ptr += bytes;
+  return aux;
 }
 
-char * mallocMM(unsigned int bytes){
-    char * aux = ptr;
-    ptr += bytes;
-    return aux;
-}
-
-int freeMM(void *freeMem){
-      return 0;
-}
+int freeMM(void *freeMem) { return 0; }
 
 // #define NULL 0
 
@@ -55,14 +49,16 @@ int freeMM(void *freeMem){
 //       if (nbytes == 0)
 //             return NULL;
 
-//       unsigned long nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1; //Normalize to header units
+//       unsigned long nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) +
+//       1; //Normalize to header units
 
 //       Header *currNode, *prevNode;
 //       prevNode = startingNode;
 
-//       for (currNode = prevNode->data.ptr;; prevNode = currNode, currNode = currNode->data.ptr)
+//       for (currNode = prevNode->data.ptr;; prevNode = currNode, currNode =
+//       currNode->data.ptr)
 //       {
-          
+
 //             if (currNode->data.size >= nunits)
 //             {
 //                   if (currNode->data.size == nunits) // Equal just use
@@ -74,7 +70,8 @@ int freeMM(void *freeMem){
 //                         currNode->data.size = nunits;
 //                   }
 //                   startingNode = prevNode;
-//                   return (void *)(currNode + 1); //Return new memspace WITHOUT header
+//                   return (void *)(currNode + 1); //Return new memspace
+//                   WITHOUT header
 //             }
 //             if (currNode == startingNode)
 //                   return NULL;
@@ -83,34 +80,40 @@ int freeMM(void *freeMem){
 
 // int freeMM(void *freeMem)
 // {
-//       if (freeMem == NULL || (((long)freeMem - (long)base) % sizeof(Header)) != 0)
+//       if (freeMem == NULL || (((long)freeMem - (long)base) % sizeof(Header))
+//       != 0)
 //             return -1;
 
 //       Header *freeBlock, *currNode;
 //       freeBlock = (Header *)freeMem - 1; //Add header to mem to free
 
-//       if (freeBlock < base || freeBlock >= (base + totalUnits * sizeof(Header)))
+//       if (freeBlock < base || freeBlock >= (base + totalUnits *
+//       sizeof(Header)))
 //             return -1;
 
 //       char isExternal = 0;
 
-//       for (currNode = startingNode; !(freeBlock > currNode && freeBlock < currNode->data.ptr); currNode = currNode->data.ptr)
+//       for (currNode = startingNode; !(freeBlock > currNode && freeBlock <
+//       currNode->data.ptr); currNode = currNode->data.ptr)
 //       {
 
 //             if (freeBlock == currNode || freeBlock == currNode->data.ptr)
 //                   return -1 ;
 
-//             if (currNode >= currNode->data.ptr && (freeBlock > currNode || freeBlock < currNode->data.ptr))
+//             if (currNode >= currNode->data.ptr && (freeBlock > currNode ||
+//             freeBlock < currNode->data.ptr))
 //             {
 //                   isExternal = 1;
 //                   break;
 //             }
 //       }
 
-//       if (!isExternal && (currNode + currNode->data.size > freeBlock || freeBlock + freeBlock->data.size > currNode->data.ptr)) //Absurd!!
+//       if (!isExternal && (currNode + currNode->data.size > freeBlock ||
+//       freeBlock + freeBlock->data.size > currNode->data.ptr)) //Absurd!!
 //             return -1;
 
-//       if (freeBlock + freeBlock->data.size == currNode->data.ptr) //Join right
+//       if (freeBlock + freeBlock->data.size == currNode->data.ptr) //Join
+//       right
 //       {
 //             freeBlock->data.size += currNode->data.ptr->data.size;
 //             freeBlock->data.ptr = currNode->data.ptr->data.ptr;

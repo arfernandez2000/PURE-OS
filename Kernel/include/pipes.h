@@ -2,12 +2,11 @@
 #ifndef PIPES_H
 #define PIPES_H
 
-#include <stdint.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include "semaphores.h"
 #include "memorymanager.h"
-
+#include "semaphores.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 uint32_t pOpen(uint32_t pipeId);
 int pClose(uint32_t pipeId);

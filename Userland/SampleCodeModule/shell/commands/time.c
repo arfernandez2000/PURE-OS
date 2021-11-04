@@ -5,50 +5,38 @@
 #include "shell.h"
 #include "system.h"
 
-int getSeconds() {
-    return sys_time(SECONDS);
-}
+int getSeconds() { return sys_time(SECONDS); }
 
-int getMinutes() {
-    return sys_time(MINUTES);
-}
+int getMinutes() { return sys_time(MINUTES); }
 
-int getHours() {
-    return sys_time(HOURS);
-}
+int getHours() { return sys_time(HOURS); }
 
-int getDay() {
-    return sys_time(DAY);
-}
+int getDay() { return sys_time(DAY); }
 
-int getMonth() {
-    return sys_time(MONTH);
-}
+int getMonth() { return sys_time(MONTH); }
 
-int getYear() {
-    return sys_time(YEAR);
-}
+int getYear() { return sys_time(YEAR); }
 
 void printTime(int number) {
-    char buffer[3] = {0};
-    buffer[0] = number / 10 + '0';
-    buffer[1] = number % 10 + '0';
-    buffer[2] = '\0';
-    addText(buffer);
+  char buffer[3] = {0};
+  buffer[0] = number / 10 + '0';
+  buffer[1] = number % 10 + '0';
+  buffer[2] = '\0';
+  addText(buffer);
 }
 
 void time() {
-    printTime(getDay());
-    addText("/");
-    printTime(getMonth());
-    addText("/");
-    printTime(getYear());
-    addText(" ");
-    printTime(getHours());
-    addText(":");
-    printTime(getMinutes());
-    addText(":");
-    printTime(getSeconds());
-    printWindow();
-    substractLine();
+  printTime(getDay());
+  addText("/");
+  printTime(getMonth());
+  addText("/");
+  printTime(getYear());
+  addText(" ");
+  printTime(getHours());
+  addText(":");
+  printTime(getMinutes());
+  addText(":");
+  printTime(getSeconds());
+  printWindow();
+  substractLine();
 }

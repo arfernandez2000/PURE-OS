@@ -4,14 +4,13 @@
 #include "libc.h"
 #include "shell/include/shell.h"
 
-#define NULL (void* )0
-
+#define NULL (void *)0
 
 int main() {
-    winClear();
+  winClear();
 
-    char *argv[] = {"Shell"};
-    shell(1,argv);
+  char *argv[] = {"Shell"};
+  shell(1, argv);
 
-	return 1; 
+  return 1;
 }

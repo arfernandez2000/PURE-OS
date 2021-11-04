@@ -9,6 +9,6 @@ uint32_t sOpen(uint32_t id, int initValue);
 int sWait(uint32_t id);
 int sPost(uint32_t id);
 int sClose(uint32_t id);
-char** semDisplay();
+char **semDisplay();
 
 #endif
