@@ -60,7 +60,7 @@ int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     processQueue[activeProcesses] = createPCB(entryPoint, argc,argv,fg,fd,name);
     return processID++;
 }
-static int argsCopy(char **buffer, char **argv, int argc)
+int argsCopy(char **buffer, char **argv, int argc)
 {
       for (int i = 0; i < argc; i++)
       {
@@ -71,7 +71,7 @@ static int argsCopy(char **buffer, char **argv, int argc)
 }
 
 PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int fd[2], char* name){
-    PCB* newProcess = mallocMM(sizeof(PCB));
+    PCB* newProcess = (PCB*) mallocMM(sizeof(PCB));
     if(newProcess == NULL){
         return NULL; 
     }
@@ -79,9 +79,9 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
     newProcess->foreground = fg;
     newProcess->argc = argc;
 
-    char **argvCopy = mallocMM(sizeof(char *) * argc);
+    char **argvCopy = (char**)mallocMM(sizeof(char *) * argc);
       if (argvCopy == 0)
-            return -1;
+            return NULL;
     argsCopy(argvCopy, &argv[1], argc - 1);
 
     newProcess->argv = argvCopy;
@@ -108,13 +108,7 @@ PCB* createPCB(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
 void newProcessStack(void (*fn), int argc, char** argv, PCB* newProcess) {
 
-    uint64_t newStack = mallocMM(STACK_SIZE);
-    
-    if(newStack == NULL){
-       while(1){
-           printStringLen(0x30, "Error",5);
-       }; 
-    }
+    uint64_t newStack = (uint64_t) mallocMM(STACK_SIZE);
     newProcess->rbp =  newStack + STACK_SIZE;
     newProcess->rsp = (uint64_t) _initialize_stack_frame(fn, newStack + STACK_SIZE, argc, argv);
     processesStack[activeProcesses++] =  newProcess->rsp;
@@ -147,7 +141,7 @@ int* getPipes() {
 }
 
 char** psDisplay() {
-    char** processString = mallocMM(1000);
+    char** processString = (char**) mallocMM(1000);
     for(int i=0; i< activeProcesses; i++){
         processString[i] = " ";
     }
@@ -219,26 +213,18 @@ void cleanProcesses() {
 }
 
 int  killProcess(uint64_t pid) {
-    //int error = freeMM(processQueue[pid]->name);
-    // if(error == -1){
-    //     return -2;
-    // }
-    
     int res = changeState(pid,KILLED);
-    if(res != -1){
-        //int error = freeMM(processQueue[pid]->name);
-        // if(error == -1){
-        //     return -2;
-        // }
-    }
-        
     return res;
 }
 
 int blockProcess(uint64_t pid) {
-    changeState(pid, BLOCKED);
+    int error = changeState(pid, BLOCKED);
+    if(error == -1){
+        return -1;
+    }
     if(getPID() == pid)
         yield();
+    return 1;
 }
 
 int unBlockProcess(uint64_t pid) {

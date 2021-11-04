@@ -62,7 +62,10 @@ int main() {
 	load_idt();
 	saveSampleRSP(getRSP());
 	char * argv[] = {"Shell"};
-	addProcess(sampleCodeModuleAddress, 1, argv, 1, 0,"Shell");
+	int error = addProcess(sampleCodeModuleAddress, 1, argv, 1, 0,"Shell");
+	if(error == -1){
+		return -1;
+	}
 	while(1){
 		_hlt();
 	}

@@ -25,7 +25,7 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             return getPPID();
     
         case PS:
-            return psDisplay();
+            return (uint64_t) psDisplay();
         case KILL:
             return killProcess(rsi);
         case BLOCK:
@@ -60,7 +60,7 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
         case PIPE_CLOSE:
             return pClose(rsi);
         case GET_PIPES:
-            return getPipes();
+            return (uint64_t)getPipes();
         default:
             return -1;
 	}

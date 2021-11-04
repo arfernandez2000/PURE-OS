@@ -32,7 +32,10 @@ int nice(uint64_t pid, int priority){
 }
 void exit(){
     uint64_t pid = syscall(GET_PID, 0, 0, 0, 0, 0, 0);
-    kill(pid);
+    if(kill(pid) == -1){
+        addText("Error killing");
+        printWindow();
+    };
     while (1);
 }
 

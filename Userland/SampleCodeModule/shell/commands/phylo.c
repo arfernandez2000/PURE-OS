@@ -45,27 +45,39 @@ void test(int i)
     if (state[i] == HUNGRY && state[LEFT(i)] != EATING && state[RIGHT(i)] != EATING)
     {
         state[i] = EATING;
-        sPost(SEM_PHYLO + i);
+        if(sPost(SEM_PHYLO + i) == -1){
+            return;
+        };
     }
 }
 
 void take_forks(int i)
 {
 
-    sWait(SEM_MUTEX);      /* enter critical region */
+    if(sWait(SEM_MUTEX) == -1){
+        return;
+    };      /* enter critical region */
     state[i] = HUNGRY; /* record fact that philosopher i is hungry */
     test(i);           /* try to acquire 2 for ks */
-    sPost(SEM_MUTEX);        /* exit critical region */
-    sWait(SEM_PHYLO + i);       /* block if for ks were not acquired */
+    if(sPost(SEM_MUTEX) == -1){
+        return;
+    };        /* exit critical region */
+    if(sWait(SEM_PHYLO + i) == -1){
+        return;
+    };       /* block if for ks were not acquired */
 }
 
 void put_forks(int i)
 {
-    sWait(SEM_MUTEX);        /* enter critical region */
+    if(sWait(SEM_MUTEX) == -1){
+        return;
+    };        /* enter critical region */
     state[i] = THINKING; /* philosopher has finished eating */
     test(LEFT(i));       /* see if left neighbor can now eat */
     test(RIGHT(i));      /* see if right neighbor can now eat */
-    sPost(SEM_MUTEX);          /* exit critical region */
+    if(sPost(SEM_MUTEX) == -1){
+        return;
+    };          /* exit critical region */
 }
 
 void philosopher(int argc, char **argv)
@@ -83,17 +95,26 @@ void philosopher(int argc, char **argv)
 }
 int removePhylo()
 {
-    sWait(SEM_MUTEX);
+    if(sWait(SEM_MUTEX) == -1){
+        return -1;
+    }
     if (phylosCount == INITIAL_PHYLOS)
     {
         return -1;
     }
   
     phylosCount--;
-    kill(phylosPid[phylosCount]);
+    if(kill(phylosPid[phylosCount]) == -1){
+        addText("Error killing process");
+        printWindow();
+    };
     state[phylosCount] = GONE;
-    sPost(SEM_MUTEX);
-    sClose(SEM_PHYLO + phylosCount);
+    if(sPost(SEM_MUTEX) == -1){
+        return -1;
+    } 
+    if(sClose(SEM_PHYLO + phylosCount) == -1){
+        return -1;
+    };
     return 1;
 }
 int addPhylo(int fg)
@@ -114,13 +135,17 @@ int addPhylo(int fg)
         printWindow();
         return -1;
     }
-    sWait(SEM_MUTEX);
+    if(sWait(SEM_MUTEX) == -1){
+        return -1;
+    };
     state[phylosCount] = THINKING;
-    if(!sOpen(SEM_PHYLO + phylosCount, 1))
+    if(sOpen(SEM_PHYLO + phylosCount, 1) == -1)
         return -1;
         
     phylosPid[phylosCount++] = pid;
-    sPost(SEM_MUTEX);
+    if(sPost(SEM_MUTEX)== -1){
+        return -1;
+    };
     return 1;
 }
 
@@ -128,8 +153,13 @@ void killAllPhylos()
 {
     
     for (int i = 0; i < phylosCount; i++){
-        sClose(SEM_PHYLO + i);
-        kill(phylosPid[i]);
+        if(sClose(SEM_PHYLO + i) == -1){
+            return;
+        };
+        if(kill(phylosPid[i]) == -1){
+            addText("Error killing");
+            printWindow();
+        };
         state[i] = GONE;
     }
 }
@@ -195,7 +225,9 @@ void table(int argc, char **argv)
             break;
         case '\t':
             run = 0;
-            sPost(SEM_MUTEX);
+            if(sPost(SEM_MUTEX) == -1){
+                return;
+            };
             break;
         default:
             break;
@@ -205,29 +237,41 @@ void table(int argc, char **argv)
     substractLine();
     printWindow();
     killAllPhylos();
-    kill(tablePrintID);
-    sClose(SEM_MUTEX);
-    sPost(SEM_SHELL);
-    sClose(SEM_SHELL);
+    if(kill(tablePrintID) == -1){
+        addText("Error killing process");
+        printWindow();
+    };
+    if(sClose(SEM_MUTEX) == -1){
+        return ;
+    }
+    if(sPost(SEM_SHELL) == -1){
+        return ;
+    };
+    if(sClose(SEM_SHELL) == -1){
+        return ;
+    };
     exit();
 }
 
 void initialize(){
-    if(!sOpen(SEM_MUTEX, 1))
+    if(sOpen(SEM_MUTEX, 1)==-1)
         return;
-    sWait(SEM_MUTEX);    
+    if(sWait(SEM_MUTEX) == -1){
+        return;
+    }    
     phylosCount = 0;
-    sPost(SEM_MUTEX);
+    if(sPost(SEM_MUTEX) == -1){
+        return;
+    };
 }
 
 //---------------------------------------------------
 
 void phylo(int fg)
 {
-    int run = 1;
     char buffer[10];
     if(fg){
-        if(!sOpen(SEM_SHELL, -1))
+        if(sOpen(SEM_SHELL, -1)== -1)
             return;
     }
     
@@ -236,15 +280,21 @@ void phylo(int fg)
     int tableID = sys_loadProcess(&table, 2, argv, fg, 0);
     char *argv2[] = {"tableP", itoa(fg, buffer,10)};
     tablePrintID = sys_loadProcess(&tablePrint, 2, argv2, fg, 0);
-    if (tableID == -1)
+    if (tableID == -1 || tablePrintID == -1)
     {
         addText("Error Loading Table");
         substractLine();
         printWindow();
         return;
     }
-    block(tableID);
-    block(tablePrintID);
+    if(block(tableID) == -1){
+        addText("Error in block");
+        printWindow();
+    };
+    if(block(tablePrintID) == -1){
+        addText("Error in block");
+        printWindow();
+    };
    
     for (int i = 0; i < INITIAL_PHYLOS; i++)
     {
@@ -253,8 +303,16 @@ void phylo(int fg)
     addText("Welcome to the philosopher's problem");
     printWindow();
     substractLine();
-    unblock(tableID);
-    unblock(tablePrintID);
+    if(unblock(tableID) == -1){
+        addText("Error unblocking");
+        printWindow();
+    };
+    if(unblock(tablePrintID) == -1){
+        addText("Error unblocking");
+        printWindow();
+    };
     if(fg)
-        sWait(SEM_SHELL);
+        if(sWait(SEM_SHELL) == -1){
+            return;
+        };
 }

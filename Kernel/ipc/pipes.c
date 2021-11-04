@@ -63,8 +63,12 @@ int pClose(uint32_t pipeId)
     if (pipe->totalProcesses > 0)
         return 1;
 
-    sClose(pipe->lockR);
-    sClose(pipe->lockW);
+    if(sClose(pipe->lockR) == -1){
+        return -1;
+    };
+     if(sClose(pipe->lockW) == -1){
+         return -1;
+     };
     pipe->state = EMPTY;
 
     return 1;
@@ -79,12 +83,16 @@ int pRead(uint32_t pipeId)
 
     Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
-    sWait(pipe->lockR);
+    if(sWait(pipe->lockR) == -1){
+        return -1;
+    };
 
     char c = pipe->buffer[pipe->readIndex];
     pipe->readIndex = (pipe->readIndex + 1) % BUFF_SIZE;
 
-    sPost(pipe->lockW);
+    if(sPost(pipe->lockW) == -1){
+        return -1;
+    };
 
     return c;
 }
@@ -106,12 +114,16 @@ static int putCharPipeByIdx(int pipeIndex, char c)
 {
     Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
-    sWait(pipe->lockW);
+    if(sWait(pipe->lockW) == -1){
+        return -1;
+    };
 
     pipe->buffer[pipe->writeIndex] = c;
     pipe->writeIndex = (pipe->writeIndex + 1) % BUFF_SIZE;
 
-    sPost(pipe->lockR);
+    if(sPost(pipe->lockR) == -1){
+        return -1;
+    };
 
     return 0;
 }

@@ -9,5 +9,5 @@ void new_line();
 void backspace();
 void clear();
 void increment();
-
+int atoi(char * string, int length) ;
 #endif

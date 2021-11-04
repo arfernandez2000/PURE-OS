@@ -28,7 +28,7 @@ uint32_t sOpen(uint32_t id, int initValue)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
-        sem = mallocMM(sizeof(Semaphore));
+        sem = (Semaphore*) mallocMM(sizeof(Semaphore));
         if (sem == NULL)
             return -1;
 
@@ -79,7 +79,9 @@ int sWait(uint32_t id)
         int currPid = getPID();
         sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
         release(&(sem->mutex));
-        blockProcess(currPid);
+        if(blockProcess(currPid) == -1){
+            return -1;
+        };
     }
 
     return 0;
@@ -98,7 +100,9 @@ int sPost(uint32_t id)
         for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
             sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
         sem->blockedPIDsSize--;
-        unBlockProcess(nextPid);
+        if(unBlockProcess(nextPid) == -1){
+            return -1;
+        };
         release(&(sem->mutex));
         return 0;
     }

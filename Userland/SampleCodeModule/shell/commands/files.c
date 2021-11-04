@@ -31,7 +31,7 @@ void cat(int fg, int *pipes)
 {
     char buffer[10];
     if(fg){
-        if(!sOpen(SEM_SHELL, -1))
+        if(sOpen(SEM_SHELL, -1) == -1)
             return;
     }
     char* argv[] = {"cat", itoa(fg, buffer,10)};
@@ -40,7 +40,9 @@ void cat(int fg, int *pipes)
         addText("Error al crear el proceso");
     }
     if(fg)
-        sWait(SEM_SHELL);
+        if(sWait(SEM_SHELL) == -1){
+            return ;
+        };
 }
 
 void catProc(int argc, char **argv)
@@ -51,7 +53,7 @@ void catProc(int argc, char **argv)
         while (1)
             ;
     }
-    int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
+    int *pipes = (int*) syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
     
     char buffer[BUFF_SIZE] = {0};
 
@@ -63,8 +65,12 @@ void catProc(int argc, char **argv)
         substractLine();
         printWindow();
         // pWrite(pipes[0], buffer);
-        sPost(SEM_SHELL);
-        sClose(SEM_SHELL);
+        if(sPost(SEM_SHELL) == -1){
+            return;
+        };
+        if(sClose(SEM_SHELL) == -1){
+            return;
+        };
         exit();
     }
     if (pipes[0] == -1 && pipes[1] >= 0) {
@@ -76,8 +82,12 @@ void catProc(int argc, char **argv)
         substractLine();
         printWindow();  
 
-        sPost(SEM_SHELL);
-        sClose(SEM_SHELL);
+        if(sPost(SEM_SHELL) == -1){
+            return;
+        }
+        if(sClose(SEM_SHELL) == -1){
+            return;
+        };
         exit();
     }
 
@@ -86,8 +96,12 @@ void catProc(int argc, char **argv)
     addText(buffer);
     substractLine();
     printWindow();
-    sPost(SEM_SHELL);
-    sClose(SEM_SHELL);
+    if(sPost(SEM_SHELL) == -1){
+        return;
+    }
+    if(sClose(SEM_SHELL) == -1){
+        return;
+    };
     exit();
 }
 
@@ -142,13 +156,20 @@ void wc(int fg, int *pipes)
 {
     char buffer[10];
     if(fg){
-        if(!sOpen(SEM_SHELL, -1))
+        if(sOpen(SEM_SHELL, -1) == -1)
             return;
     }
     char* argv[] = {"wc", itoa(fg, buffer,10)};
-    sys_loadProcess(&wcProc, 2, argv, fg, pipes);
+    int error = sys_loadProcess(&wcProc, 2, argv, fg, pipes);
+    if(error == -1){
+        addText("Load Process Failed");
+        printWindow();
+        return;
+    }
     if(fg)
-        sWait(SEM_SHELL);
+        if(sWait(SEM_SHELL) == -1){
+            return;
+        };
 }
 
 void wcProc(int argc, char **argv)
@@ -157,7 +178,7 @@ void wcProc(int argc, char **argv)
         while (1);
     }
 
-    int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
+    int *pipes = (int*)syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
 
     char buffer[BUFF_SIZE] = {0};
     scanning(buffer, 0);
@@ -174,8 +195,12 @@ void wcProc(int argc, char **argv)
     addText(itoa(lines, ret, 10));
     substractLine();
     printWindow();
-    sPost(SEM_SHELL);
-    sClose(SEM_SHELL);
+    if(sPost(SEM_SHELL) ==-1){
+        return;
+    };
+    if(sClose(SEM_SHELL) == -1){
+        return;
+    };
     exit();
 }
 
@@ -183,13 +208,20 @@ void filter(int fg, int *pipes)
 {
     char buffer[10];
     if(fg){
-        if(!sOpen(SEM_SHELL, -1))
+        if(sOpen(SEM_SHELL, -1) ==  -1)
             return;
     }
     char* argv[] = {"filter", itoa(fg, buffer,10)};
-    sys_loadProcess(&filterProc, 2, argv, fg, pipes);
+    int error = sys_loadProcess(&filterProc, 2, argv, fg, pipes);
+    if(error == -1){
+        addText("Load Process Failed");
+        printWindow();
+        return;
+    }
     if(fg)
-        sWait(SEM_SHELL);
+        if(sWait(SEM_SHELL)== -1){
+            return;
+        };
 
 }
 
@@ -206,8 +238,12 @@ void filterProc(int argc, char **argv)
         addText(buffer);
         substractLine();
         printWindow();
-    sPost(SEM_SHELL);
-    sClose(SEM_SHELL);
+    if(sPost(SEM_SHELL) == -1){
+        return;
+    }
+    if(sClose(SEM_SHELL) == -1){
+        return;
+    };
     exit();
 }
 

@@ -26,19 +26,32 @@ void inc(int argc, char *argv[]){
   int64_t value = atoi(argv[1], Stringlen(argv[1]));
   int N = atoi(argv[2], Stringlen(argv[2]));
 
-  if (sem && !sOpen(SEM_ID, 1)){
+  if (sem && sOpen(SEM_ID, 1) == -1){
     addText("ERROR OPENING SEM\n");
     printWindow();
     return;
   }
   
   for (i = 0; i < N; i++){
-    if (sem) sWait(SEM_ID);
+    if (sem){
+      if(sWait(SEM_ID) == -1){
+        return;
+      };
+    } 
     slowInc(&global, value);
-    if (sem) sPost(SEM_ID);
+    if (sem) {
+      if(sPost(SEM_ID) == -1){
+        return;
+      };
+    }
+
   }
 
-  if (sem) sClose(SEM_ID);
+  if (sem) {
+    if(sClose(SEM_ID) == -1){
+      return;
+    }
+  } 
   
   addText("Final value: ");
   char* buff;
@@ -54,7 +67,7 @@ void test_sync(){
 
   global = 0;
 
-  if(!sOpen(SEM_SHELL, -TOTAL_PAIR_PROCESSES*2)){
+  if(sOpen(SEM_SHELL, -TOTAL_PAIR_PROCESSES*2) == -1){
     return;
   }
 
@@ -92,10 +105,14 @@ void test_sync(){
 
   for (int i = 0; i < TOTAL_PAIR_PROCESSES*2; i++)
   {
-    sWait(SEM_SHELL);
+    if(sWait(SEM_SHELL) == -1){
+      return;
+    };
   }
 
-  sClose(SEM_SHELL);
+  if(sClose(SEM_SHELL) == -1){
+    return;
+  };
   
 }
 
@@ -106,13 +123,23 @@ void test_no_sync(){
 
   addText("CREATING PROCESSES...(WITHOUT SEM)\n");
   printWindow();
-  
+  int error;
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     char *argv1[4] = {"inc", "1", "1", "100"};
-    sys_loadProcess(&inc, 4, argv1, 0, NULL);
+    error = sys_loadProcess(&inc, 4, argv1, 0, NULL);
+    if(error == -1){
+      addText("Error loading Process");
+      printWindow();
+      return;
+    }
     char *argv2[4] = {"inc", "0", "-1", "100"};
-    sys_loadProcess(&inc, 4, argv2, 0, NULL);
+    error = sys_loadProcess(&inc, 4, argv2, 0, NULL);
+    if(error == -1){
+      addText("Error loading Process");
+      printWindow();
+      return;
+    }
   }
 }
 

@@ -51,7 +51,9 @@ void test_processes(){
     printWindow();
     return;
   }
-
+    addText("Creating processes");
+    substractLine();
+    printWindow();
     // Create MAX_PROCESSES processes
     for(rq = initialProcessCount; rq < maxProcesses; rq++){
       error = my_create_process_proc("proc_loop");
@@ -67,7 +69,9 @@ void test_processes(){
       }
       
     }
-
+    addText("Randomly killing, blocking and unblocking processes");
+    substractLine();
+    printWindow();
     // Randomly kills, blocks or unblocks processes until every one has been killed exclude shell for demonstration purposes
     while (alive > 0){
 

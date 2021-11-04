@@ -3,6 +3,7 @@
 #include "shell.h"
 #include "libc.h"
 #include "processCommands.h"
+#include "sem.h"
 
 #define NULL (void *)0
 #define SEM_SHELL 104
@@ -39,8 +40,12 @@ void loopProc(int argc, char **argv)
         substractLine();
     }
     if(fg){
-        sPost(SEM_SHELL);
-        sClose(SEM_SHELL);
+        if(sPost(SEM_SHELL) == -1){
+            return;
+        };
+        if(sClose(SEM_SHELL) == -1){
+            return;
+        }   
     }
     exit();
 }
@@ -49,7 +54,7 @@ void loop(int fg)
 {
     char buffer[10];
     if(fg){
-        if(!sOpen(SEM_SHELL, -1))
+        if(sOpen(SEM_SHELL, -1) == -1)
             return;
     }
     char *argv[] = {"loop", itoa(fg, buffer, 10)};
@@ -59,5 +64,7 @@ void loop(int fg)
         addText("Error al crear el proceso");
     }
     if(fg)
-        sWait(SEM_SHELL);
+        if(sWait(SEM_SHELL) == -1){
+            return;
+        };
 }
