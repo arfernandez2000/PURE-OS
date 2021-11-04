@@ -106,9 +106,6 @@ void scanfNoPrint(char *buffer, int maxSize)
     {
         if (c != -1)
         {
-            // if (c == '\v')
-            //     sys_switchContext();
-            // else
             if (c == '\b' && i > 0)
             {
                 buffer[--i] = ' ';
@@ -180,7 +177,7 @@ void shell(int argc, char **argv)
 
         tokens[1] = strtokLib(tokens[0], ' ');
         tokens[2] = strtokLib(tokens[1], '\n');
-        tokens[3] = strtokLib(tokens[1], ' ');
+        tokens[3] = strtokLib(tokens[2], ' ');
 
         for (int i = 0; i < len_files; i++)
         {

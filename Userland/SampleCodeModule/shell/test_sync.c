@@ -81,7 +81,7 @@ void test_sync(){
     argv2[1] = "1";
     argv2[2] = "-1";
     argv2[3] = "1000";
-    errror = sys_loadProcess(&inc, 4, argv2, 0, NULL);
+    error = sys_loadProcess(&inc, 4, argv2, 0, NULL);
     if (error == -1)
     {
         addText("Error al crear el proceso");
