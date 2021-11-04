@@ -60,21 +60,34 @@ void test_sync(){
 
   addText("CREATING PROCESSES...(WITH SEM)\n");
   printWindow();
-
+  int error;
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     char **argv1 = sys_malloc(4*sizeof(char));
     argv1[0] = "inc";
     argv1[1] = "1";
     argv1[2] = "1";
     argv1[3] = "1000";
-    sys_loadProcess(&inc, 4, argv1, 0, NULL);
+    error = sys_loadProcess(&inc, 4, argv1, 0, NULL);
+    if (error == -1)
+    {
+        addText("Error al crear el proceso");
+        printWindow();
+        return ;
+    }
+   
     
     char **argv2 = sys_malloc(4*sizeof(char));
     argv2[0] = "inc";
     argv2[1] = "1";
     argv2[2] = "-1";
     argv2[3] = "1000";
-    sys_loadProcess(&inc, 4, argv2, 0, NULL);
+    errror = sys_loadProcess(&inc, 4, argv2, 0, NULL);
+    if (error == -1)
+    {
+        addText("Error al crear el proceso");
+        printWindow();
+        return ;
+    }
   }
 
   for (int i = 0; i < TOTAL_PAIR_PROCESSES*2; i++)

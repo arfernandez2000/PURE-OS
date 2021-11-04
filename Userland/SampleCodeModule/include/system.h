@@ -5,16 +5,10 @@
 
 typedef enum
 {
-    GET_MEM = 0,
-    TIME = 1,
-    TEMP = 2,
-    WRITE = 3,
-    GETCHAR = 4,
-    CLEAR = 5,
+    MALLOC = 4,
+    FREE = 5,
     GET_PPID = 6,
     INFOREG = 7,
-    MALLOC = 8,
-    FREE = 9,
     KILL = 10,
     BLOCK = 11,
     UNBLOCK = 12,
@@ -33,11 +27,10 @@ typedef enum
     PIPE_READ = 25,
     PIPE_WRITE = 26,
     PIPE_CLOSE = 27,
-    WAIT = 28,
+    GET_PIPES = 28,
     PIPE_DUMP = 29,
     SECONDS_ELAPSED = 30,
     PROCESS_COUNT = 31,
-    GET_PIPES = 28
 } syscallID;
 
 // void sys_switchContext();

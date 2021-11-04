@@ -16,48 +16,50 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             return getTime((char)rsi);
         case 3:
             return createProcess((void(*)(int, char**))rsi,(int)rdx,(char**)rcx,(int)r8,(int*)r9); 
-        case 4: 
+        //legacy syscalls-------------
+        case MALLOC: 
             return (uint64_t) mallocMM(rsi);
-        case 5:
+        case FREE:
             return freeMM((void *) rsi);
-        case 6:
+        case GET_PPID:
             return getPPID();
-        case 14:
+    
+        case PS:
             return psDisplay();
-        case 10:
+        case KILL:
             return killProcess(rsi);
-        case 11:
+        case BLOCK:
             return blockProcess(rsi);
-        case 12:
+        case UNBLOCK:
             return unBlockProcess(rsi);
-        case 13:
+        case GET_PID:
             return getPID();
-        case 15 :
+        case NICE :
             return nice(rsi,rdx);
-        case 17:
+        case TICKS_ELAPSED:
             return ticks_elapsed();
-        case 31:
+        case PROCESS_COUNT:
             return getProcessCount();
-        case 22:
+        case YIELD:
             yield();
             break;
-        case 18:
+        case SEM_OPEN:
             return sOpen(rsi, rdx);
-        case 19:
+        case SEM_POST:
             return sPost(rsi);
-        case 20:
+        case SEM_WAIT:
             return sWait(rsi);
-        case 21: 
+        case SEM_CLOSE: 
             return sClose(rsi);
-        case 24:
+        case PIPE_OPEN:
             return pOpen(rsi);
-        case 25:
+        case PIPE_READ:
             return pRead(rsi);
-        case 26:
+        case PIPE_WRITE:
             return pWrite(rsi, rdx);
-        case 27:
+        case PIPE_CLOSE:
             return pClose(rsi);
-        case 28:
+        case GET_PIPES:
             return getPipes();
         default:
             return -1;
