@@ -6,6 +6,7 @@
 #include "sem.h"
 #include "shell.h"
 #include "system.h"
+#include "pipesLib.h"
 
 #define NULL (void *)0
 #define SEM_SHELL 104
@@ -29,7 +30,7 @@ void loopProc(int argc, char **argv)
     int fg = atoi(argv[0], 1);
     uint64_t pid = syscall(GET_PID, 0, 0, 0, 0, 0, 0);
 
-    int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
+    int *pipes = (int*)syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
 
     char message[BUFF_SIZE];
 

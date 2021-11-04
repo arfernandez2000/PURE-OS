@@ -10,5 +10,6 @@ int sWait(uint32_t id);
 int sPost(uint32_t id);
 int sClose(uint32_t id);
 char **semDisplay();
+int getLinesDump();
 
 #endif

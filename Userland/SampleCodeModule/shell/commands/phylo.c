@@ -78,7 +78,6 @@ void put_forks(int i) {
 
 void philosopher(int argc, char **argv) {
   int i = atoi(argv[2], 1);
-  char buffer[10];
   while (1) {
     /* repeat forever */
     think();       /* philosopher is thinking */

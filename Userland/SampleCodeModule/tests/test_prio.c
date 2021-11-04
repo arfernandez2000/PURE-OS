@@ -87,7 +87,7 @@ void test_prio(){
         break;
 
       case 1:
-        res = my_nice_prio(pids[i], 2); //medium priority
+        res = my_nice_prio(pids[i], 5); //medium priority
         if(res == -1){
           addText("Error updating priority");
           substractLine();
@@ -96,7 +96,7 @@ void test_prio(){
         }
         break;
       case 2:
-        res = my_nice_prio(pids[i], 3); //highest priority
+        res = my_nice_prio(pids[i], 10); //highest priority
         if(res == -1){
           addText("Error updating priority");
           substractLine();
@@ -132,7 +132,7 @@ void test_prio(){
   for(i = 0; i < TOTAL_PROCESSES; i++){
     switch (i % 3){
       case 0:
-        res = my_nice_prio(pids[i], 2); //medium priority
+        res = my_nice_prio(pids[i], 3); //medium priority
         if(res == -1){
           addText("Error updating priority");
           substractLine();
@@ -141,7 +141,7 @@ void test_prio(){
         }
         break;
       case 1:
-        res = my_nice_prio(pids[i], 2); //medium priority
+        res = my_nice_prio(pids[i], 3); //medium priority
         if(res == -1){
           addText("Error updating priority");
           substractLine();
@@ -150,7 +150,7 @@ void test_prio(){
         }
         break;
       case 2:
-        res = my_nice_prio(pids[i], 2); //medium priority
+        res = my_nice_prio(pids[i], 3); //medium priority
         if(res == -1){
           addText("Error updating priority");
           substractLine();

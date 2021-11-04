@@ -81,19 +81,19 @@ char* pRead(uint32_t pipeId)
     int pipeIndex = getPipeIdx(pipeId);
 
     if (pipeIndex == -1)
-        return -1;
+        return NULL;
 
     Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
     if(sWait(pipe->lockR) == -1){
-        return -1;
+        return NULL;
     };
 
     char c = pipe->buffer[pipe->readIndex];
     pipe->readIndex = (pipe->readIndex + 1) % BUFF_SIZE;
 
     if(sPost(pipe->lockW) == -1){
-        return -1;
+        return NULL;
     };
 
     return &c;

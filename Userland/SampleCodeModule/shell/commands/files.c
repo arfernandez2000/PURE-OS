@@ -52,12 +52,11 @@ void cat(int fg, int *pipes)
 
 void catProc(int argc, char **argv)
 {
-    char charRead[BUFF_SIZE];
     if (!atoi(argv[0], 1))
     {
         while (1);
     }
-    int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
+    int *pipes =  (int*) syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
     
     char buffer[BUFF_SIZE] = {0};
 
@@ -166,7 +165,7 @@ void wcProc(int argc, char **argv)
         while (1);
     }
 
-    int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
+    int *pipes = (int*) syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
 
     char buffer[BUFF_SIZE] = {0};
 
@@ -238,7 +237,7 @@ void filterProc(int argc, char **argv)
     }
     char buffer[BUFF_SIZE] = {0};
 
-    int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
+    int *pipes = (int*)syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
 
     if (pipes[0] == -1 && pipes[1] >= 0) {
         int i;

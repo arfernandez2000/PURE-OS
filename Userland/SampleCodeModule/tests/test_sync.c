@@ -122,7 +122,9 @@ void test_no_sync(){
   uint64_t i;
 
   global = 0;
-
+  if(sOpen(SEM_SHELL, -TOTAL_PAIR_PROCESSES*2) == -1){
+    return;
+  }
   addText("CREATING PROCESSES...(WITHOUT SEM)\n");
   printWindow();
   int error;
@@ -143,5 +145,15 @@ void test_no_sync(){
       return;
     }
   }
+  for (int i = 0; i < TOTAL_PAIR_PROCESSES*2; i++)
+  {
+    if(sWait(SEM_SHELL) == -1){
+      return;
+    };
+  }
+
+  if(sClose(SEM_SHELL) == -1){
+    return;
+  };
 }
 

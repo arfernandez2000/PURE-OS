@@ -156,7 +156,7 @@ int getLinesDump(){
 
 char** semDisplay()
 {
-    char** result = mallocMM(10000);
+    char** result = (char**) mallocMM(10000);
 
     Semaphore *sem = semaphores;
     int i = 1;
