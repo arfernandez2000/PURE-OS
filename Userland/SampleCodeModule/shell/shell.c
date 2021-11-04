@@ -178,8 +178,8 @@ void shell(int argc, char **argv)
         tokens[0] = strstrip(buffer, ' ');
 
         tokens[1] = strtokLib(tokens[0], ' ');
-        tokens[2] = strtokLib(tokens[1], '\n');
-        tokens[3] = strtokLib(tokens[2], ' ');
+        tokens[2] = strtokLib(tokens[1], ' ');
+        tokens[3] = strtokLib(tokens[2], '\n');
 
         for (int i = 0; i < len_files; i++)
         {
@@ -193,9 +193,9 @@ void shell(int argc, char **argv)
                         break;
                     }
                     usePipe = 1;
-                    s = findSecondCommand(tokens[3]);
+                    s = findSecondCommand(tokens[2]);
                     if(s == -1){
-                        incorrect_proc(tokens[3]);
+                        incorrect_proc(tokens[2]);
                         comm_flag = 1;
                         break;
                     }
