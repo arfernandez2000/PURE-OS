@@ -165,7 +165,8 @@ char** semDisplay()
     {   
         result[line] = mallocMM(100);
         result[line++] = "-------------------------------";
-        strcpy("Semaphore ",result[line]);
+        char semaphore[20] = "Semaphore";
+        strcpy(semaphore,result[line]);
         
         result[line] = mallocMM(100);
         strcpy("     ID: ",result[line]);
