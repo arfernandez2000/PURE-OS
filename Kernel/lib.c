@@ -129,10 +129,6 @@ char *strcat(char *strg1, char *strg2)
     return start;
 }
 
-int isAlpha(char letter) {
-    return (letter < 'a' || letter > 'z' || letter < 'A' || letter > 'Z');
-}
-
 void acquire(int *mutex)
 {
 	while (_xchg(mutex, 1) != 0);

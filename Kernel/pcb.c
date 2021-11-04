@@ -151,7 +151,7 @@ char** psDisplay() {
 
     for (int i = 0; i < activeProcesses; i++) {
         processString[i] =  mallocMM(1024);
-        char* auxName = NULL;
+        char auxName[10];
         char buff[10]={0};
         int j;
         int aux;
