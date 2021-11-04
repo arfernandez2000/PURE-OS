@@ -4,6 +4,7 @@
 #include "pcb.h"
 #include "time.h"
 #include "semaphores.h"
+#include "pipes.h"
 
 uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
 	switch (rdi) {
@@ -48,6 +49,16 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             return sWait(rsi);
         case 21: 
             return sClose(rsi);
+        case 24:
+            return pOpen(rsi);
+        case 25:
+            return pRead(rsi);
+        case 26:
+            return pWrite(rsi, rdx);
+        case 27:
+            return pClose(rsi);
+        case 28:
+            return getPipes();
         default:
             return -1;
 	}

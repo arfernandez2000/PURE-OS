@@ -1,27 +1,18 @@
-// #ifndef PIPEs_H
-// #define PIPEs_H
 
-// #include <stddef.h>
-// #include <stdlib.h>
-// #include <sem.h>
+#ifndef PIPES_H
+#define PIPES_H
+
+#include <stdint.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include "semaphores.h"
+#include "memorymanager.h"
 
 
-// #define PIPE_MAX 20   //cantidad de semaforos permitdos
-// #define BUFF_SIZE 256  //cantidad de semaforos permitdos
+uint32_t pOpen(uint32_t pipeId);
+int pClose(uint32_t pipeId);
+int pRead(uint32_t pipeId);
+uint32_t pWrite(uint32_t pipeId, char *str);
+uint32_t putCharPipe(uint32_t pipeId, char c);
 
-// //devuelve el pipeId y si hubo un error devuelve -1
-// void pipeCreate(int *returnValue);
-
-// void pipeOpen(int pipeId, int *returnValue);
-
-// //si borro la el pipe devuelve 1 sino 0
-// //solo eliminar el pipe si pudo eliminar el sem
-// void pipeClose(int pipeId, int *returnValue);
-
-// void pipeWrite(int pipeId, char * addr, int n, int *returnValue);
-
-// void pipeRead(int pipeId, char * addr, int n, int *returnValue);
-
-// void printPipe(char *str, int strSize);
-
-// #endif
+#endif

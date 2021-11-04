@@ -1,219 +1,167 @@
-// #include <pipes.h>
 
-// #define IN_USE 1
-// #define FREE 0
+#include <pipes.h>
 
-// typedef struct elem{
-//     char state;
-//     char *data;
-//     int readIndex;
-//     int writeIndex;
-//     int lockW;
-//     int lockR;
-//     int numProcess;
-// }elem;
+#define BUFF_SIZE 1024
+#define PIPE_COUNT 12
 
-// elem pipe[PIPE_MAX];
-// int numOfPipe = 0; //cantidad de elemntos
+#define IN_USE 1
+#define EMPTY 0
 
-// //private
-// int newPipe(int pipeId);
-// int findPipe(int pipeId);
-// int findFreePipe();
-// int removePipe(int pipeId);
-// char* createSemName(int pipeId);
+typedef struct
+{
+    uint32_t id;
+    char buffer[BUFF_SIZE];
+    int readIndex;
+    int writeIndex;
+    long totalProcesses;
+    int lockW;
+    int lockR;
+    int state;
+} Pipe;
 
-// void pipeOpen(int pipeId, int *returnValue){
-//     if(!findPipe(pipeId)){
-//         *returnValue = -1;
-//         return;
-//     }
-//     pipe[pipeId].numProcess++;
-//     *returnValue = pipeId;
-//     return;
-// }
+typedef struct
+{
+    Pipe pipes[PIPE_COUNT];
+} PipeArray;
 
-// void pipeCreate(int *returnValue){
-    
-//     int pipeId = findFreePipe();
-//     if(pipeId == -1){
-//         *returnValue = -1;
-//         return;
-//     }
+uint32_t semId = 100;
+static PipeArray pipesArray;
 
-//     if(!newPipe(pipeId)){
-//         *returnValue = -1;
-//         return;
-//     }
+static int putCharPipeByIdx(int pipeIndex, char c);
+static int getPipeIdx(uint32_t pipeId);
+static int getFreePipe();
+static uint32_t newPipe(uint32_t pipeId);
 
-//     *returnValue =  pipeId;
-//     return;
-// }
+uint32_t pOpen(uint32_t pipeId)
+{
+    int pipeIndex = getPipeIdx(pipeId);
 
+    if (pipeIndex == -1)
+    {
+        pipeIndex = newPipe(pipeId);
+        if (pipeIndex == -1)
+            return -1;
+    }
 
-// void pipeClose(int pipeId, int *returnValue){
-//     if(!findPipe(pipeId)){
-//         *returnValue = -1;
-//         return;
-//     }
+    pipesArray.pipes[pipeIndex].totalProcesses++;
 
-//     pipe[pipeId].numProcess--;
-//     if(pipe[pipeId].numProcess > 0){
-//         *returnValue = 0;
-//         return;
-//     }
+    return pipeId;
+}
 
-//     *returnValue = removePipe(pipeId);
-//     return;
-// }
+int pClose(uint32_t pipeId)
+{
+    int pipeIndex = getPipeIdx(pipeId);
 
+    if (pipeIndex == -1)
+        return -1;
 
-// void pipeWrite(int pipeId, char *addr, int n, int *returnValue){
-//     if(!findPipe(pipeId)){
-//         *returnValue = -1;
-//         return;
-//     }
+    Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
-//     pipe[pipeId].processToWrite = 1;
-//     semWait(pipe[pipeId].lockS, returnValue);
-//     pipe[pipeId].processToWrite = 0;
+    pipe->totalProcesses--;
 
-//     for(int i = 0; i < n ; i++){
-//         while(pipe[pipeId].writeIndex == pipe[pipeId].readIndex + BUFF_SIZE){
-//             semPost(pipe[pipeId].lockS, returnValue);
-//             pipe[pipeId].processToWrite = 1;
-//             yield();
-//             semWait(pipe[pipeId].lockS, returnValue);
-//             pipe[pipeId].processToWrite = 0;
-//         }
-//         pipe[pipeId].data[ pipe[pipeId].writeIndex++ % BUFF_SIZE ] = addr[i];
-//         if(addr[i] == '\0') break;
-//     }
-//     semPost(pipe[pipeId].lockS, returnValue);
-//     return;
-// }
+    //Depleted pipe?
+    if (pipe->totalProcesses > 0)
+        return 1;
 
-// void pipeRead(int pipeId, char *addr, int n, int *returnValue){
-//     if(!findPipe(pipeId)){
-//         *returnValue = -1;
-//         return;
-//     }
+    sClose(pipe->lockR);
+    sClose(pipe->lockW);
+    pipe->state = EMPTY;
 
-//     pipe[pipeId].processToRead = 1;
-//     semWait(pipe[pipeId].lockS, returnValue);
-//     pipe[pipeId].processToRead = 0;
+    return 1;
+}
 
-//     int i;
-//     for( i = 0; i < n ; i++){
-//        while( pipe[pipeId].readIndex == pipe[pipeId].writeIndex){
-//                 semPost(pipe[pipeId].lockS, returnValue);
-//                 pipe[pipeId].processToRead = 1;
-//                 yield();
-//                 semWait(pipe[pipeId].lockS, returnValue);
-//                 pipe[pipeId].processToRead = 0;
-//         }
-//         addr[i] = pipe[pipeId].data[ pipe[pipeId].readIndex++ % BUFF_SIZE ];
-//         if( addr[i] == '\0') break;
-//     }
-//     // if (i != n) pipe[pipeId].readIndex++;
-//     semPost(pipe[pipeId].lockS, returnValue);
-//     return;
-// }
+int pRead(uint32_t pipeId)
+{
+    int pipeIndex = getPipeIdx(pipeId);
 
+    if (pipeIndex == -1)
+        return -1;
 
-// void printPipe(char *str, int strSize){
-//     int i=0, j=0, k=0, buffDim=10, aux;
-//     strSize--; //reservo el lugar del \n
-//     char *title = "\npipeId  rIndex    WIndex    rBLock  wBlock\n";
-//     char auxBuf[buffDim];
+    Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
-//     //armado del title
-//     strcat2(str, &i, strSize, title);
+    sWait(pipe->lockR);
 
-//     for(j=0 ;j < numOfPipe && i < strSize; j++, k++){
+    char c = pipe->buffer[pipe->readIndex];
+    pipe->readIndex = (pipe->readIndex + 1) % BUFF_SIZE;
 
-//         //salteo los pipes libres
-//         while(k < PIPE_MAX && pipe[k].state == FREE){k++;}
+    sPost(pipe->lockW);
 
-//         aux = intToString(k, auxBuf);
-//         strcat2(str, &i, strSize, auxBuf);
-//         addSpace(str, &i, strSize, 8-aux);
+    return c;
+}
 
-//         aux = intToString(pipe[k].readIndex, auxBuf);
-//         strcat2(str, &i, strSize, auxBuf);
-//         addSpace(str, &i, strSize, 10-aux);
+uint32_t pWrite(uint32_t pipeId, char *str)
+{
+    int pipeIndex = getPipeIdx(pipeId);
 
-//         aux = intToString(pipe[k].writeIndex, auxBuf);
-//         strcat2(str, &i, strSize, auxBuf);
-//         addSpace(str, &i, strSize, 10-aux);
+    if (pipeIndex == -1)
+        return -1;
 
-//         if(pipe[k].processToRead)
-//            aux = strcat2(str, &i, strSize, "yes");
-//         else
-//             aux = strcat2(str, &i, strSize, "no");
-//         addSpace(str, &i, strSize, 8-aux);
+    while (*str != 0)
+        putCharPipeByIdx(pipeIndex, *str++);
 
-//         if(pipe[k].processToWrite)
-//            aux = strcat2(str, &i, strSize, "yes");
-//         else
-//             aux = strcat2(str, &i, strSize, "no");
-//         strcat2(str, &i, strSize, "\n ");
-//     }
-//     str[i] = '\0';
-// }
+    return pipeId;
+}
 
+static int putCharPipeByIdx(int pipeIndex, char c)
+{
+    Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
-// //private:
-// char* createSemName(int pipeId){
-//     int i=0, strSize=10;
-//     char *str = (char*) malloc(sizeof(char)*strSize);
-//     char auxBuff[2];
-//     char* title = "pipeS:";
-//     strcat2(str, &i, strSize, title);
-//     intToString(pipeId, auxBuff);
-//     strcat2(str, &i, strSize, auxBuff);
-//     return str;
-// }
+    sWait(pipe->lockW);
 
-// int newPipe(int pipeId){
-//     char *pipeSemName = createSemName(pipeId);
-//     createSem(pipeSemName, 1, &pipe[pipeId].lockS);
-//     free(pipeSemName);
-//     if(pipe[pipeId].lockS == -1)
-//         return 0;
-    
-//     pipe[pipeId].data = malloc(sizeof(char)*BUFF_SIZE);
-//     if(pipe[pipeId].data == NULL)
-//         return 0;
-    
-//     pipe[pipeId].processToRead = 0;
-//     pipe[pipeId].processToWrite= 0;
-//     pipe[pipeId].state = IN_USE;
-//     pipe[pipeId].readIndex = 0;
-//     pipe[pipeId].writeIndex = 0;
-//     pipe[pipeId].numProcess = 0;
-//     numOfPipe++;
-//     return 1;
-// }
+    pipe->buffer[pipe->writeIndex] = c;
+    pipe->writeIndex = (pipe->writeIndex + 1) % BUFF_SIZE;
 
-// int removePipe(int pipeId){
-//     int result;
-//     removeSem(pipe[pipeId].lockS, &result);
-//     free(pipe[pipeId].data);
-//     pipe[pipeId].state = FREE;
-//     numOfPipe--;
+    sPost(pipe->lockR);
 
-//     return result;
-// }
+    return 0;
+}
 
-// int findPipe(int pipeId){
-//     return pipe[pipeId].state == IN_USE;
-// }
+uint32_t putCharPipe(uint32_t pipeId, char c)
+{
+    int pipeIndex = getPipeIdx(pipeId);
 
-// int findFreePipe(){
-//     for (int i = 0; i < PIPE_MAX; i++){
-//         if(pipe[i].state == FREE)
-//             return i;
-//     }
-//     return -1;
-// }
+    if (pipeIndex == -1)
+        return -1;
+
+    putCharPipeByIdx(pipeIndex, c);
+
+    return pipeId;
+}
+
+static uint32_t newPipe(uint32_t pipeId)
+{
+    int newIdx = getFreePipe();
+
+    if (newIdx == -1)
+        return -1;
+
+    Pipe *pipe = &pipesArray.pipes[newIdx];
+
+    pipe->id = pipeId;
+    pipe->state = IN_USE;
+    pipe->readIndex = pipe->writeIndex = pipe->totalProcesses = 0;
+
+    if ((pipe->lockR = sOpen(semId++, 0)) == -1)
+        return -1;
+
+    if ((pipe->lockW = sOpen(semId++, BUFF_SIZE)) == -1)
+        return -1;
+
+    return pipeId;
+}
+
+static int getPipeIdx(uint32_t pipeId)
+{
+    for (int i = 0; i < PIPE_COUNT; i++)
+        if (pipesArray.pipes[i].state == IN_USE && pipesArray.pipes[i].id == pipeId)
+            return i;
+    return -1;
+}
+
+static int getFreePipe()
+{
+    for (int i = 0; i < PIPE_COUNT; i++)
+        if (pipesArray.pipes[i].state == EMPTY)
+            return i;
+    return -1;
+}
