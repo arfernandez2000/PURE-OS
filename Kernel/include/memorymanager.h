@@ -1,10 +1,11 @@
 #ifndef MEMORYMANAGER_H
 #define MEMORYMANAGER_H
 
-// void * mallocMM(unsigned nbytes);
-// void memInit(char *memBase, unsigned long memSize);
-// int freeMM(void *ap);
-void memInit(void *startingPoint);
-char *mallocMM(unsigned int bytes);
-int freeMM(void *freeMem);
+#include <stdint.h>
+#include "naiveConsole.h"
+
+void * mallocMM(unsigned nbytes);
+void memInit(char *memBase, unsigned long memSize);
+void freeMM(void *ap);
+
 #endif

@@ -52,18 +52,15 @@ uint64_t getRSP();
 
 int main() {
   _cli();
-  // memInit((char *)sampleCodeModuleHeapAddress, (64*1024*1024));
-  memInit(sampleCodeModuleHeapAddress);
-  load_idt();
-  saveSampleRSP(getRSP());
-  char *argv[] = {"Shell"};
-  int error = addProcess(sampleCodeModuleAddress, 1, argv, 1, 0, "Shell");
-  if (error == -1) {
-    return -1;
-  }
-  while (1) {
-    _hlt();
-  }
+	memInit((char *)sampleCodeModuleHeapAddress, (64*1024*1024));
+	load_idt();
+	saveSampleRSP(getRSP());
+	char * argv[] = {"Shell"};
+	addProcess(sampleCodeModuleAddress, 1, argv, 1, 0,"Shell");
 
-  return 0;
+	while(1){
+		_hlt();
+	}
+	
+	return 0;
 }
