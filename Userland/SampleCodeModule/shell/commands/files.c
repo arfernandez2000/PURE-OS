@@ -30,7 +30,7 @@ int isVow(char c);
 void cat(int fg, int *pipes)
 {
     char buffer[10];
-    if(fg){
+    if(fg && (pipes[0] >= 0 || (pipes[0] == -1 && pipes[1] == -1))){
         if(!sOpen(SEM_SHELL, -1))
             return;
     }
@@ -39,7 +39,7 @@ void cat(int fg, int *pipes)
     if(error == -1){
         addText("Error al crear el proceso");
     }
-    if(fg)
+    if(fg && (pipes[0] >= 0 || (pipes[0] == -1 && pipes[1] == -1)))
         sWait(SEM_SHELL);
 }
 
@@ -62,9 +62,7 @@ void catProc(int argc, char **argv)
         scanning(buffer, 0);
         substractLine();
         printWindow();
-        // pWrite(pipes[0], buffer);
-        sPost(SEM_SHELL);
-        sClose(SEM_SHELL);
+        pWrite(pipes[0], buffer);
         exit();
     }
     if (pipes[0] == -1 && pipes[1] >= 0) {

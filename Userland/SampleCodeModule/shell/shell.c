@@ -41,7 +41,7 @@ int (*func_proc_2[])(uint64_t pid, uint64_t priority) = {nice};
 char window[ROWS * COLS + 1] = {[0 ... ROWS * COLS - 1] = ' ', 0};
 int offset = (ROWS - 1) * COLS;
 
-int pipeCount = -1;
+int pipeCount = 0;
 
 void waitMF(int argc, char **argv)
 {
@@ -193,7 +193,7 @@ void shell(int argc, char **argv)
                 s = findSecondCommand(tokens[3]);
                 if (usePipe)
                 {
-                    if (pOpen(pipeCount++) == -1)
+                    if (pOpen(pipeCount) == -1)
                     {
                         addText("Error opening/creating pipe");
                         substractLine();
@@ -215,6 +215,7 @@ void shell(int argc, char **argv)
                     {
                         (*func_files[s / 2])(0, pipesSecondCommand);
                     }
+                    pipeCount++;
                 }
 
                 if (i % 2 == 0)
