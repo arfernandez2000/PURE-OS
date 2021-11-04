@@ -192,6 +192,11 @@ void shell(int argc, char **argv)
                         loop_error();
                         break;
                     }
+                    if(isBG(tokens[0])){
+                        bg_error();
+                        comm_flag = 1;
+                        break;
+                    }
                     usePipe = 1;
                     s = findSecondCommand(tokens[2]);
                     if(s == -1){
@@ -336,6 +341,13 @@ void loop_error()
     substractLine();
 }
 
+void bg_error()
+{
+    addText("Background processes can't be fist in a piped command");
+    printWindow();
+    substractLine();
+}
+
 char *getWindow()
 {
     return window;
@@ -349,4 +361,9 @@ int getOffset()
 void setOffset(int of)
 {
     offset = of;
+}
+
+int isBG(char* command){
+    return !strcmp(command, "cat&") || !strcmp(command, "wc&") || !strcmp(command, "filter&") 
+    || !strcmp(command, "loop&") || !strcmp(command, "phylo&");
 }
