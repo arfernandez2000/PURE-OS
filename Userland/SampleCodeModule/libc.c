@@ -134,6 +134,14 @@ int atoi(char *string, int length) {
   return neg ? -res : res;
 }
 
+void strcpy2(char *str1, char *str2)
+{ //copies str1 into str2
+      int i;
+      for (i = 0; str1[i] != 0; i++)
+            str2[i] = str1[i];
+      str2[i] = 0;
+}
+
 int pow(int base, int exponent) {
   int result = 1;
   for (; exponent > 0; exponent--) {
