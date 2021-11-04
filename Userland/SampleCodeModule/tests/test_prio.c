@@ -109,7 +109,7 @@ void test_prio(){
 
   bussy_wait_prio(WAIT);
   substractLine();
-  addText("BLOCKING...");
+  addText("STARTING BLOCKING...");
   substractLine();
   printWindow();
 
@@ -123,6 +123,10 @@ void test_prio(){
         }
 
   }
+  addText("BLOCKING FINISHED");
+  substractLine();
+  printWindow();
+
   substractLine();
   addText("CHANGING PRIORITIES WHILE BLOCKED...");
   substractLine();

@@ -331,7 +331,7 @@ void incorrect_arg(char *command)
 
 void loop_error()
 {
-    addText("loop can't be fist in a piped command");
+    addText("loop can't be first in a piped command");
     printWindow();
     substractLine();
 }
