@@ -1,8 +1,9 @@
 #ifndef FILES_H
 #define FILES_H
 
-void cat (int fg);
-void wc (int fg);
-void filter (int fg);
+
+void cat (int fg, int* pipes);
+void wc (int fg, int* pipes);
+void filter (int fg, int* pipes);
 
 #endif

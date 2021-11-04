@@ -55,6 +55,8 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             return pWrite(rsi, rdx);
         case 27:
             return pClose(rsi);
+        case 28:
+            return getPipes();
         default:
             return -1;
 	}

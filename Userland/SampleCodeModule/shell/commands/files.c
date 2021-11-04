@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "pipesLib.h"
 
 #define BUFF_SIZE 1024
 
@@ -18,127 +19,178 @@
 
 int openFile(char *file);
 
-void catProc(int argc, char** argv);
-void wcProc(int argc, char** argv);
-void filterProc (int argc, char** argv);
-void scanning(char* buffer, int filterVow);
+void catProc(int argc, char **argv);
+void wcProc(int argc, char **argv);
+void filterProc(int argc, char **argv);
+void scanning(char *buffer, int filterVow);
 int isVow(char c);
 
-void cat (int fg){
+void cat(int fg, int *pipes)
+{
     char buffer[10];
-    char* argv[] = {"cat", itoa(fg, buffer,10)};
-    int error = sys_loadProcess(&catProc, 2, argv, fg, NULL);
-    if(error == -1){
+    char *argv[] = {"cat", itoa(fg, buffer, 10)};
+    int error = sys_loadProcess(&catProc, 2, argv, fg, pipes);
+    if (error == -1)
+    {
         addText("Error al crear el proceso");
     }
 }
 
-void catProc(int argc, char** argv){
-    if (!atoi(argv[0],1)){ 
-        while(1);   
+void catProc(int argc, char **argv)
+{
+    char* charRead;
+    if (!atoi(argv[0], 1))
+    {
+        while (1)
+            ;
     }
+    int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
+    
     block(0);
     char buffer[BUFF_SIZE] = {0};
+
+    if (pipes[0] >= 0 && pipes[1] == -1) {
+        // addText("tengo que enviar");
+        // substractLine();
+        // printWindow();
         scanning(buffer, 0);
         substractLine();
-        addText(buffer);
-        substractLine();
         printWindow();
-    unblock(0);    
+        // pWrite(pipes[0], buffer);
+        unblock(0);
+        exit();
+    }
+    if (pipes[0] == -1 && pipes[1] >= 0) {
+        //Habria que hacer un while porque esto solo devuelve un char
+        *charRead++ = pRead(pipes[1]);
+        *charRead = 0;
+        addText(charRead);
+        addText("holaaa");
+        substractLine();
+        printWindow();  
+
+        unblock(0);
+        exit();
+    }
+
+    scanning(buffer, 0);
+    substractLine();
+    addText(buffer);
+    substractLine();
+    printWindow();
+    unblock(0);
     exit();
 }
 
-void scanning(char* buffer, int filterVow){
+void scanning(char *buffer, int filterVow)
+{
     char c;
-        int i = 0;
-        char* window = getWindow();
-        int offset = getOffset();
-        while ((c = getChar()) != '\t' && i < BUFF_SIZE - 1) {
-            if (c != -1) {
-                if (c == '\b' && i > 0) {
-                    buffer[--i] = ' ';
-                    window[--offset] = ' ';
-                    setOffset(offset);
-                    printWindow();
-                }
-                if (c == '\n'){
+    int i = 0;
+    char *window = getWindow();
+    int offset = getOffset();
+    while ((c = getChar()) != '\t' && i < BUFF_SIZE - 1)
+    {
+        if (c != -1)
+        {
+            if (c == '\b' && i > 0)
+            {
+                buffer[--i] = ' ';
+                window[--offset] = ' ';
+                setOffset(offset);
+                printWindow();
+            }
+            if (c == '\n')
+            {
+                buffer[i++] = c;
+                substractLine();
+                offset = getOffset();
+                printWindow();
+            }
+            else if (c != 0 && c != '\b')
+            {
+                if (!filterVow || !isVow(c))
+                {
                     buffer[i++] = c;
+                }
+                if (offset == ROWS * COLS - 1)
+                {
                     substractLine();
                     offset = getOffset();
-                    printWindow();
                 }
-                else if (c != 0 && c != '\b') { 
-                    if(!filterVow || !isVow(c)){
-                        buffer[i++] = c;
-                    }
-                    if (offset == ROWS * COLS - 1) {
-                        substractLine();
-                        offset = getOffset();
-                    }
-                    window[offset++] = c;
-                    setOffset(offset);
-                    printWindow();
-                } 
+                window[offset++] = c;
+                setOffset(offset);
+                printWindow();
             }
         }
-        buffer[i] = '\0';
-        if (offset == ROWS * COLS - 1) substractLine();
-        window[offset] = ' ';
+    }
+    buffer[i] = '\0';
+    if (offset == ROWS * COLS - 1)
+        substractLine();
+    window[offset] = ' ';
 }
 
-void wc (int fg) {
+void wc(int fg, int *pipes)
+{
     char buffer[10];
-    char* argv[] = {"wc", itoa(fg, buffer,10)};
-    sys_loadProcess(&wcProc, 2, argv, fg, NULL);
+    char *argv[] = {"wc", itoa(fg, buffer, 10)};
+    sys_loadProcess(&wcProc, 2, argv, fg, pipes);
 }
 
-void wcProc(int argc, char** argv){
-    if (!atoi(argv[0],1)){ 
-       while(1);   
+void wcProc(int argc, char **argv)
+{
+    if (!atoi(argv[0], 1)) {
+        while (1);
     }
     block(0);
+
+    int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
+
     char buffer[BUFF_SIZE] = {0};
-        scanning(buffer, 0);
-        substractLine();
-        int lines = 1;
-        for (size_t i = 0; buffer[i] != '\0'; i++)
+    scanning(buffer, 0);
+    substractLine();
+    int lines = 1;
+    for (size_t i = 0; buffer[i] != '\0'; i++)
+    {
+        if (buffer[i] == '\n')
         {
-            if(buffer[i] == '\n'){
-                lines++;
-            }
+            lines++;
         }
-        char ret[BUFF_SIZE] = {0};
-        addText(itoa(lines, ret, 10));
-        substractLine();
-        printWindow();
+    }
+    char ret[BUFF_SIZE] = {0};
+    addText(itoa(lines, ret, 10));
+    substractLine();
+    printWindow();
     unblock(0);
     exit();
-  
 }
 
-void filter(int fg){
+void filter(int fg, int *pipes)
+{
     char buffer[10];
-    char* argv[] = {"filter", itoa(fg, buffer,10)};
-    sys_loadProcess(&filterProc, 2, argv, fg, NULL);
-
+    char *argv[] = {"filter", itoa(fg, buffer, 10)};
+    sys_loadProcess(&filterProc, 2, argv, fg, pipes);
 }
 
-void filterProc (int argc, char** argv) {
-      if (!atoi(argv[0],1)){ 
-        while(1);   
+void filterProc(int argc, char **argv)
+{
+    if (!atoi(argv[0], 1))
+    {
+        while (1)
+            ;
     }
     block(0);
     char buffer[BUFF_SIZE] = {0};
-        scanning(buffer, 1);
-        substractLine();
-        addText(buffer);
-        substractLine();
-        printWindow();
+    scanning(buffer, 1);
+    substractLine();
+    addText(buffer);
+    substractLine();
+    printWindow();
     unblock(0);
     exit();
 }
 
-int isVow(char c){
+int isVow(char c)
+{
     return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
             c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U');
 }

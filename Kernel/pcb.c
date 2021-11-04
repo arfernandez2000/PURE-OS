@@ -138,6 +138,10 @@ uint64_t getPID(){
     return processQueue[currentProcess]->pid;
 }
 
+int* getPipes() {
+    return processQueue[currentProcess]->pipes;
+}
+
 char** psDisplay() {
     char** processString = mallocMM(1000);
     for(int i=0; i< activeProcesses; i++){
