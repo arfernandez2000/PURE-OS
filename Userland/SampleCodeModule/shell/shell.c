@@ -188,22 +188,25 @@ void shell(int argc, char **argv)
             {
                 if (!strcmp(tokens[1], "|"))
                 {
+                    if(!strcmp(tokens[0], "loop")){
+                        comm_flag = 1;
+                        loop_error();
+                        break;
+                    }
                     usePipe = 1;
-                }
-                s = findSecondCommand(tokens[3]);
-                if (usePipe)
-                {
+                    s = findSecondCommand(tokens[3]);
+                    if(s == -1){
+                        incorrect_proc(tokens[3]);
+                        comm_flag = 1;
+                        break;
+                    }
                     if (pOpen(pipeCount) == -1)
                     {
                         addText("Error opening/creating pipe");
                         substractLine();
                         printWindow();
                     }
-                }
-
-                // pipe[0] write, pipe[1] read
-                if (usePipe)
-                {
+                
                     pipesFirstCommand[0] = pipeCount;
                     pipesSecondCommand[1] = pipeCount;
                     
@@ -220,12 +223,15 @@ void shell(int argc, char **argv)
 
                 if (i % 2 == 0)
                 {
-                    usePipe ? (*func_files[i / 2])(1, pipesFirstCommand) : (*func_files[i / 2])(1, pipesFirstCommand);
+                    (*func_files[i / 2])(1, pipesFirstCommand);
                 }
                 else
                 {
-                    usePipe ? (*func_files[i / 2])(0, pipesFirstCommand) : (*func_files[i / 2])(0, pipesFirstCommand);
+                    (*func_files[i / 2])(0, pipesFirstCommand);
                 }
+
+                if (usePipe)
+                    pClose(pipeCount - 1);
 
                 file_comm = 0;
                 comm_flag = 1;
@@ -308,10 +314,25 @@ void incorrect_comm(char *buffer)
     substractLine();
 }
 
+void incorrect_proc(char *buffer)
+{
+    addText(buffer);
+    addText(" is not a BottlerShell process");
+    printWindow();
+    substractLine();
+}
+
 void incorrect_arg(char *command)
 {
     addText("Incorrect arguments for command ");
     addText(command);
+    printWindow();
+    substractLine();
+}
+
+void loop_error()
+{
+    addText("loop can't be fist in a piped command");
     printWindow();
     substractLine();
 }

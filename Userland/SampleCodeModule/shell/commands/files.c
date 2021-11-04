@@ -19,6 +19,9 @@
 #define COLS 80
 #define ROWS 25
 
+//pipe 0 write
+//pipe 1 read
+
 int openFile(char *file);
 
 void catProc(int argc, char **argv);
@@ -48,45 +51,33 @@ void catProc(int argc, char **argv)
     char charRead[BUFF_SIZE];
     if (!atoi(argv[0], 1))
     {
-        while (1)
-            ;
+        while (1);
     }
     int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
     
     char buffer[BUFF_SIZE] = {0};
 
     if (pipes[0] >= 0 && pipes[1] == -1) {
-        // addText("tengo que enviar");
-        // substractLine();
-        // printWindow();
         scanning(buffer, 0);
         substractLine();
         printWindow();
         pWrite(pipes[0], buffer);
         exit();
     }
-    if (pipes[0] == -1 && pipes[1] >= 0) {
-        //Habria que hacer un while porque esto solo devuelve un char
+    else if (pipes[0] == -1 && pipes[1] >= 0) {
         int i;
         char* c;
         strcpy2(pRead(pipes[1]), c);
         while (*c != '\0')
         {
-            charRead[i++] = c[0];
+            buffer[i++] = c[0];
             strcpy2(pRead(pipes[1]), c);
         }
-        
-        charRead[i] = '\0';
-        addText(charRead);
-        substractLine();
-        printWindow();  
-
-        sPost(SEM_SHELL);
-        sClose(SEM_SHELL);
-        exit();
+        buffer[i] = '\0';
     }
-
-    scanning(buffer, 0);
+    else {
+        scanning(buffer, 0);
+    }
     substractLine();
     addText(buffer);
     substractLine();
@@ -146,13 +137,13 @@ void scanning(char *buffer, int filterVow)
 void wc(int fg, int *pipes)
 {
     char buffer[10];
-    if(fg){
+    if(fg && (pipes[0] >= 0 || (pipes[0] == -1 && pipes[1] == -1))){
         if(!sOpen(SEM_SHELL, -1))
             return;
     }
     char* argv[] = {"wc", itoa(fg, buffer,10)};
     sys_loadProcess(&wcProc, 2, argv, fg, pipes);
-    if(fg)
+    if(fg && (pipes[0] >= 0 || (pipes[0] == -1 && pipes[1] == -1)))
         sWait(SEM_SHELL);
 }
 
@@ -165,7 +156,22 @@ void wcProc(int argc, char **argv)
     int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
 
     char buffer[BUFF_SIZE] = {0};
-    scanning(buffer, 0);
+
+    if (pipes[0] == -1 && pipes[1] >= 0) {
+        int i;
+        char* c;
+        strcpy2(pRead(pipes[1]), c);
+        while (*c != '\0')
+        {
+            buffer[i++] = c[0];
+            strcpy2(pRead(pipes[1]), c);
+        }
+        
+        buffer[i] = '\0';
+    }
+    else {
+        scanning(buffer, 0);
+    }
     substractLine();
     int lines = 1;
     for (size_t i = 0; buffer[i] != '\0'; i++)
@@ -176,6 +182,10 @@ void wcProc(int argc, char **argv)
         }
     }
     char ret[BUFF_SIZE] = {0};
+    if(pipes[0] >= 0){
+       pWrite(pipes[0], itoa(lines, ret, 10));
+        exit(); 
+    }
     addText(itoa(lines, ret, 10));
     substractLine();
     printWindow();
@@ -187,13 +197,13 @@ void wcProc(int argc, char **argv)
 void filter(int fg, int *pipes)
 {
     char buffer[10];
-    if(fg){
+    if(fg && (pipes[0] >= 0 || (pipes[0] == -1 && pipes[1] == -1))){
         if(!sOpen(SEM_SHELL, -1))
             return;
     }
     char* argv[] = {"filter", itoa(fg, buffer,10)};
     sys_loadProcess(&filterProc, 2, argv, fg, pipes);
-    if(fg)
+    if(fg && (pipes[0] >= 0 || (pipes[0] == -1 && pipes[1] == -1)))
         sWait(SEM_SHELL);
 
 }
@@ -202,15 +212,36 @@ void filterProc(int argc, char **argv)
 {
     if (!atoi(argv[0], 1))
     {
-        while (1)
-            ;
+        while (1);
     }
     char buffer[BUFF_SIZE] = {0};
+
+    int *pipes = syscall(GET_PIPES, 0, 0, 0, 0, 0, 0);
+
+    if (pipes[0] == -1 && pipes[1] >= 0) {
+        int i;
+        char* c;
+        strcpy2(pRead(pipes[1]), c);
+        while (*c != '\0')
+        {
+            if(!isVow(c[0]))
+                buffer[i++] = c[0];
+            strcpy2(pRead(pipes[1]), c);
+        }
+        
+        buffer[i] = '\0';
+    }
+    else {
         scanning(buffer, 1);
-        substractLine();
-        addText(buffer);
-        substractLine();
-        printWindow();
+    }
+    substractLine();
+    if(pipes[0] >= 0){
+       pWrite(pipes[0], buffer);
+        exit(); 
+    }
+    addText(buffer);
+    substractLine();
+    printWindow();
     sPost(SEM_SHELL);
     sClose(SEM_SHELL);
     exit();
