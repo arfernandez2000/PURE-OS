@@ -25,11 +25,11 @@
 #define COLS 80
 #define ROWS 25
 
-const int len_void = 13;
+const int len_void = 14;
 const int len_files = 10;
 const int len_proc = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba", "test_mm", "ps", "test_priority", "test_processes", "test_sync", "test_no_sync"};
-void (*func[])() = {help, time, inforeg, excdiv, excop, clear, prueba, test_mm, ps, test_prio, test_processes, test_sync, test_no_sync};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba", "test_mm", "ps", "test_priority", "test_processes", "test_sync", "test_no_sync", "sem"};
+void (*func[])() = {help, time, inforeg, excdiv, excop, clear, prueba, test_mm, ps, test_prio, test_processes, test_sync, test_no_sync, sem};
 char *commands_files[] = {"cat", "cat&", "wc", "wc&", "filter", "filter&", "loop", "loop&", "phylo", "phylo&"};
 void (*func_files[])() = {cat, wc, filter, loop, phylo};
 char *commands_proc[] = {"kill", "block", "unblock"};

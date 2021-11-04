@@ -3,6 +3,7 @@
 #include "naiveConsole.h"
 #include "pcb.h"
 #include "lib.h"
+#define MAX_SEM 10000
 
 
 typedef struct Semaphore
@@ -18,8 +19,6 @@ typedef struct Semaphore
 } Semaphore;
 
 Semaphore *semaphores = NULL;
-
-static void dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize);
 static Semaphore *findSem(uint32_t id);
 
 uint32_t sOpen(uint32_t id, int initValue)
@@ -137,47 +136,58 @@ int sClose(uint32_t id)
     return 0;
 }
 
-void sStatus()
-{
-    ncPrint("\nSEMAPHORE DUMP\n");
-    ncPrint("------------------------------------------------\n");
-    ncPrint("Active semaphores:\n");
-    Semaphore *sem = semaphores;
-    int i = 1;
-    while (sem)
-    {
-        ncPrint("-------------------------------\n");
-        ncPrint("Semaphore");
-        ncPrintDec(i++);
-        ncPrint("\n");
-        ncPrint("     ID: ");
-        ncPrintDec(sem->id);
-        ncPrint("\n");
-        ncPrint("     Value: ");
-        ncPrintDec(sem->value);
-        ncPrint("\n");
-        ncPrint("     Number of attached processes: ");
-        ncPrintDec(sem->listeners);
-        ncPrint("\n");
-        ncPrint("     Number of blocked processes: ");
-        ncPrintDec(sem->blockedPIDsSize);
-        ncPrint("\n");
-        ncPrint("     Blocked processes:\n");
-        dumpBlockedPIDs(sem->blockedPIDs, sem->blockedPIDsSize);
-        sem = sem->next;
-    }
-    ncPrint("-------------------------------\n");
-}
-
-static void dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize)
+int dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize, char *** result, int line)
 {
     for (int i = 0; i < blockedPIDsSize; i++)
     {
-        ncPrint("         PID: ");
-        ncPrintDec(blockedPIDs[i]);
-        ncPrint("\n");
+        *result[line] = "         PID: ";
+        char buffer[10];
+        strcat(*result[line++], itoa(blockedPIDs[i],buffer,10,10));
     }
+    return line;
 }
+
+int lines;
+int getLinesDump(){
+    return lines;
+}
+
+char** semDisplay()
+{
+    char** result = mallocMM(10000);
+
+    Semaphore *sem = semaphores;
+    int i = 1;
+    int line =0;
+    while (sem)
+    {   
+        result[line++] = "-------------------------------";
+        result[line++]= "Semaphore";
+        strcat(result[line], itoa(i++,result[line++],10,10));
+
+        result[line] = "     ID: ";
+        char buffer[10];
+        strcat(result[line++], itoa(sem->id,buffer,10,10));
+
+        result[line] = "     Value: ";
+        strcat(result[line++], itoa(sem->value,buffer,10,10));
+
+        result[line] = "     Number of attached processes: ";
+
+        strcat(result[line++], itoa(sem->listeners,buffer,10,10));
+  
+        result[line] ="     Number of blocked processes: ";
+        strcat(result[line++], itoa(sem->blockedPIDsSize,buffer,10,10));
+
+        result[line] = "     Blocked processes:";
+        line = dumpBlockedPIDs(sem->blockedPIDs, sem->blockedPIDsSize, &result,line);
+        sem = sem->next;
+    }
+    result[line++] = "-------------------------------------" ;
+    lines = line;
+    return result;
+}
+
 
 static Semaphore *findSem(uint32_t id)
 {

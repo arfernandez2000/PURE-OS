@@ -61,6 +61,10 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             return pClose(rsi);
         case GET_PIPES:
             return (uint64_t)getPipes();
+        case SEM_DUMP:
+            return (uint64_t) semDisplay();
+        case DUMP_LINES:
+            return  getLinesDump();
         default:
             return -1;
 	}
