@@ -5,6 +5,7 @@
 #include "processCommands.h"
 
 #define NULL (void *)0
+#define SEM_SHELL 104
 
 int ticksElapsed()
 {
@@ -25,13 +26,6 @@ int waitCycles(int cycles, int fg)
 void loopProc(int argc, char **argv)
 {
     int fg = atoi(argv[0], 1);
-    if (fg)
-    {
-        addText("hola");
-        substractLine();
-        printWindow();
-        block(0);
-    }
     uint64_t pid = syscall(GET_PID, 0, 0, 0, 0, 0, 0);
     int loop = 1;
     while (loop) {
@@ -44,17 +38,26 @@ void loopProc(int argc, char **argv)
         printWindow();
         substractLine();
     }
-    unblock(0);
+    if(fg){
+        sPost(SEM_SHELL);
+        sClose(SEM_SHELL);
+    }
     exit();
 }
 
 void loop(int fg)
 {
     char buffer[10];
+    if(fg){
+        if(!sOpen(SEM_SHELL, -1))
+            return;
+    }
     char *argv[] = {"loop", itoa(fg, buffer, 10)};
     int error = sys_loadProcess(&loopProc, 2, argv, fg, NULL);
     if (error == -1)
     {
         addText("Error al crear el proceso");
     }
+    if(fg)
+        sWait(SEM_SHELL);
 }

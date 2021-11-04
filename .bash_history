@@ -69,3 +69,5 @@ make
 cd ..
 cd ..
 make all
+cd root
+make clean;make all

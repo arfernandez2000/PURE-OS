@@ -11,7 +11,7 @@ typedef enum
     WRITE = 3,
     GETCHAR = 4,
     CLEAR = 5,
-    CREATE_PROC = 6,
+    GET_PPID = 6,
     INFOREG = 7,
     MALLOC = 8,
     FREE = 9,
@@ -36,7 +36,8 @@ typedef enum
     WAIT = 28,
     PIPE_DUMP = 29,
     SECONDS_ELAPSED = 30,
-    PROCESS_COUNT = 31
+    PROCESS_COUNT = 31,
+    GET_PIPES = 28
 } syscallID;
 
 // void sys_switchContext();

@@ -1,5 +1,6 @@
 #include "phylo.h"
 
+
 #define INITIAL_PHYLOS 4 /* number of philosophers */
 #define MAX_PHYLOS 9
 
@@ -8,13 +9,12 @@
 #define EATING 2
 #define GONE 3
 
-typedef int semaphore; /* semaphores are a special kind of int */
-int state[MAX_PHYLOS]; /* array to keep track of everyone’s state */
-semaphore mutex;   /* mutual exclusion for critical regions */
-semaphore mutexTable;
-semaphore s[MAX_PHYLOS]; /* one semaphore per philosopher */
-int phylosPid[MAX_PHYLOS];
+#define SEM_SHELL 105
+#define SEM_MUTEX 106
+#define SEM_PHYLO 107
 
+int state[MAX_PHYLOS]; /* array to keep track of everyone’s state */
+int phylosPid[MAX_PHYLOS];
 int phylosCount;
 
 #define RIGHT(i) ((i) + 1) % (phylosCount)              /* number of i’s right neighbor */
@@ -39,45 +39,38 @@ void eat()
     sleep(10);
     return;
 }
-static void up(int *sem)
-{
-    (*sem)++;
-}
-static void down(int *sem)
-{
-    (*sem)--;
-}
+
 void test(int i)
 {
     if (state[i] == HUNGRY && state[LEFT(i)] != EATING && state[RIGHT(i)] != EATING)
     {
         state[i] = EATING;
-        up(&s[i]);
+        sPost(SEM_PHYLO + i);
     }
 }
 
 void take_forks(int i)
 {
 
-    down(&mutex);      /* enter critical region */
+    sWait(SEM_MUTEX);      /* enter critical region */
     state[i] = HUNGRY; /* record fact that philosopher i is hungry */
     test(i);           /* try to acquire 2 for ks */
-    up(&mutex);        /* exit critical region */
-    down(&s[i]);       /* block if for ks were not acquired */
+    sPost(SEM_MUTEX);        /* exit critical region */
+    sWait(SEM_PHYLO + i);       /* block if for ks were not acquired */
 }
 
 void put_forks(int i)
 {
-    down(&mutex);        /* enter critical region */
+    sWait(SEM_MUTEX);        /* enter critical region */
     state[i] = THINKING; /* philosopher has finished eating */
     test(LEFT(i));       /* see if left neighbor can now eat */
     test(RIGHT(i));      /* see if right neighbor can now eat */
-    up(&mutex);          /* exit critical region */
+    sPost(SEM_MUTEX);          /* exit critical region */
 }
 
 void philosopher(int argc, char **argv)
 {
-    int i = atoi(argv[2], 1); // esto cambiarlo. HAY QUE RECIBIR POR PARAMETRO EL IDX DEL phylosopher
+    int i = atoi(argv[2], 1); 
     char buffer[10];
     while (1)
     { 
@@ -90,7 +83,7 @@ void philosopher(int argc, char **argv)
 }
 int removePhylo()
 {
-    down(&mutex);
+    sWait(SEM_MUTEX);
     if (phylosCount == INITIAL_PHYLOS)
     {
         return -1;
@@ -99,14 +92,15 @@ int removePhylo()
     phylosCount--;
     kill(phylosPid[phylosCount]);
     state[phylosCount] = GONE;
-    up(&mutex);
+    sPost(SEM_MUTEX);
+    sClose(SEM_PHYLO + phylosCount);
     return 1;
 }
 int addPhylo(int fg)
 {
     if (phylosCount == MAX_PHYLOS)
         return -1;
-    down(&mutex);
+  
     char buffer[10];
     char buffer2[10];
     char buffer3[10];
@@ -120,18 +114,30 @@ int addPhylo(int fg)
         printWindow();
         return -1;
     }
+    sWait(SEM_MUTEX);
     state[phylosCount] = THINKING;
-    s[phylosCount] = 1;
+    if(!sOpen(SEM_PHYLO + phylosCount, 1))
+        return -1;
+        
     phylosPid[phylosCount++] = pid;
-    up(&mutex);
+    sPost(SEM_MUTEX);
     return 1;
+}
+
+void killAllPhylos()
+{
+    
+    for (int i = 0; i < phylosCount; i++){
+        kill(phylosPid[i]);
+        // phylosPid[i] = 0;
+        state[i] = GONE;
+        sClose(SEM_PHYLO + i);
+    }
 }
 
 void tablePrint(int argc, char** argv) {
     while (1) {
         sleep(10);
-        down(&mutexTable);
-        printWindow();
         for (int i = 0; i < phylosCount; i++)
         {
             if (state[i] == EATING)
@@ -145,16 +151,12 @@ void tablePrint(int argc, char** argv) {
         }
         substractLine();
         printWindow();
-        up(&mutexTable);
     }
 }
 
 void table(int argc, char **argv)
 {
-    if (atoi(argv[0], 1) == 1)
-    {
-        block(0);
-    }else{
+    if(atoi(argv[0], 1) != 1) {
         while(1);
     }
     int run = 1;
@@ -194,6 +196,7 @@ void table(int argc, char **argv)
             break;
         case '\t':
             run = 0;
+            sPost(SEM_MUTEX);
             break;
         default:
             break;
@@ -202,28 +205,20 @@ void table(int argc, char **argv)
     addText("Finished");
     substractLine();
     printWindow();
-    unblock(0);
     kill(tablePrintID);
     killAllPhylos();
-    addText("$> ");
-    printWindow();
+    sClose(SEM_MUTEX);
+    sPost(SEM_SHELL);
+    sClose(SEM_SHELL);
     exit();
 }
-void killAllPhylos()
-{
-    down(&mutex);
-    for (int i = 0; i < phylosCount; i++){
-         kill(phylosPid[i]);
-    }
-    phylosCount = 0;
-    up(&mutex);
-}
+
 void initialize(){
-    down(&mutex);
-    mutexTable = 1;
+    if(!sOpen(SEM_MUTEX, 1))
+        return;
+    sWait(SEM_MUTEX);    
     phylosCount = 0;
-    tablePrintID = 0;
-    up(&mutex);
+    sPost(SEM_MUTEX);
 }
 
 //---------------------------------------------------
@@ -232,6 +227,10 @@ void phylo(int fg)
 {
     int run = 1;
     char buffer[10];
+    if(fg){
+        if(!sOpen(SEM_SHELL, -1))
+            return;
+    }
     
     initialize();
     char *argv[] = {"table", itoa(fg, buffer, 10)};
@@ -257,4 +256,6 @@ void phylo(int fg)
     substractLine();
     unblock(tableID);
     unblock(tablePrintID);
+    if(fg)
+        sWait(SEM_SHELL);
 }

@@ -8,6 +8,7 @@
 
 #define TOTAL_PAIR_PROCESSES 2
 #define SEM_ID 101
+#define SEM_SHELL 102
 #define NULL (void*) 0
 
 int64_t global;  //shared memory
@@ -44,6 +45,7 @@ void inc(int argc, char *argv[]){
   addText(itoa(global, buff, 10));
   substractLine();
   printWindow();
+  sPost(SEM_SHELL);
   exit();
 }
 
@@ -51,6 +53,10 @@ void test_sync(){
   uint64_t i;
 
   global = 0;
+
+  if(!sOpen(SEM_SHELL, -TOTAL_PAIR_PROCESSES*2)){
+    return;
+  }
 
   addText("CREATING PROCESSES...(WITH SEM)\n");
   printWindow();
@@ -60,16 +66,24 @@ void test_sync(){
     argv1[0] = "inc";
     argv1[1] = "1";
     argv1[2] = "1";
-    argv1[3] = "100";
+    argv1[3] = "1000";
     sys_loadProcess(&inc, 4, argv1, 0, NULL);
     
     char **argv2 = sys_malloc(4*sizeof(char));
     argv2[0] = "inc";
     argv2[1] = "1";
     argv2[2] = "-1";
-    argv2[3] = "100";
+    argv2[3] = "1000";
     sys_loadProcess(&inc, 4, argv2, 0, NULL);
   }
+
+  for (int i = 0; i < TOTAL_PAIR_PROCESSES*2; i++)
+  {
+    sWait(SEM_SHELL);
+  }
+
+  sClose(SEM_SHELL);
+  
 }
 
 void test_no_sync(){
