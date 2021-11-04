@@ -142,7 +142,8 @@ int dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize, char *** re
 {
     for (int i = 0; i < blockedPIDsSize; i++)
     {
-        *result[line] = "         PID: ";
+        *result[line] = mallocMM(100);
+        strcpy("         PID: ", *result[line]);
         char buffer[10];
         strcat(*result[line++], itoa(blockedPIDs[i],buffer,10,10));
     }
@@ -156,32 +157,36 @@ int getLinesDump(){
 
 char** semDisplay()
 {
-    char** result = (char**) mallocMM(10000);
+    char** result = (char**) mallocMM(1024);
 
     Semaphore *sem = semaphores;
     int i = 1;
     int line =0;
     while (sem)
     {   
+        result[line] = mallocMM(100);
         result[line++] = "-------------------------------";
-        result[line++]= "Semaphore";
-        strcat(result[line], itoa(i++,result[line++],10,10));
-
-        result[line] = "     ID: ";
+        strcpy("Semaphore ",result[line]);
+        
+        result[line] = mallocMM(100);
+        strcpy("     ID: ",result[line]);
         char buffer[10];
         strcat(result[line++], itoa(sem->id,buffer,10,10));
 
-        result[line] = "     Value: ";
+        result[line] = mallocMM(100);
+        strcpy("     Value: ",result[line]);
         strcat(result[line++], itoa(sem->value,buffer,10,10));
 
-        result[line] = "     Number of attached processes: ";
-
+        result[line] = mallocMM(100);
+        strcpy("     Number of attached processes: ",result[line]);
         strcat(result[line++], itoa(sem->listeners,buffer,10,10));
-  
-        result[line] ="     Number of blocked processes: ";
+
+        result[line] = mallocMM(100);
+        strcpy("     Number of blocked processes: ", result[line]);
         strcat(result[line++], itoa(sem->blockedPIDsSize,buffer,10,10));
 
-        result[line] = "     Blocked processes:";
+        result[line] = mallocMM(100);
+        strcpy( "     Blocked processes:",result[line]);
         line = dumpBlockedPIDs(sem->blockedPIDs, sem->blockedPIDsSize, &result,line);
         sem = sem->next;
     }
