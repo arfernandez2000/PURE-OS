@@ -37,7 +37,8 @@ typedef enum
     PIPE_DUMP = 29,
     SECONDS_ELAPSED = 30,
     PROCESS_COUNT = 31,
-    GET_PIPES = 28
+    GET_PIPES = 28,
+    MEM_DUMP = 30
 } syscallID;
 
 // void sys_switchContext();
