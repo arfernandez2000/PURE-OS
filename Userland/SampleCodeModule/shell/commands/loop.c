@@ -34,7 +34,7 @@ void loopProc(int argc, char **argv) {
   char message[BUFF_SIZE];
 
   if (pipes[0] == -1 && pipes[1] >= 0) {
-    int i;
+    int i=0;
     char *c;
     strcpy2(pRead(pipes[1]), c);
     while (*c != '\0') {
