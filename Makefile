@@ -32,6 +32,8 @@ format:
 	clang-format -style=file --sort-includes --Werror -i ./Userland/SampleCodeModule/*.c ./Userland/SampleCodeModule/include/*.h
 	clang-format -style=file --sort-includes --Werror  ./Userland/SampleCodeModule/shell/*.c 
 	clang-format -style=file --sort-includes --Werror -i ./Userland/SampleCodeModule/shell/commands/*.c ./Userland/SampleCodeModule/shell/include/*.h
+check:
+	cppcheck --quiet --enable=all --force --inconclusive .
 	
 	
 
