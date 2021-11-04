@@ -75,9 +75,9 @@ void philosopher(int argc, char **argv)
     while (1)
     { 
         /* repeat forever */
-        //think(); /* philosopher is thinking */
+        think(); /* philosopher is thinking */
         take_forks(i); /* acquire two for ks or block */
-        //eat(); /* yum-yum, spaghetti */
+        eat(); /* yum-yum, spaghetti */
         put_forks(i); /* put both for ks back on table */
     }
 }
@@ -128,10 +128,9 @@ void killAllPhylos()
 {
     
     for (int i = 0; i < phylosCount; i++){
-        kill(phylosPid[i]);
-        // phylosPid[i] = 0;
-        state[i] = GONE;
         sClose(SEM_PHYLO + i);
+        kill(phylosPid[i]);
+        state[i] = GONE;
     }
 }
 
@@ -205,8 +204,8 @@ void table(int argc, char **argv)
     addText("Finished");
     substractLine();
     printWindow();
-    kill(tablePrintID);
     killAllPhylos();
+    kill(tablePrintID);
     sClose(SEM_MUTEX);
     sPost(SEM_SHELL);
     sClose(SEM_SHELL);
