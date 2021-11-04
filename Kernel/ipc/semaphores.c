@@ -143,7 +143,8 @@ int dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize, char *** re
     for (int i = 0; i < blockedPIDsSize; i++)
     {
         *result[line] = mallocMM(100);
-        strcpy("         PID: ", *result[line]);
+        char pid[] = "PID: ";
+        strcpy(pid, *result[line]);
         char buffer[10];
         strcat(*result[line++], itoa(blockedPIDs[i],buffer,10,10));
     }
@@ -165,28 +166,34 @@ char** semDisplay()
     {   
         result[line] = mallocMM(100);
         result[line++] = "-------------------------------";
-        char semaphore[20] = "Semaphore";
+        char semaphore[] = "Semaphore";
+        result[line] = mallocMM(100);
         strcpy(semaphore,result[line]);
         
         result[line] = mallocMM(100);
-        strcpy("     ID: ",result[line]);
+        char id[] = "ID: ";
+        strcpy(id,result[line]);
         char buffer[10];
         strcat(result[line++], itoa(sem->id,buffer,10,10));
 
         result[line] = mallocMM(100);
-        strcpy("     Value: ",result[line]);
+        char value[] = "Value: ";
+        strcpy(value,result[line]);
         strcat(result[line++], itoa(sem->value,buffer,10,10));
 
         result[line] = mallocMM(100);
-        strcpy("     Number of attached processes: ",result[line]);
+        char noDetachedProcesses []= "Number of attached processes: ";
+        strcpy(noDetachedProcesses,result[line]);
         strcat(result[line++], itoa(sem->listeners,buffer,10,10));
 
         result[line] = mallocMM(100);
-        strcpy("     Number of blocked processes: ", result[line]);
+        char noBlockedProcesses[] = "Number of blocked processes: ";
+        strcpy(noBlockedProcesses, result[line]);
         strcat(result[line++], itoa(sem->blockedPIDsSize,buffer,10,10));
 
         result[line] = mallocMM(100);
-        strcpy( "     Blocked processes:",result[line]);
+        char blockedProcesses[] = "Blocked processes:";
+        strcpy(blockedProcesses,result[line]);
         line = dumpBlockedPIDs(sem->blockedPIDs, sem->blockedPIDsSize, &result,line);
         sem = sem->next;
     }
