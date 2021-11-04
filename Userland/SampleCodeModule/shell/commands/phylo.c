@@ -300,7 +300,7 @@ void phylo(int fg)
     {
         addPhylo(fg);
     }
-    addText("Welcome to the philosopher's problem");
+    addText("Philosophers will starve? Let's see");
     printWindow();
     substractLine();
     if(unblock(tableID) == -1){
