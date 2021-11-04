@@ -24,8 +24,8 @@ int tablePrintID = -1;
 
 void sleep(unsigned int seconds)
 {
-    unsigned int limitTime = seconds + ticksElapsed();
-    while (ticksElapsed() < limitTime)
+    unsigned int limitTime = seconds + syscall(TICKS_ELAPSED, 0, 0, 0, 0, 0, 0);
+    while (syscall(TICKS_ELAPSED, 0, 0, 0, 0, 0, 0) < limitTime)
         ;
 }
 void think()
