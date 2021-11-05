@@ -54,13 +54,15 @@ void inc(int argc, char *argv[]){
       return;
     }
   } 
-  
   addText("Final value: ");
   char* buff;
   addText(itoa(global, buff, 10));
   substractLine();
   printWindow();
-  sPost(SEM_SHELL);
+  if(sPost(SEM_SHELL) == -1){
+    return;
+  }
+  printWindow();
   exit();
 }
 
@@ -122,6 +124,7 @@ void test_no_sync(){
   uint64_t i;
 
   global = 0;
+
   if(sOpen(SEM_SHELL, -TOTAL_PAIR_PROCESSES*2) == -1){
     return;
   }
@@ -130,14 +133,14 @@ void test_no_sync(){
   int error;
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    char *argv1[4] = {"inc", "1", "1", "100"};
+    char *argv1[4] = {"inc", "1", "1", "1000"};
     error = sys_loadProcess(&inc, 4, argv1, 0, NULL);
     if(error == -1){
       addText("Error loading Process");
       printWindow();
       return;
     }
-    char *argv2[4] = {"inc", "0", "-1", "100"};
+    char *argv2[4] = {"inc", "0", "-1", "1000"};
     error = sys_loadProcess(&inc, 4, argv2, 0, NULL);
     if(error == -1){
       addText("Error loading Process");
@@ -145,7 +148,7 @@ void test_no_sync(){
       return;
     }
   }
-  for (int i = 0; i < TOTAL_PAIR_PROCESSES*2; i++)
+  for (int i = 0; i < TOTAL_PAIR_PROCESSES*2 - 1; i++)
   {
     if(sWait(SEM_SHELL) == -1){
       return;
