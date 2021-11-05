@@ -15,7 +15,6 @@ typedef struct
     char buffer[BUFF_SIZE];
     int readIndex;
     int writeIndex;
-    long totalProcesses;
     int lockW;
     int lockR;
     int state;
@@ -28,6 +27,8 @@ typedef struct
 
 uint32_t semId = 200;
 static PipeArray pipesArray;
+static PipeArray usedPipes;
+int countPipes = 0;
 
 static int putCharPipeByIdx(int pipeIndex, char c);
 static int getPipeIdx(uint32_t pipeId);
@@ -44,10 +45,17 @@ uint32_t pOpen(uint32_t pipeId)
         if (pipeIndex == -1)
             return -1;
     }
-
-    pipesArray.pipes[pipeIndex].totalProcesses++;
-
+    countPipes++;
     return pipeId;
+}
+
+void savePipe(Pipe *pipe){
+    Pipe *usedPipe = &usedPipes.pipes[countPipes];
+    strcpy(pipe->buffer, usedPipe->buffer);
+    usedPipe->id = pipe->id;
+    usedPipe->state = EMPTY;
+    usedPipe->lockR = pipe->lockR;
+    usedPipe->lockW = pipe->lockW;
 }
 
 int pClose(uint32_t pipeId)
@@ -59,11 +67,7 @@ int pClose(uint32_t pipeId)
 
     Pipe *pipe = &pipesArray.pipes[pipeIndex];
 
-    pipe->totalProcesses--;
-
-    //Depleted pipe?
-    if (pipe->totalProcesses > 0)
-        return 1;
+    savePipe(pipe);
 
     if(sClose(pipe->lockR) == -1){
         return -1;
@@ -153,7 +157,7 @@ static uint32_t newPipe(uint32_t pipeId)
 
     pipe->id = pipeId;
     pipe->state = IN_USE;
-    pipe->readIndex = pipe->writeIndex = pipe->totalProcesses = 0;
+    pipe->readIndex = pipe->writeIndex = 0;
 
     if ((pipe->lockR = sOpen(semId++, 0)) == -1)
         return -1;
@@ -178,4 +182,51 @@ static int getFreePipe()
         if (pipesArray.pipes[i].state == EMPTY)
             return i;
     return -1;
+}
+
+int lineP;
+int getLinesPipeDump(){
+    return lineP;
+}
+
+char** pipeDisplay()
+{
+    char** result = (char**) mallocMM(1024);
+
+    int line =0;
+    int i = 1;
+    while (i <= countPipes)
+    {   
+        result[line] = mallocMM(100);
+        result[line++] = "-------------------------------";
+        char pipe[20] = "Pipe";
+        strcpy(pipe,result[line]);
+        
+        result[line] = mallocMM(100);
+        strcpy("     ID: ",result[line]);
+        char buffer[10];
+        strcat(result[line++], itoa(usedPipes.pipes[i].id,buffer,10,10));
+
+        result[line] = mallocMM(100);
+        strcpy("     Estado: ",result[line]);
+        if(usedPipes.pipes[i].state == EMPTY)
+            strcat(result[line++], "EMPTY");
+        else
+            strcat(result[line++], "IN USE");
+
+        result[line] = mallocMM(100);
+        strcpy("     Read semaphore ID: ", result[line]);
+        strcat(result[line++], itoa(usedPipes.pipes[i].lockR,buffer,10,10));
+
+        result[line] = mallocMM(100);
+        strcpy("     Write semaphore ID: ", result[line]);
+        strcat(result[line++], itoa(usedPipes.pipes[i].lockW,buffer,10,10));
+        result[line] = mallocMM(100);
+        strcpy("     Current buffer: ", result[line]);
+        strcat(result[line++], usedPipes.pipes[i].buffer);
+        i++;
+    }
+    result[line++] = "-------------------------------------" ;
+    lineP = line;
+    return result;
 }

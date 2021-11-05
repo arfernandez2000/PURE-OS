@@ -27,11 +27,11 @@
 #define COLS 80
 #define ROWS 25
 
-const int len_void = 14;
+const int len_void = 15;
 const int len_files = 10;
 const int len_proc = 3;
-char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba", "test_mm", "ps", "test_priority", "test_processes", "test_sync", "test_no_sync", "sem"};
-void (*func[])() = {help, time, inforeg, excdiv, excop, clear, prueba, test_mm, ps, test_prio, test_processes, test_sync, test_no_sync, sem};
+char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba", "test_mm", "ps", "test_priority", "test_processes", "test_sync", "test_no_sync", "sem", "pipe"};
+void (*func[])() = {help, time, inforeg, excdiv, excop, clear, prueba, test_mm, ps, test_prio, test_processes, test_sync, test_no_sync, sem, pipe};
 char *commands_files[] = {"cat", "cat&", "wc", "wc&", "filter", "filter&", "loop", "loop&", "phylo", "phylo&"};
 void (*func_files[])() = {cat, wc, filter, loop, phylo};
 char *commands_proc[] = {"kill", "block", "unblock"};
@@ -192,6 +192,12 @@ void shell(int argc, char **argv)
                         loop_error();
                         break;
                     }
+                    if(!strcmp(tokens[0], "phylo") || !strcmp(tokens[2], "phylo") 
+                    || !strcmp(tokens[2], "phylo&") || !strcmp(tokens[0], "phylo&")){
+                        comm_flag = 1;
+                        phylo_error();
+                        break;
+                    }
                     if(isBG(tokens[0])){
                         bg_error();
                         comm_flag = 1;
@@ -341,9 +347,16 @@ void loop_error()
     substractLine();
 }
 
+void phylo_error()
+{
+    addText("phylo can't be in a piped command");
+    printWindow();
+    substractLine();
+}
+
 void bg_error()
 {
-    addText("Background processes can't be fist in a piped command");
+    addText("Background processes can't be first in a piped command");
     printWindow();
     substractLine();
 }
@@ -365,5 +378,5 @@ void setOffset(int of)
 
 int isBG(char* command){
     return !strcmp(command, "cat&") || !strcmp(command, "wc&") || !strcmp(command, "filter&") 
-    || !strcmp(command, "loop&") || !strcmp(command, "phylo&");
+    || !strcmp(command, "loop&");
 }

@@ -13,3 +13,24 @@ int pWrite(uint64_t id, char *str) {
 }
 
 int pClose(uint64_t id) { return syscall(PIPE_CLOSE, id, 0, 0, 0, 0, 0); }
+
+void pipe() {
+
+  char **result = (char **)syscall(PIPE_DUMP, 0, 0, 0, 0, 0, 0);
+  int linesDump = syscall(DUMP_LINES_PIPE, 0, 0, 0, 0, 0, 0);
+  if (linesDump == 1) {
+    addText("No active pipes");
+    substractLine();
+    printWindow();
+    return;
+  }
+  int i = 0;
+  while (i < linesDump) {
+    addText(result[i]);
+    substractLine();
+    printWindow();
+    i++;
+  }
+  sys_free(result);
+  return;
+}
