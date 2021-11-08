@@ -337,6 +337,11 @@ void filterProc(int argc, char **argv)
     exit();
 }
 
+uint64_t shmOpen(int num) {
+    return syscall(SHM_OPEN, num ,0,0,0,0,0);
+}
+
+
 int isVow(char c)
 {
     return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||

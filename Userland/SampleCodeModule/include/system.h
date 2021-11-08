@@ -33,6 +33,7 @@ typedef enum {
   SEM_DUMP = 32,
   DUMP_LINES = 33,
   DUMP_LINES_PIPE = 34,
+  SHM_OPEN = 35
 } syscallID;
 
 // void sys_switchContext();

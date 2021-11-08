@@ -32,6 +32,7 @@
 #define SEM_DUMP 32
 #define DUMP_LINES 33
 #define DUMP_LINES_PIPE 34
+#define SHM_OPEN 35
 
 uint64_t write(uint64_t, uint64_t, uint64_t);
 uint64_t read(uint64_t, uint64_t, uint64_t);

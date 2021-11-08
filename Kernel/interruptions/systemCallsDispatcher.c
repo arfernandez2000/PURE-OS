@@ -7,6 +7,7 @@
 #include "time.h"
 #include "semaphores.h"
 #include "pipes.h"
+#include "shm.h"
 
 uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
 	switch (rdi) {
@@ -72,6 +73,8 @@ uint64_t systemCallsDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
             return  getLinesDump();
         case DUMP_LINES_PIPE:
             return  getLinesPipeDump();
+        case SHM_OPEN:
+            return (uint64_t) shmOpen((int) rsi);
         default:
             return -1;
 	}

@@ -19,6 +19,7 @@
 #include "test_sync.h"
 #include "phylo.h"
 #include "pipesLib.h"
+#include "pruebas.h"
 
 #define NULL (void *)0
 #define SIZE 100
@@ -28,12 +29,12 @@
 #define ROWS 25
 
 const int len_void = 15;
-const int len_files = 10;
+const int len_files = 14;
 const int len_proc = 3;
 char *commands_void[] = {"help", "time", "inforeg", "excdiv", "excop", "clear", "prueba", "test_mm", "ps", "test_priority", "test_processes", "test_sync", "test_no_sync", "sem", "pipe"};
 void (*func[])() = {help, time, inforeg, excdiv, excop, clear, prueba, test_mm, ps, test_prio, test_processes, test_sync, test_no_sync, sem, pipe};
-char *commands_files[] = {"cat", "cat&", "wc", "wc&", "filter", "filter&", "loop", "loop&", "phylo", "phylo&"};
-void (*func_files[])() = {cat, wc, filter, loop, phylo};
+char *commands_files[] = {"cat", "cat&", "wc", "wc&", "filter", "filter&", "loop", "loop&", "phylo", "phylo&", "proceso1", "proceso1&", "proceso2", "proceso2&"};
+void (*func_files[])() = {cat, wc, filter, loop, phylo, proceso1, proceso2};
 char *commands_proc[] = {"kill", "block", "unblock"};
 int (*func_proc[])(uint64_t pid) = {kill, block, unblock};
 const int len_proc_2 = 1;
@@ -153,6 +154,13 @@ int findSecondCommand(char *string)
     return -1;
 }
 
+
+void phylo_error()
+{
+    addText("phylo can't be in a piped command");
+    printWindow();
+    substractLine();
+}
 void shell(int argc, char **argv)
 {
 
@@ -347,12 +355,6 @@ void loop_error()
     substractLine();
 }
 
-void phylo_error()
-{
-    addText("phylo can't be in a piped command");
-    printWindow();
-    substractLine();
-}
 
 void bg_error()
 {
